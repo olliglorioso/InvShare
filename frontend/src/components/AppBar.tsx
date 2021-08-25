@@ -3,13 +3,15 @@ import MenuIcon from '@material-ui/icons/Menu';
 import useStyles from '../styles/styles';
 import { actionEnableSidebar } from '../reducers/sidebarReducer';
 import {IconButton, AppBar, Toolbar, Typography, Button} from '@material-ui/core';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
+import { RootState } from '..';
 
-
-const MenuBar = ({disableLoginButton}: {disableLoginButton: string}): JSX.Element => {
+const MenuBar = (): JSX.Element => {
     const styles = useStyles()
     const dispatch = useDispatch()
+    const location = useLocation()
+    const userState = useSelector<RootState, boolean>((state) => state.user)
 
     return (
         <div>
@@ -19,13 +21,14 @@ const MenuBar = ({disableLoginButton}: {disableLoginButton: string}): JSX.Elemen
                     <MenuIcon />
                 </IconButton>
                 <Typography className={styles.appBarTitle} variant="h6" >
-                    InvShare
+                    <Button><Link to="/" style={{color: 'white', textDecoration: 'none', fontSize: 20}}>InvShare</Link></Button>
                 </Typography>
-                {disableLoginButton === 'no'
-                    ? <Button color='inherit'><Link to="/login" style={{color: 'white', textDecoration: 'none'}}>Login</Link></Button>
-                    : <div></div>
-                }
-                    
+                {location.pathname === '/login'
+                    ? <div></div>
+                    : userState
+                        ? <div></div>
+                        : <Button color='inherit'><Link to="/login" style={{color: 'white', textDecoration: 'none'}}>Log in</Link></Button>
+                }    
                 </Toolbar>
             </AppBar>
         </div>

@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-import uniqueValidator from 'mongoose-unique-validator'
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const schema = new mongoose.Schema({
   username: {
@@ -11,17 +11,17 @@ const schema = new mongoose.Schema({
   passwordHash: {
     type: String,
   }
-})
+});
 
-schema.plugin(uniqueValidator)
+schema.plugin(uniqueValidator);
 
 schema.set('toJSON', {
   transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-    delete returnedObject.passwordHash
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+    delete returnedObject.passwordHash;
   }
-})
+});
 
-module.exports = mongoose.model('User', schema)
+module.exports = mongoose.model('User', schema);

@@ -3,6 +3,7 @@ import MenuBar from './components/AppBar';
 import SideBar from './components/SideBar'
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import LoginPage from './components/LoginPage';
+import StockPage from './components/StockPage';
 
 function App(): JSX.Element {
   return (
@@ -12,8 +13,11 @@ function App(): JSX.Element {
         <Route path="/" exact>
           <div>
             <SideBar />
-            <MenuBar disableLoginButton={"no"} />
+            <MenuBar  />
           </div>
+        </Route>
+        <Route path="/mystocks" exact>
+          <StockPage />
         </Route>
         <Route path="/login" exact>
           <LoginPage />

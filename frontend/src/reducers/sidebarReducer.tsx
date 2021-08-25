@@ -10,7 +10,6 @@ const sidebarReducer = (state = false, action: {type: string}): boolean => {
 }
 
 export const actionEnableSidebar = (enableOrDisable: string): {type: string} => {
-    
     return {
         type: enableOrDisable
     }

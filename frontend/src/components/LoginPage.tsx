@@ -3,35 +3,38 @@ import SideBar from './SideBar'
 import MenuBar from './AppBar'
 import { Grid } from '@material-ui/core'
 import LoginForm from './LoginForm'
+// import SignUpForm from './SignUpForm'
 
 const LoginPage = (): JSX.Element => {
     return (
         <div>
             <div>
                 <SideBar />
-                <MenuBar disableLoginButton={'yes'}/>
+                <MenuBar />
             </div>
-            <div >
+            <div>
                 <Grid
                     container
                     spacing={0}
-                    direction="column"
+                    direction="row"
                     justifyContent="center"
                     style={{minHeight: '100vh'}}
                 >
-                    <Grid item xs={5}>
+                    <Grid container item xs={5} alignItems="center" justifyContent="center">
                         <LoginForm />
                     </Grid>
+                    {/* <Grid container item xs={5} justifyContent="center" alignItems="center">
+                        <SignUpForm />
+                    </Grid> */}
                 </Grid>
+                
                 <Grid
                     container
                     spacing={0}
                     direction="column"
                     style={{minHeight: '100vh'}}
                 >
-                    <Grid item xs={5}>
-                        <LoginForm />
-                    </Grid>
+                    
                 </Grid>
             </div>
             

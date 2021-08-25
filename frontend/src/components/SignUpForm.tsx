@@ -1,14 +1,9 @@
 import React from "react"
 import {useFormik} from 'formik'
 import { Button, TextField, InputAdornment } from "@material-ui/core";
-import { AccountCircle, LockRounded } from "@material-ui/icons";
+import { AccountCircle, LockRounded, EmailOutlined } from "@material-ui/icons";
 import { withStyles } from "@material-ui/styles";
-import { LOGIN } from '../graphql/queries'
-import {useMutation} from '@apollo/client'
 import { useHistory } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import {logUserIn} from '../reducers/userLoggedReducer'
 
 const CssTextField = withStyles({
     root: {
@@ -30,35 +25,27 @@ const CssTextField = withStyles({
         },
       },
     },
-})(TextField);
+  })(TextField);
 
-
-const LoginForm = (): JSX.Element => {
-  const [login, result] = useMutation(LOGIN)
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    if ( result.data ) {
-      dispatch(logUserIn(result.data.login.value))
-    }
-  }, [result.data]) // eslint-disable-line
-
+const SignUpForm = (): JSX.Element => {
   const history = useHistory()
 
   const formik = useFormik({
       initialValues: {
         username: '',
+        email: '',
         password: '',
+        password_again: ''
       },
-      onSubmit: async (values: {username: string, password: string}) => {
-        await login({variables: {username: values.username, password: values.password}})
+      onSubmit: values => {
+        alert(JSON.stringify(values, null, 2));
         history.push('/')
       },
     });
   return (
       <form onSubmit={formik.handleSubmit}>
           <CssTextField
-              id="username"
+              id="su_username"
               type="username"
               variant="outlined"
               label="Username"
@@ -74,7 +61,23 @@ const LoginForm = (): JSX.Element => {
           />
           <p></p>
           <CssTextField
-              id="password"
+              id="email"
+              type="email"
+              variant="outlined"
+              label="Email"
+              onChange={formik.handleChange}
+              value={formik.values.username}
+              InputProps={{
+                  startAdornment: (
+                      <InputAdornment position="start">
+                          <EmailOutlined />
+                      </InputAdornment>
+                  )
+              }}
+          />
+          <p></p>
+          <CssTextField
+              id="su_password"
               type="password"
               variant="outlined"
               label="Password"
@@ -89,11 +92,27 @@ const LoginForm = (): JSX.Element => {
               }}
           />
           <p></p>
-          <Button variant="contained" type="submit" style={{background: 'black', color: 'white', width: 255}}>Log in</Button>
+          <CssTextField
+              id="password_again"
+              type="password"
+              variant="outlined"
+              label="Password again"
+              onChange={formik.handleChange}
+              value={formik.values.username}
+              InputProps={{
+                  startAdornment: (
+                      <InputAdornment position="start">
+                          <LockRounded />
+                      </InputAdornment>
+                  )
+              }}
+          />
+          <p></p>
+          <Button variant="contained" type="submit" style={{background: 'black', color: 'white', width: 255}}>Sign up</Button>
           <p style={{fontSize: 20, alignContent: 'center'}}></p>
       </form>
       
     );
 }
 
-export default LoginForm
+export default SignUpForm

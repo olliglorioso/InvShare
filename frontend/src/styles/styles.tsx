@@ -7,6 +7,6 @@ const useStyles = makeStyles((theme) => ({
     appBarTitle: {
       flexGrow: 1,
     }
-  }));
+}));
 
 export default useStyles;
