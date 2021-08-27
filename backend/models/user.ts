@@ -10,7 +10,11 @@ const schema = new mongoose.Schema({
   },
   passwordHash: {
     type: String,
-  }
+  },
+  stocks: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Stock'
+  }]
 });
 
 schema.plugin(uniqueValidator);

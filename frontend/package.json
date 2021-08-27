@@ -12,11 +12,13 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@types/apollo-upload-client": "^14.1.0",
     "@types/jest": "^26.0.24",
     "@types/node": "^12.20.19",
     "@types/react": "^17.0.17",
     "@types/react-dom": "^17.0.9",
     "apexcharts": "^3.27.3",
+    "apollo-link-context": "^1.0.20",
     "dates-between": "^1.1.0",
     "finnhub": "^1.2.6",
     "formik": "^2.2.9",
@@ -30,7 +32,9 @@
     "react-scripts": "4.0.3",
     "redux": "^4.1.1",
     "typescript": "^4.3.5",
-    "web-vitals": "^1.1.2"
+    "use-debounce": "^7.0.0",
+    "web-vitals": "^1.1.2",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "react-scripts start",

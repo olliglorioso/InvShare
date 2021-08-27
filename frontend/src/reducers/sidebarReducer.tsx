@@ -1,11 +1,11 @@
 const sidebarReducer = (state = false, action: {type: string}): boolean => {
     switch (action.type) {
-        case 'ENABLE':
-            return true
-        case 'DISABLE':
-            return false
-        default: 
-            return state
+    case "ENABLE":
+        return true
+    case "DISABLE":
+        return false
+    default: 
+        return state
     }
 }
 

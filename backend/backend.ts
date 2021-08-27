@@ -1,6 +1,7 @@
 const { ApolloServer, gql } = require('apollo-server');
 const mongoose = require('mongoose');
 const User = require('./models/user');
+const Stock = require('./models/stock')
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
@@ -19,10 +20,11 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true,
     });     
   
 const typeDefs = gql`
-    type User {
-        username: String!
-        passwordHash: String!
-        id: ID!
+    type BoughtStock {
+        companyName: String!
+        oneStockPrice: Float!
+        amount: Int!
+        user: ID!
     }
 
     type Stock {
@@ -36,6 +38,13 @@ const typeDefs = gql`
 
     type Token {
         value: String!
+    }
+
+    type User {
+        username: String!
+        passwordHash: String!
+        id: ID!
+        stocks: [BoughtStock]
     }
     
     type Query {
@@ -53,6 +62,11 @@ const typeDefs = gql`
             username: String!
             password: String!
         ): Token
+        buyStock(
+            stockName: String!
+            oneStockPrice: Float!
+            amount: Int!
+        ): BoughtStock
     }
 
 
@@ -62,7 +76,8 @@ const resolvers = {
     Query: {
         allUsers: () => User.find({}),
         me: (_root: any, _args: any, context: any) => {
-            return context.currentUser;
+            console.log(context.currentUser)
+            return context.currentUser
         },
         individualStock: async (_root: any, args: any) => {
             const company = args.company
@@ -82,9 +97,9 @@ const resolvers = {
             const passwordHash = await bcrypt.hash(args.password, saltRounds);
             const user = new User({
                 username: args.username,
-                passwordHash
+                passwordHash,
+                stocks: []
             });
-
             const savedUser = await user.save();
 
             return savedUser;
@@ -105,7 +120,23 @@ const resolvers = {
             const token = jwt.sign(userForToken, process.env.SECRETFORTOKEN);
             return {value: token};
         },
-        
+        buyStock: async (_root: any, args: any, context: any) => {
+            console.log(context)
+            console.log(args)
+            const stock = new Stock({
+                companyName: args.stockName,
+                oneStockPrice: args.oneStockPrice,
+                amount: args.amount,
+                user: context.currentUser.id
+            })
+
+
+            const savedStock = await stock.save()
+            
+            context.currentUser.stocks = context.currentUser.stocks.concat(savedStock._id)
+            await context.currentUser.save()
+            return savedStock
+        }
     }
 };
 
@@ -119,7 +150,7 @@ const server = new ApolloServer({
             auth.substring(7), process.env.SECRETFORTOKEN
           );
           const currentUser = await User
-            .findById(decodedToken.id);
+            .findById(decodedToken.id).populate('stocks');
           return { currentUser };
         }
         return null;

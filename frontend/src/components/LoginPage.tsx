@@ -1,8 +1,8 @@
-import React from 'react'
-import SideBar from './SideBar'
-import MenuBar from './AppBar'
-import { Grid } from '@material-ui/core'
-import LoginForm from './LoginForm'
+import React from "react"
+import SideBar from "./SideBar"
+import MenuBar from "./AppBar"
+import { Grid } from "@material-ui/core"
+import LoginForm from "./LoginForm"
 // import SignUpForm from './SignUpForm'
 
 const LoginPage = (): JSX.Element => {
@@ -18,7 +18,7 @@ const LoginPage = (): JSX.Element => {
                     spacing={0}
                     direction="row"
                     justifyContent="center"
-                    style={{minHeight: '100vh'}}
+                    style={{minHeight: "100vh"}}
                 >
                     <Grid container item xs={5} alignItems="center" justifyContent="center">
                         <LoginForm />
@@ -32,7 +32,7 @@ const LoginPage = (): JSX.Element => {
                     container
                     spacing={0}
                     direction="column"
-                    style={{minHeight: '100vh'}}
+                    style={{minHeight: "100vh"}}
                 >
                     
                 </Grid>

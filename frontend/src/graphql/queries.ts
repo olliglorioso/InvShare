@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client'
+import {gql} from "@apollo/client"
 
 const ADD_USER = gql`
 mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
@@ -7,6 +7,17 @@ mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
         passwordHash
     }
   }
+`
+
+export const BUY_STOCK = gql`
+mutation buyStock($stockName: String!, $oneStockPrice: Float!, $amount: Int!) {
+  buyStock(stockName: $stockName, oneStockPrice: $oneStockPrice, amount: $amount) {
+    companyName
+    oneStockPrice
+    amount
+    user
+  }
+}
 `
 
 export const INDIVIDUAL_STOCK = gql`
