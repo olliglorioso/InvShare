@@ -10,12 +10,12 @@ mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
 `
 
 export const BUY_STOCK = gql`
-mutation buyStock($stockName: String!, $oneStockPrice: Float!, $amount: Int!) {
-  buyStock(stockName: $stockName, oneStockPrice: $oneStockPrice, amount: $amount) {
-    companyName
-    oneStockPrice
-    amount
-    user
+mutation buyStock($stockName: String!, $amount: Int!) {
+  buyStock(stockName: $stockName, amount: $amount) {
+    transactionDate
+    transactionStock
+    transactionStockAmount
+    transactionStockPrice
   }
 }
 `

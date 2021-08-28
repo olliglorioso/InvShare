@@ -1,26 +1,18 @@
 import mongoose from 'mongoose';
-import uniqueValidator from 'mongoose-unique-validator';
+import { StockType } from '../types';
 
-const schema = new mongoose.Schema({
-  companyName: {
+const schema = new mongoose.Schema<StockType>({
+  stockSymbol: {
     type: String,
     required: true,
-    // unique: true,
+    unique: true
   },
-  oneStockPrice: {
+  stockTotalAmount: {
       type: Number,
       required: true,
-  },
-  amount: {
-      type: Number,
-      required: true
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+      min: [1, "There can't be less than one stock bought"]
   }
 });
 
-schema.plugin(uniqueValidator);
 
-module.exports = mongoose.model('Stock', schema);
+export default mongoose.model<StockType>('Stock', schema);

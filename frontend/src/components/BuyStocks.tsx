@@ -130,10 +130,7 @@ const BuyStocks = (): JSX.Element => {
             <Formik
                 initialValues={initialValues}
                 onSubmit={(values) => {
-                    console.log(cName)
-                    console.log(values.amount)
-                    console.log(price)
-                    buyStock({variables: {stockName: cName.toUpperCase(), amount: values.amount, oneStockPrice: price}})
+                    buyStock({variables: {stockName: cName.toUpperCase(), amount: parseInt(values.amount)}})
                 }}
             >
                 {({
@@ -160,7 +157,7 @@ const BuyStocks = (): JSX.Element => {
                         <p></p>
                         <PricePerStock setLoading={setLoading} price={price} handleChange={handleChange} />
                         <FinalInformation price={price} amount={values.amount} />
-                        <Button disabled={loading} variant="contained" type="submit" style={{background: loading ? "grey" : "black", color: "white", width: 255}}>Buy</Button>
+                        <Button variant="contained" type="submit" style={{background: "black", color: "white", width: 255}}>Buy</Button>
                         <p style={{fontSize: 20, alignContent: "center"}}></p>
                     </form>
                 )}
