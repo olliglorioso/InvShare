@@ -18,7 +18,7 @@ export const logUserIn = (token: string): {type: string, token: string} => {
     }
 }
 
-export const logOut = (): {type: string} => {
+export const logUserOut = (): {type: string} => {
     return {
         type: "LOGOUT"
     }

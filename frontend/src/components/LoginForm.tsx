@@ -38,8 +38,11 @@ const LoginForm = (): JSX.Element => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        if ( result.data ) {
+        try {
             dispatch(logUserIn(result.data.login.value))
+            history.push("/")
+        } catch (e) {
+            console.log("ei ole olemassa käyttäjää")
         }
   }, [result.data]) // eslint-disable-line
 
@@ -52,7 +55,6 @@ const LoginForm = (): JSX.Element => {
         },
         onSubmit: async (values: {username: string, password: string}) => {
             await login({variables: {username: values.username, password: values.password}})
-            history.push("/")
         },
     });
     return (
@@ -89,7 +91,7 @@ const LoginForm = (): JSX.Element => {
                 }}
             />
             <p></p>
-            <Button variant="contained" type="submit" style={{background: "black", color: "white", width: 255}}>Log in</Button>
+            <Button id="tryToLoginButton" variant="contained" type="submit" style={{background: "black", color: "white", width: 255}}>Log in</Button>
             <p style={{fontSize: 20, alignContent: "center"}}></p>
         </form>
       

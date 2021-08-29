@@ -1,14 +1,13 @@
 import React from "react";
 import MenuBar from "./components/AppBar";
-import SideBar from "./components/SideBar"
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
 import LoginPage from "./components/LoginPage";
 import StockPage from "./components/StockPage";
+import SideBar from "./components/SideBar";
 
 function App(): JSX.Element {
     return (
         <Router>
-      
             <Switch>
                 <Route path="/" exact>
                     <div>

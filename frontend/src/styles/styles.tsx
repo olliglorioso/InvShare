@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme) => ({
     },
     appBarTitle: {
         flexGrow: 1,
+        textAlign: "center"
     }
 }));
 
