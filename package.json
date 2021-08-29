@@ -21,6 +21,8 @@
   "bugs": {
     "url": "https://github.com/olliglorioso/fso2021-practice-work/issues"
   },
-  "homepage": "https://github.com/olliglorioso/fso2021-practice-work#readme"
+  "homepage": "https://github.com/olliglorioso/fso2021-practice-work#readme",
+  "devDependencies": {
+    "ts-node": "^10.2.1"
+  }
 }
-
