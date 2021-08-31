@@ -11,7 +11,7 @@
     "build:backend": "cd backend && npm run build",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm start",
-    "prod": "cd backend/backend-builded && node backend.js"
+    "prod:app": "cd ./backend && npm run prod"
   },
   "repository": {
     "type": "git",

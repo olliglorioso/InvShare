@@ -7,7 +7,8 @@
     "dev": "cross-env NODE_ENV=development ts-node backend.ts",
     "start:test": "cross-env NODE_ENV=test ts-node backend.ts",
     "lint": "eslint --ext .ts .",
-    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+    "prod": "cd backend-builded && node backend.js"
   },
   "jest": {
     "testEnvironment": "node"
