@@ -5,6 +5,7 @@
   "scripts": {
     "tsc": "tsc",
     "prod": "ts-node backend.ts",
+    "start:backend": "cd dist && node backend.js",
     "dev": "cross-env NODE_ENV=production ts-node-dev backend.ts",
     "start:test": "cross-env NODE_ENV=test ts-node backend.ts",
     "lint": "eslint --ext .ts .",

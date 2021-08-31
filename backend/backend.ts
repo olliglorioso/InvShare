@@ -17,6 +17,8 @@ const startServer = async () => {
     ? process.env.MONGODB_TEST_URI || ''
     : process.env.MONGODB_URI || ''
 
+    console.log(MONGODB_URI)
+
     mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
         .then(()=> {
             console.log('connected to mongodb');
@@ -49,7 +51,7 @@ const startServer = async () => {
 
     const app = express()
     app.use(cors())
-    app.use(express.static('build'))
+    app.use(express.static('../build'))
     void await server.start()
 
     server.applyMiddleware({app})

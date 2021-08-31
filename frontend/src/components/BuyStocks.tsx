@@ -50,13 +50,10 @@ const FinalInformation = ({price, amount}: {price: number, amount: string}) => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PricePerStock = ({price, handleChange, setLoading}: {setLoading: (loading: boolean) => void, price: number, handleChange: any}) => {
+const PricePerStock = ({price, handleChange}: {price: number, handleChange: any}) => {
     let cPrice = price
     useEffect(() => {
         cPrice = price
-        if (price === 0) {
-            setLoading(true)
-        }
     }, [price])
 
     return (
@@ -78,22 +75,17 @@ const PricePerStock = ({price, handleChange, setLoading}: {setLoading: (loading:
     )
 }
 
-const Company = ({companyName, setLoading}: {companyName: string, setLoading: (loading: boolean) => void}) => {
+const Company = ({companyName}: {companyName: string}) => {
     const [name, setName] = useState(companyName)
     const dispatch = useDispatch()
     const [debounceName] = useDebounce(name, 2000)
 
     useEffect(() => {
         dispatch(changeStock(debounceName))
-        if (debounceName !== "") {
-            setLoading(false)
-        }
-        
     }, [debounceName])
 
     const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value)
-        setLoading(true)
     }
 
     return (
@@ -122,9 +114,8 @@ const BuyStocks = (): JSX.Element => {
     const price = useSelector<RootState, number>((state) => state.stock.stockPrice)
     const cName = useSelector<RootState, string>((state) => state.stock.stockName)
     const initialValues: MyFormValues = { company: "", amount: "1", price_per_stock: "" };
-    const [loading, setLoading] = useState(true)
     const [buyStock, {data}] = useMutation(BUY_STOCK)
-
+    console.log(data)
     return (
         <div>
             <Formik
@@ -137,7 +128,7 @@ const BuyStocks = (): JSX.Element => {
                     handleSubmit, values, handleChange
                 }) => (
                     <form onSubmit={handleSubmit}>
-                        <Company setLoading={setLoading} companyName={values.company}/>
+                        <Company companyName={values.company}/>
                         <p></p>
                         <CssTextField
                             id="amount"
@@ -155,7 +146,7 @@ const BuyStocks = (): JSX.Element => {
                             }}
                         />
                         <p></p>
-                        <PricePerStock setLoading={setLoading} price={price} handleChange={handleChange} />
+                        <PricePerStock price={price} handleChange={handleChange} />
                         <FinalInformation price={price} amount={values.amount} />
                         <Button variant="contained" type="submit" style={{background: "black", color: "white", width: 255}}>Buy</Button>
                         <p style={{fontSize: 20, alignContent: "center"}}></p>

@@ -20,8 +20,5 @@
     ],
     "no-case-declarations": "off"
   },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./backend/tsconfig.json"
-  }
+  "parser": "@typescript-eslint/parser"
 }
