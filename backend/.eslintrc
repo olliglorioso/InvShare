@@ -22,6 +22,7 @@
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "tsconfig.json"
-  }
+    "project": "C:/Users/munbo/0001ft/fso2021-practice-work/backend/tsconfig.json"
+  },
+  "ignorePatterns": "backend-builded"
 }

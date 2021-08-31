@@ -11,6 +11,7 @@ import {typeDefs} from './src/typeDefs';
 import express from 'express'
 import { v4 as uuidv4 } from 'uuid'
 import cors from 'cors'
+import history from 'connect-history-api-fallback'
 
 const startServer = async () => {
     const MONGODB_URI: string = process.env.NODE_ENV === 'test'
@@ -48,8 +49,9 @@ const startServer = async () => {
     });
 
     const app = express()
+    app.use(history())
     app.use(cors())
-    app.use(express.static('build'))
+    app.use(express.static('../build'))
     void await server.start()
 
     server.applyMiddleware({app})

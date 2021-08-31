@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "run:backend": "cd backend && npm run dev",
-    "run:frontend": "cd frontend && npm start",
     "lint:backend": "cd backend && npm run lint",
     "lint:frontend": "cd frontend && npm run lint",
-    "build:frontend": "cd frontend && rm -rf build && npm run build && cp -r build ../backend",
     "test:frontend": "cd frontend && npm run cypress:run",
-    "start:prod": "cd backend && npm run prod"
+    "build:frontend": "cd frontend && rm -rf build && npm run build && cp -r build ../backend",
+    "build:backend": "cd backend && npm run build",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "prod": "cd backend/backend-builded && node backend.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/olliglorioso/fso2021-practice-work/issues"
   },
-  "homepage": "https://github.com/olliglorioso/fso2021-practice-work#readme"
+  "homepage": "https://github.com/olliglorioso/fso2021-practice-work#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "connect-history-api-fallback": "^1.6.0"
+  }
 }

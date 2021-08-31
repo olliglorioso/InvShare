@@ -9,17 +9,17 @@ function App(): JSX.Element {
     return (
         <Router>
             <Switch>
-                <Route path="/" exact>
-                    <div>
-                        <SideBar />
-                        <MenuBar  />
-                    </div>
-                </Route>
                 <Route path="/mystocks" exact>
                     <StockPage />
                 </Route>
                 <Route path="/login" exact>
                     <LoginPage />
+                </Route>
+                <Route path="/">
+                    <div>
+                        <SideBar />
+                        <MenuBar  />
+                    </div>
                 </Route>
             </Switch>
         </Router>

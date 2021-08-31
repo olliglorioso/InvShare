@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "outDir": "./build/",
+    "outDir": "backend-builded/",
     "module": "commonjs",
     "strict": true,
     "noUnusedLocals": true,
@@ -9,5 +9,10 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true
   },
+  "exclude": [
+    "node_modules"
+  ]
 }
