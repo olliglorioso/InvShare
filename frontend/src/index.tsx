@@ -28,7 +28,7 @@ const authLink = setContext((_, { headers }) => {
     }
 })
   
-const httpLink = new HttpLink({ uri: "https://fso2021practicework.herokuapp.com/graphql" })
+const httpLink = new HttpLink({ uri: "https://fso2021practicework.herokuapp.com" })
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
