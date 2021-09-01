@@ -9,7 +9,7 @@
     "lint:backend": "cd backend && npm run lint",
     "lint:frontend": "cd frontend && npm run lint",
     "build:frontend": "rm -rf build && cd frontend && rm -rf build && npm run build && cp -r build ..",
-    "build:backend": "rm -rf dist && cd backend && npm run tsc && cd .. && cp -r dist/src . && cp -r dist/index.js . ",
+    "build:backend": "rm -rf index.js && rm -rf src && cd backend && npm run tsc && cd .. && cp -r dist/src . && cp -r dist/index.js . && rm -rf dist",
     "test:frontend": "cd frontend && npm run cypress:run",
     "start": "node index.js"
   },
