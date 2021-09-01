@@ -37,7 +37,7 @@ jobs:
         healthcheck: "https://fso2021practicework.herokuapp.com/healthcheck"
         checkstring: "toimii"
         rollbackonhealthcheckfailed: true
-    - actions/checkout@v2
+    - uses: actions/checkout@v2
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
