@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid'
 import cors from 'cors'
 
 const startServer = async () => {
+    console.log(process.env.MONGODB_URI)
     const MONGODB_URI: string = process.env.NODE_ENV === 'test'
     ? process.env.MONGODB_TEST_URI || ''
     : process.env.MONGODB_URI || ''
