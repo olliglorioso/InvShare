@@ -50,6 +50,9 @@ const startServer = async () => {
     const app = express()
     app.use(cors())
     app.use(express.static('build'))
+    app.get('/healthcheck', (_req, res) => {
+        res.send('toimii')
+    })
     void await server.start()
 
     server.applyMiddleware({app})

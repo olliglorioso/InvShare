@@ -4,10 +4,12 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "prod": "cross-env NODE_ENV=development ts-node backend.ts",
-    "dev": "cross-env NODE_ENV=production ts-node-dev backend.ts",
-    "start:test": "cross-env NODE_ENV=test ts-node backend.ts",
+    "prod": "cross-env NODE_ENV=development ts-node index.ts",
+    "dev": "cross-env NODE_ENV=production ts-node-dev index.ts",
+    "start:test": "cross-env NODE_ENV=test ts-node-dev index.ts",
     "lint": "eslint --ext .ts .",
+    "start:client": "cd ../frontend && npm start",
+    "start:all": "concurrently \"npm run start:client\" \"npm run start:test\" ",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
   },
   "jest": {
@@ -45,6 +47,7 @@
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
     "apollo-server-express": "^3.3.0",
+    "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
     "easygraphql-tester": "^6.0.1",
     "eslint": "^7.32.0",

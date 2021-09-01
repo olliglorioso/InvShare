@@ -8,15 +8,39 @@
 #     branches: [main]
 #     types: [opened, synchronize]
 
-# jobs:
-#   deployment_pipeline:
-#     runs-on: ubuntu-18.04
-#     steps:
-#     - uses: actions/checkout@v2
-#     - uses: actions/setup-node@v1
-#       with:
-#         node-version: '12.x'
-#     - name: npm install
-#     - run: npm install
-#     - name: lint frontend
-
+jobs:
+  deployment_pipeline:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: npm install
+    - run: cd frontend && npm install && cd ../backend && npm install
+    - name: lint all
+    - run: npm run lint:all
+    - name: test frontend with cypress
+      uses: cypress-io/github-action@v2
+      with:
+        command: npm run test:frontend
+        start: cd backend && npm run start:all
+        wait-on: http://localhost:3000
+    - name: build all
+    - run: npm run build:all
+    - uses: akhileshns/heroku-deploy@v3.12.12
+      if: ${{ github.event_name == 'push' }}
+      with:  ${{secrets.HEROKU_API_KEY}}
+      heroku_app_name: "fso2021practicework"
+      heroku_email: "olli.glorioso@gmail.com"
+      healthcheck: "https://fso2021practicework.herokuapp.com/healthcheck"
+      checkstring: "toimii"
+      rollbackonhealthcheckfailed: true
+    - actions/checkout@v2
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      if: always() # Pick up events even if the job fails or is canceled.
