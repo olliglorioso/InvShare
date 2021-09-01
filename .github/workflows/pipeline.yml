@@ -24,7 +24,7 @@ jobs:
       uses: cypress-io/github-action@v2
       with:
         command: npm run test:frontend
-        start: cd backend && npm run start:all
+        start: npm run start:testserver
         wait-on: http://localhost:3000
     - name: build all
       run: npm run build:all
