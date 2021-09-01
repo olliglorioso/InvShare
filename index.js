@@ -64,7 +64,7 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     app.use(express_1.default.static('./build'));
     void (yield server.start());
     server.applyMiddleware({ app });
-    void app.listen(({ port: 4000 }), () => {
+    void app.listen(({ port: process.env.PORT }), () => {
         console.log(`Server ready at http://localhost:4000${server.graphqlPath}`);
     });
     return app;

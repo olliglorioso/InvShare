@@ -9,7 +9,7 @@ import resolvers from './src/resolvers';
 import { UserType } from './src/types';
 import {typeDefs} from './src/typeDefs';
 import express from 'express'
-import { v4 as uuidv4 } from 'uuid'
+// import { v4 as uuidv4 } from 'uuid'
 import cors from 'cors'
 import history from 'connect-history-api-fallback'
 
@@ -40,12 +40,12 @@ const startServer = async () => {
             return null;
         },
         introspection: true,
-        formatError: (error: GraphQLError): GraphQLError => {
-            const errId = uuidv4()
-            console.log(errId)
-            console.log(error)
-            return new GraphQLError(`Error occured: ${errId}`)
-        }
+        // formatError: (error: GraphQLError): GraphQLError => {
+        //     const errId = uuidv4()
+        //     console.log(errId)
+        //     console.log(error)
+        //     return new GraphQLError(`Error occured: ${errId}`)
+        // }
     });
 
     const app = express()
@@ -55,8 +55,8 @@ const startServer = async () => {
     void await server.start()
 
     server.applyMiddleware({app})
-    void app.listen(({port: 4000}), () => {
-        console.log(`Server ready at http://localhost:4000${server.graphqlPath}`);
+    void app.listen(({port: process.env.PORT}), () => {
+        console.log(`Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`);
     });
     return app
 }
