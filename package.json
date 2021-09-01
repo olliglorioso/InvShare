@@ -2,7 +2,7 @@
   "name": "fso2021-practice-work",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "run:backend": "cd backend && npm run dev",
     "run:frontend": "cd frontend && npm start",
