@@ -2,15 +2,16 @@
   "name": "fso2021-practice-work",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "run:backend": "cd backend && npm run dev",
     "run:frontend": "cd frontend && npm start",
     "lint:backend": "cd backend && npm run lint",
     "lint:frontend": "cd frontend && npm run lint",
-    "build:frontend": "cd frontend && rm -rf build && npm run build && cp -r build ../backend",
+    "build:frontend": "rm -rf build && cd frontend && rm -rf build && npm run build && cp -r build ..",
+    "build:backend": "cd backend && npm run tsc",
     "test:frontend": "cd frontend && npm run cypress:run",
-    "start:prod": "cd backend && npm run prod"
+    "start": "node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,30 @@
   "bugs": {
     "url": "https://github.com/olliglorioso/fso2021-practice-work/issues"
   },
-  "homepage": "https://github.com/olliglorioso/fso2021-practice-work#readme"
+  "homepage": "https://github.com/olliglorioso/fso2021-practice-work#readme",
+  "dependencies": {
+    "apollo-server-express": "^3.3.0",
+    "cross-env": "^7.0.3",
+    "easygraphql-tester": "^6.0.1",
+    "eslint": "^7.32.0",
+    "graphql": "^15.5.1",
+    "graphql-tools": "^8.1.0",
+    "graphql-yoga": "^1.18.3",
+    "isomorphic-fetch": "^3.0.0",
+    "typescript": "^4.3.5",
+    "uuid": "^8.3.2",
+    "@stoqey/finnhub": "^0.3.4",
+    "@types/jsonwebtoken": "^8.5.5",
+    "@types/request": "^2.48.7",
+    "apollo-server": "^3.1.2",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.13.7",
+    "mongoose-unique-validator": "^2.0.3",
+    "ts-jest": "^27.0.5"
+  }
 }

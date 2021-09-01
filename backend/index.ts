@@ -49,12 +49,12 @@ const startServer = async () => {
 
     const app = express()
     app.use(cors())
-    app.use(express.static('build'))
+    app.use(express.static('../build'))
     void await server.start()
 
     server.applyMiddleware({app})
-    void app.listen(({port: 4000}), () => {
-        console.log(`Server ready at http://localhost:4000${server.graphqlPath}`);
+    void app.listen(({port: process.env.PORT}), () => {
+        console.log(`Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`);
     });
     return app
 }
