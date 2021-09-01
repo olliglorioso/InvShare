@@ -25,6 +25,7 @@ jobs:
       env: 
         MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
         SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
+        PORT: ${{ secrets.PORT }}
       with:
         command: npm run test:frontend
         start: npm run start:testserver
