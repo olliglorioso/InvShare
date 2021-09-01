@@ -17,9 +17,9 @@ jobs:
       with:
         node-version: '12.x'
     - name: npm install
-    - run: cd frontend && npm install && cd ../backend && npm install
+      run: cd frontend && npm install && cd ../backend && npm install
     - name: lint all
-    - run: npm run lint:all
+      run: npm run lint:all
     - name: test frontend with cypress
       uses: cypress-io/github-action@v2
       with:
@@ -27,7 +27,7 @@ jobs:
         start: cd backend && npm run start:all
         wait-on: http://localhost:3000
     - name: build all
-    - run: npm run build:all
+      run: npm run build:all
     - uses: akhileshns/heroku-deploy@v3.12.12
       if: ${{ github.event_name == 'push' }}
       with:  ${{secrets.HEROKU_API_KEY}}
