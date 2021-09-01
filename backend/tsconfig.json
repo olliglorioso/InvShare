@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "outDir": "../dist/",
+    "outDir": "../dist",
     "module": "commonjs",
     "strict": true,
     "noUnusedLocals": true,
@@ -9,5 +9,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
+    "skipLibCheck": true
   },
 }

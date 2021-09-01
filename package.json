@@ -9,13 +9,16 @@
     "lint:backend": "cd backend && npm run lint",
     "lint:frontend": "cd frontend && npm run lint",
     "build:frontend": "rm -rf build && cd frontend && rm -rf build && npm run build && cp -r build ..",
-    "build:backend": "cd backend && npm run tsc",
+    "build:backend": "rm -rf dist && cd backend && npm run tsc && cd .. && cp -r dist/src . && cp -r dist/index.js . ",
     "test:frontend": "cd frontend && npm run cypress:run",
     "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/olliglorioso/fso2021-practice-work.git"
+  },
+  "eslintConfig": {
+    "ignorePatterns": "dist"
   },
   "author": "",
   "license": "ISC",
