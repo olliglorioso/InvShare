@@ -61,7 +61,7 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     const app = express_1.default();
     app.use(connect_history_api_fallback_1.default());
     app.use(cors_1.default());
-    app.use(express_1.default.static('../build'));
+    app.use(express_1.default.static('./build'));
     void (yield server.start());
     server.applyMiddleware({ app });
     void app.listen(({ port: 4000 }), () => {

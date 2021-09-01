@@ -7,11 +7,11 @@
     "lint:backend": "cd backend && npm run lint",
     "lint:frontend": "cd frontend && npm run lint",
     "test:frontend": "cd frontend && npm run cypress:run",
-    "build:frontend": "cd frontend && rm -rf build && npm run build && cp -r build ../backend",
+    "build:frontend": "cd frontend && rm -rf build && npm run build && cp -r build ..",
     "build:backend": "cd backend && npm run build",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm start",
-    "prod:app": "cd ./backend && npm run prod"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
