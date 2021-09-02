@@ -5,7 +5,7 @@
   "scripts": {
     "tsc": "tsc",
     "dev": "cross-env NODE_ENV=develompent ts-node-dev index.ts",
-    "start:test": "cross-env NODE_ENV=test ts-node-dev index.ts",
+    "start:test": "cross-env NODE_ENV=test ts-node index.ts",
     "lint": "eslint --ext .ts .",
     "start:client": "cd ../frontend && npm start",
     "start:all": "concurrently \"npm run start:client\" \"npm run start:test\" ",
