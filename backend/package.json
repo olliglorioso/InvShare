@@ -29,11 +29,13 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.7",
     "mongoose-unique-validator": "^2.0.3",
-    "ts-jest": "^27.0.5"
+    "ts-jest": "^27.0.5",
+    "connect-history-api-fallback": "^1.6.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-typescript": "^7.15.0",
+    "connect-history-api-fallback": "^1.6.0",
     "@graphql-codegen/cli": "^2.1.1",
     "@graphql-codegen/typescript": "^2.1.2",
     "@graphql-codegen/typescript-resolvers": "^2.1.2",
