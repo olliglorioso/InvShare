@@ -20,16 +20,16 @@ jobs:
       run: cd frontend && npm install && cd ../backend && npm install
     - name: lint all
       run: npm run lint:all
-    - name: test frontend with cypress
-      uses: cypress-io/github-action@v2
-      env: 
-        MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
-        SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
-        PORT: ${{ secrets.PORT }}
-      with:
-        command: npm run test:frontend
-        start: npm run start:testserver
-        wait-on: http://localhost:3000
+    # - name: test frontend with cypress
+    #   uses: cypress-io/github-action@v2
+    #   env: 
+    #     MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+    #     SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
+    #     PORT: ${{ secrets.PORT }}
+    #   with:
+    #     command: npm run test:frontend
+    #     start: npm run start:testserver
+    #     wait-on: http://localhost:3000
     - name: build all
       run: npm run build:all
     - uses: akhileshns/heroku-deploy@v3.12.12
