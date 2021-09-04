@@ -4,7 +4,7 @@ import { ListItem, List, Divider, ListItemText, Drawer } from "@material-ui/core
 import { actionEnableSidebar } from "../reducers/sidebarReducer";
 import { RootState } from "..";
 import { makeStyles } from "@material-ui/core";
-import { AccountCircle, Settings, ShowChart } from "@material-ui/icons";
+import { AccountCircle, Explore, Settings, ShowChart } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 
 const SideBar = (): JSX.Element => {
     const dispatch = useDispatch()
-    const sidebarState = useSelector<RootState, boolean>((state) => state.sidebar)
+    const sidebarState = useSelector<RootState, boolean>((state): boolean => state.sidebar)
     const styles = useStyles()
     const history = useHistory()
 
@@ -32,9 +32,8 @@ const SideBar = (): JSX.Element => {
                 classes={{paper: styles.paper}}
             >
                 <div>
-                    
                     <List>
-                        <ListItem button onClick={() => {return}}>
+                        <ListItem button onClick={() => history.push("/myprofile")}>
                             <AccountCircle /><ListItemText inset={true} primary={"My profile"} />
                         </ListItem>
                         <Divider classes={{root: styles.divider}} />
@@ -44,6 +43,10 @@ const SideBar = (): JSX.Element => {
                         <Divider classes={{root: styles.divider}} />
                         <ListItem button onClick={() => history.push("/mystocks")}>
                             <ShowChart /><ListItemText inset={true} primary={"Buy stocks"} />
+                        </ListItem>
+                        <Divider classes={{root: styles.divider}} />
+                        <ListItem button onClick={() => {return}}>
+                            <Explore/><ListItemText inset={true} primary={"Explore"} />
                         </ListItem>
                     </List>
                 </div>

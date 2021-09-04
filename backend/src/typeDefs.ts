@@ -15,6 +15,12 @@ export const typeDefs: DocumentNode = gql`
         volume: Int!
     }
 
+    type Stock {
+        _id: ID!
+        stockTotalAmount: Int!
+        stockSymbol: String!
+    }
+
     type Holding {
         usersStockName: ID!
         usersTotalAmount: Int!
@@ -24,7 +30,7 @@ export const typeDefs: DocumentNode = gql`
     type Transaction {
         transactionType: String!
         transactionDate: String!
-        transactionStock: ID!
+        transactionStock: Stock!
         transactionStockAmount: Int!
         transactionStockPrice: Float!
     }
@@ -32,7 +38,7 @@ export const typeDefs: DocumentNode = gql`
     type User {
         usersUsername: String!
         usersPasswordHash: String!
-        usersTransactions: [ID]!
+        usersTransactions: [Transaction]!
         usersHoldings: [Holding]!
         id: ID!
     }

@@ -12,7 +12,7 @@ import FinnhubAPI, { MarketDataItem } from '@stoqey/finnhub'
 const getIndividualStockInformation = async (symbol: string): Promise<CandlesType[]> => {
     const finnhubAPI = new FinnhubAPI('c4hm412ad3ifj3t4h07g');
     const getCandles = async (): Promise<MarketDataItem[]> => {
-        const candles = await finnhubAPI.getCandles(symbol, new Date(2020, 12, 1), new Date(), 'D')
+        const candles = await finnhubAPI.getCandles(symbol, new Date(2020, 12, 1), new Date(), "D")
         return candles
     }
     const candles = await getCandles()
@@ -47,6 +47,7 @@ const resolvers = {
                 usersHoldings: []
             });
             const savedUser = await user.save();
+            console.log("voitiin seivata")
             return savedUser;
             
         },
@@ -70,7 +71,7 @@ const resolvers = {
             const token = jwt.sign(userForToken, process.env.SECRETFORTOKEN as string);
             return {value: token};
         },
-        buyStock: async (_root: undefined, args: {stockName: string, amount: number}, context: {currentUser: UserType}): Promise<TransactionType> => {
+        buyStock: async (_root: undefined, args: {stockName: string, amount: number}, context: {currentUser: UserType}): Promise<TransactionType | null> => {
             const candles = await getIndividualStockInformation(args.stockName)
             // since this handles the unique validation, we don't need mongoose to do that (and I don't know how with ts)
             const firstBuyEver = await Stock.findOne({stockSymbol: args.stockName.toUpperCase()})
@@ -88,13 +89,12 @@ const resolvers = {
                     transactionStockPrice: candles[candles.length - 1].close,
                     transactionStockAmount: args.amount,
                     transactionStock: newStock._id as string
-                })
-                
-                await newStock.save()
+                }).populate('transactionStock')
+                await newStock.save()   
                 await User.updateOne({usersUsername: loggedUser.usersUsername},
                 {$set: {usersTransactions: loggedUser.usersTransactions.concat(newTransaction._id), usersHoldings: loggedUser.usersHoldings
                 .concat({usersStockName: newStock._id as mongoose.Types.ObjectId, usersTotalAmount: args.amount, usersTotalOriginalPriceValue: args.amount * newTransaction.transactionStockPrice})}})
-                const savedTransaction = await newTransaction.save()
+                const savedTransaction = await newTransaction.populate('transactionStock').save()
                 return savedTransaction
             } else {
                 
@@ -113,8 +113,10 @@ const resolvers = {
                 await User.updateOne({usersUsername: loggedUser.usersUsername},
                 {$set: {usersTransactions: loggedUser.usersTransactions.concat(newTransaction._id),
                 usersHoldings: helperArrayOfHoldings}})
-                const savedTransaction = await newTransaction.save()
-                return savedTransaction
+                await newTransaction.save()
+                const transactionToReturn = await Transaction.findOne({_id: newTransaction._id}).populate('transactionStock')
+                console.log(transactionToReturn)
+                return transactionToReturn
 
             }
 

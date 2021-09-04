@@ -19,6 +19,7 @@
     "@types/react-dom": "^17.0.9",
     "apexcharts": "^3.27.3",
     "apollo-link-context": "^1.0.20",
+    "boring-avatars": "^1.5.8",
     "cors": "^2.8.5",
     "dates-between": "^1.1.0",
     "finnhub": "^1.2.6",

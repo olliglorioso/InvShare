@@ -9,7 +9,7 @@ export interface Holding {
 export interface UserType {
     usersUsername: string,
     usersPasswordHash: string, 
-    usersTransactions: string[],
+    usersTransactions: mongoose.Types.ObjectId[],
     usersHoldings: Holding[],
     _id?: mongoose.Types.ObjectId,
 }

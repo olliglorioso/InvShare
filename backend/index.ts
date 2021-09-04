@@ -11,10 +11,9 @@ import {typeDefs} from './src/typeDefs';
 import express from 'express'
 import { v4 as uuidv4 } from 'uuid'
 import cors from 'cors'
-import history from 'connect-history-api-fallback'
+// import history from 'connect-history-api-fallback'
 
 const startServer = async () => {
-    console.log(process.env.MONGODB_TEST_URI)
     const MONGODB_URI: string = process.env.NODE_ENV === 'test'
     ? process.env.MONGODB_TEST_URI || ''
     : process.env.MONGODB_URI || ''
@@ -34,8 +33,7 @@ const startServer = async () => {
             const auth = req ? req.headers.authorization : null;
             if (auth && auth.toLowerCase().startsWith('bearer ')) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
-                const currentUser = await User
-                    .findById(decodedToken.id).populate('usersHoldings').populate('usersTransactions');
+                const currentUser = await User.findById(decodedToken.id).populate('usersHoldings').populate({path: 'usersTransactions', populate: {path: 'transactionStock'}})
                 return {currentUser};
             }
             return null;
@@ -51,7 +49,7 @@ const startServer = async () => {
 
     const app = express()
     app.use(cors())
-    app.use(history())
+    // app.use(history())
     app.use(express.static('build'))
     app.get('/healthcheck', (_req, res) => {
         res.send('toimii')

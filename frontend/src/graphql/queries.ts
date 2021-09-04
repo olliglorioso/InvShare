@@ -13,11 +13,36 @@ export const BUY_STOCK = gql`
 mutation buyStock($stockName: String!, $amount: Int!) {
   buyStock(stockName: $stockName, amount: $amount) {
     transactionDate
-    transactionStock
+    transactionStock {
+      stockSymbol
+    }
     transactionStockAmount
     transactionStockPrice
   }
 }
+`
+
+export const ME = gql`
+  query {
+    me {
+      usersUsername
+      usersHoldings {
+        usersStockName
+        usersTotalAmount
+        usersTotalOriginalPriceValue
+      }
+      usersTransactions {
+        transactionStockAmount
+        transactionDate
+        transactionStockPrice
+        transactionType
+        transactionStock {
+          stockSymbol
+          stockTotalAmount
+        }
+      }
+    }
+  }
 `
 
 export const INDIVIDUAL_STOCK = gql`

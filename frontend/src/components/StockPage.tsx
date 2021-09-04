@@ -8,12 +8,14 @@ import { RootState } from "..";
 
 const StockPage = (): JSX.Element => {
     const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
-
+    console.log(btoa("olliglorioso:M4rkkinointi?"))
     return (
         <div style={{
             backgroundColor: "white",
             textAlign: "center",
-            paddingTop: 100
+            paddingTop: "20vh",
+            paddingBottom: "20vh",
+            margin: 10
         }}>
             <div>
                 <SideBar />
@@ -23,7 +25,7 @@ const StockPage = (): JSX.Element => {
                 <div style={{width: "100%"}}>
                     <MainChart stock={buyingStockState} />
                 </div>
-                <div style={{paddingTop: 15, width: 500}}>
+                <div style={{paddingTop: 25, width: 500}}>
                     <BuyStocks />
                 </div>
             </div>

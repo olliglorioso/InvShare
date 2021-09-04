@@ -114,8 +114,7 @@ const BuyStocks = (): JSX.Element => {
     const price = useSelector<RootState, number>((state) => state.stock.stockPrice)
     const cName = useSelector<RootState, string>((state) => state.stock.stockName)
     const initialValues: MyFormValues = { company: "", amount: "1", price_per_stock: "" };
-    const [buyStock, {data}] = useMutation(BUY_STOCK)
-    console.log(data)
+    const [buyStock] = useMutation(BUY_STOCK)
     return (
         <div>
             <Formik
