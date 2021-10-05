@@ -12,7 +12,7 @@ import FinnhubAPI, { MarketDataItem } from '@stoqey/finnhub'
 const getIndividualStockInformation = async (symbol: string): Promise<CandlesType[]> => {
     const finnhubAPI = new FinnhubAPI('c4hm412ad3ifj3t4h07g');
     const getCandles = async (): Promise<MarketDataItem[]> => {
-        const candles = await finnhubAPI.getCandles(symbol, new Date(2020, 12, 1), new Date(), "D")
+        const candles = await finnhubAPI.getCandles(symbol, new Date(2020,12,1), new Date(), 'D')
         return candles
     }
     const candles = await getCandles()
@@ -21,13 +21,25 @@ const getIndividualStockInformation = async (symbol: string): Promise<CandlesTyp
 
 const resolvers = {
     Query: {
-        me: (_root: undefined, _args: void, context: {currentUser: UserType}): UserType => {
+        me: (_root: undefined, _args: void, context: {currentUser: UserType}): any => {
+            // const userToReturn = {...context.currentUser, usersTransactions: context.currentUser.usersTransactions.map((trans: any): TransactionType => {return {...trans, transactionDate: trans.transactionDate.toString()}})}
             return context.currentUser
         },
         individualStock: (_root: undefined, args: {company: string}): Promise<CandlesType[]> => {
             const candles = getIndividualStockInformation(args.company)
             return candles
         },
+        currentPortfolioValue: async (_root: undefined, _args: void, context: {currentUser: UserType}): Promise<number> => {
+            let summa = 0
+            if (context.currentUser) {
+                for (let i in context.currentUser.usersHoldings) {
+                    const a = await Stock.find({_id: context.currentUser.usersHoldings[i].usersStockName})
+                    const value = await getIndividualStockInformation(a[0].stockSymbol)
+                    summa += value[value.length - 1].close * context.currentUser.usersHoldings[i].usersTotalAmount
+                }
+            }
+            return summa
+        }
         
     },
 
@@ -47,7 +59,6 @@ const resolvers = {
                 usersHoldings: []
             });
             const savedUser = await user.save();
-            console.log("voitiin seivata")
             return savedUser;
             
         },
@@ -61,7 +72,6 @@ const resolvers = {
             if (!(user && passwordCorrect)) {
                 return
             }
-            
             
             const userForToken = {
                 username: user.usersUsername,
@@ -82,7 +92,6 @@ const resolvers = {
                     stockTotalAmount: args.amount,
                     stockSymbol: args.stockName.toUpperCase()
                 })
-        
                 const newTransaction = new Transaction({
                     transactionType: "Buy",
                     transactionDate: (new Date()).toString(),
@@ -97,7 +106,6 @@ const resolvers = {
                 const savedTransaction = await newTransaction.populate('transactionStock').save()
                 return savedTransaction
             } else {
-                
                 const newTransaction = new Transaction({
                     transactionType: "Buy",
                     transactionDate: (new Date()).toString(),
@@ -106,20 +114,23 @@ const resolvers = {
                     transactionStock: firstBuyEver._id as mongoose.Types.ObjectId
                 })
                 const holdingToBeChanged = loggedUser.usersHoldings.filter((obj: Holding) => obj.usersStockName.toString() === (firstBuyEver._id as mongoose.Types.ObjectId).toString())[0]
-                const helperArrayOfHoldings = loggedUser.usersHoldings
-                helperArrayOfHoldings[loggedUser.usersHoldings.indexOf(holdingToBeChanged)] = {usersTotalAmount: (holdingToBeChanged.usersTotalAmount + args.amount),
-                usersTotalOriginalPriceValue: (holdingToBeChanged.usersTotalOriginalPriceValue + (args.amount * candles[candles.length - 1].close)), usersStockName: holdingToBeChanged.usersStockName}
-                await Stock.updateOne({_id: (firstBuyEver._id as mongoose.Types.ObjectId)}, {$set: {stockTotalAmount: firstBuyEver.stockTotalAmount + args.amount}})
-                await User.updateOne({usersUsername: loggedUser.usersUsername},
-                {$set: {usersTransactions: loggedUser.usersTransactions.concat(newTransaction._id),
-                usersHoldings: helperArrayOfHoldings}})
-                await newTransaction.save()
-                const transactionToReturn = await Transaction.findOne({_id: newTransaction._id}).populate('transactionStock')
-                console.log(transactionToReturn)
-                return transactionToReturn
-
+                if (holdingToBeChanged) {
+                    const helperArrayOfHoldings = loggedUser.usersHoldings
+                    helperArrayOfHoldings[loggedUser.usersHoldings.indexOf(holdingToBeChanged)] = {usersTotalAmount: (holdingToBeChanged.usersTotalAmount + args.amount), usersTotalOriginalPriceValue: (holdingToBeChanged.usersTotalOriginalPriceValue + (args.amount * candles[candles.length - 1].close)), usersStockName: holdingToBeChanged.usersStockName}
+                    await Stock.updateOne({_id: (firstBuyEver._id as mongoose.Types.ObjectId)}, {$set: {stockTotalAmount: firstBuyEver.stockTotalAmount + args.amount}})
+                    await User.updateOne({usersUsername: loggedUser.usersUsername}, {$set: {usersTransactions: loggedUser.usersTransactions.concat(newTransaction._id), usersHoldings: helperArrayOfHoldings}})
+                    await newTransaction.save()
+                    const transactionToReturn = await Transaction.findOne({_id: newTransaction._id}).populate('transactionStock')
+                    return transactionToReturn
+                } else {
+                    await Stock.updateOne({_id: (firstBuyEver._id as mongoose.Types.ObjectId)}, {$set: {stockTotalAmount: firstBuyEver.stockTotalAmount + args.amount}})
+                    await User.updateOne({usersUsername: loggedUser.usersUsername}, {$set: {usersTransactions: loggedUser.usersTransactions.concat(newTransaction._id), usersHoldings: loggedUser.usersHoldings.concat({usersStockName: firstBuyEver._id as mongoose.Types.ObjectId, usersTotalAmount: args.amount, usersTotalOriginalPriceValue: args.amount * newTransaction.transactionStockPrice})}})
+                    await newTransaction.save()
+                    const transactionToReturn = await Transaction.findOne({_id: newTransaction._id}).populate('transactionStock')
+                    return transactionToReturn
+                }
+                
             }
-
         },
     }
 }

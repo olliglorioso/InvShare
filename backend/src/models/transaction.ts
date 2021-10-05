@@ -8,7 +8,7 @@ const schema = new mongoose.Schema<TransactionType>({
       required: true
   },
   transactionDate: {
-      type: Date,
+      type: String,
       required: true
   },
   transactionStock: {

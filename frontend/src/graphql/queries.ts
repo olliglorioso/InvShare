@@ -9,6 +9,12 @@ mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
   }
 `
 
+export const CURRENT_PORTFOLIO_VALUE = gql`
+query {
+  currentPortfolioValue
+}
+`
+
 export const BUY_STOCK = gql`
 mutation buyStock($stockName: String!, $amount: Int!) {
   buyStock(stockName: $stockName, amount: $amount) {
@@ -32,8 +38,8 @@ export const ME = gql`
         usersTotalOriginalPriceValue
       }
       usersTransactions {
-        transactionStockAmount
         transactionDate
+        transactionStockAmount
         transactionStockPrice
         transactionType
         transactionStock {

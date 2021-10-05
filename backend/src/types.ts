@@ -1,18 +1,13 @@
 import mongoose from 'mongoose'
 
 export interface Holding {
+    _id?: mongoose.Types.ObjectId
     usersStockName: mongoose.Types.ObjectId,
     usersTotalAmount: number,
-    usersTotalOriginalPriceValue: number
+    usersTotalOriginalPriceValue: number,
 }
 
-export interface UserType {
-    usersUsername: string,
-    usersPasswordHash: string, 
-    usersTransactions: mongoose.Types.ObjectId[],
-    usersHoldings: Holding[],
-    _id?: mongoose.Types.ObjectId,
-}
+
 
 export interface CandlesType {
     close: number,
@@ -35,6 +30,14 @@ export interface TransactionType {
     transactionStockAmount: number,
     transactionStockPrice: number,
     _id?: mongoose.Types.ObjectId
+}
+
+export interface UserType {
+    usersUsername: string,
+    usersPasswordHash: string, 
+    usersTransactions: mongoose.Types.ObjectId[],
+    usersHoldings: Holding[],
+    _id?: mongoose.Types.ObjectId,
 }
 
 export interface StockType {
