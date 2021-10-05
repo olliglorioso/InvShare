@@ -41,7 +41,6 @@ const MyProfile = () => {
     }
     
     const transactions = data.me.usersTransactions
-    console.log(transactions[0])
     const allTimeProfit = (100 * (-1 + Math.round(res.data.currentPortfolioValue)/Math.round(totalOriginalValue))).toFixed(2)
 
 
@@ -88,7 +87,7 @@ const MyProfile = () => {
                             </div>
                             <div>
                                 {
-                                    parseFloat(allTimeProfit) > 0
+                                    parseFloat(allTimeProfit) >= 0
                                         ? <Typography style={{color: "green", fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{allTimeProfit}%</Typography>
                                         : <Typography style={{color: "red", fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{allTimeProfit}%</Typography>
                                 }

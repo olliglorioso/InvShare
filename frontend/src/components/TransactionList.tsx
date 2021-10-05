@@ -1,6 +1,6 @@
 import React from "react";
 import { ListSubheader, Collapse, Button, List, ListItemIcon, ListItemText } from "@material-ui/core";
-import { KeyboardArrowRight, ShoppingCart } from "@material-ui/icons";
+import { KeyboardArrowRight, ShoppingCart, Delete } from "@material-ui/icons";
 import { ExpandLess, ExpandMore} from "@material-ui/icons";
 type StockType = {
     stockSymbol: string,
@@ -39,7 +39,12 @@ const TransactionList = (props: {transactions: TransactionType[]}) => {
                     <div key={transaction.transactionDate}>
                         <Button onClick={handleClick}>
                             <ListItemIcon>
-                                <ShoppingCart />
+                                {
+                                    transaction.transactionType === "Buy"
+                                        ? <ShoppingCart />
+                                        : <Delete />
+                                }
+                                
                             </ListItemIcon>
                             <ListItemText primary={transaction.transactionStock.stockSymbol} />
                             {open ? <ExpandLess /> : <ExpandMore />}
