@@ -1,16 +1,21 @@
-import React from "react"
+import React, {useState} from "react"
 import { useQuery } from "@apollo/client"
 import { CURRENT_PORTFOLIO_VALUE, ME } from "../graphql/queries"
 import {Card, CardContent, CardHeader, Typography, Button} from "@material-ui/core"
 import Avatar from "boring-avatars"
 import TransactionList from "./TransactionList"
+import Positions from "./Positions"
+import Analysis from "./Analysis"
 
 const MyProfile = () => {
-    const {data, loading} = useQuery(ME)
+    const {data} = useQuery(ME)
     const res = useQuery(CURRENT_PORTFOLIO_VALUE)
+    const [mode, setMode] = useState("Positions")
+
     if (!res.data) {
         return <div></div>
     }
+    const analysisData = res.data.currentPortfolioValue[0]
 
     type StockType = {
         stockSymbol: string,
@@ -25,24 +30,17 @@ const MyProfile = () => {
         transactionType: string,
         __typename: string
     }
-
-    if (loading) {
-        return <div></div>
-    }
-
     let totalOriginalValue
 
     if (data && data.me) {
         totalOriginalValue = data.me.usersTransactions.reduce((a: number, b: TransactionType) => a + (b.transactionStockPrice * b.transactionStockAmount), 0)
-    }
-
-    if (!data || !data.me) {
+    } else {
         return <div></div>
     }
-    
-    const transactions = data.me.usersTransactions
-    const allTimeProfit = (100 * (-1 + Math.round(res.data.currentPortfolioValue)/Math.round(totalOriginalValue))).toFixed(2)
 
+    const positions = data.me.usersHoldings
+    const transactions = data.me.usersTransactions
+    const allTimeProfit = (100 * (-1 + Math.round(analysisData.wholeValue)/Math.round(totalOriginalValue))).toFixed(2)
 
     return (
         <div style={{
@@ -62,7 +60,7 @@ const MyProfile = () => {
                                 <div style={{flex: 1}}>
                                     <Typography style={{fontSize: 30, flex: 1}}>{data.me.usersUsername}</Typography>
                                 </div>
-                                <div style={{paddingRight: "3vh"}}>
+                                {/* <div style={{paddingRight: "3vh"}}>
                                     <Typography style={{fontWeight: "bold", textAlign: "center"}}>{Math.round(totalOriginalValue)}</Typography>
                                     <Typography>Rating</Typography>
                                 </div>
@@ -73,7 +71,7 @@ const MyProfile = () => {
                                 <div>
                                     <Typography style={{fontWeight: "bold", textAlign: "center"}}>{Math.round(totalOriginalValue)}</Typography>
                                     <Typography>Followers</Typography>
-                                </div>
+                                </div> */}
                             </div>
                             
                         }
@@ -82,7 +80,7 @@ const MyProfile = () => {
                     <CardContent>
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                             <div style={{justifyContent: "center"}}>
-                                <Typography style={{fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{Math.round(res.data.currentPortfolioValue)}</Typography>
+                                <Typography style={{fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{Math.round(analysisData.wholeValue)}</Typography>
                                 <Typography>Portfolio value</Typography>
                             </div>
                             <div>
@@ -102,20 +100,34 @@ const MyProfile = () => {
                     </CardContent>
                 </Card>
             </div>
-            <div style={{justifyContent: "space-between", display: "flex", flexDirection: "row", alignItems: "center"}}>
-                <div style={{flex: 1, paddingBottom: "1vh", textAlign: "center"}}>
-                    <Button variant="contained" type="submit" style={{background: "black", color: "white"}}>Positions</Button>
+            <div style={{display: "flex", justifyContent: "space-around"}}>
+                <div style={{paddingBottom: "1vh", textAlign: "center"}} >
+                    <Button variant="contained" type="submit" style={{background: "black", color: "white"}} onClick={() => setMode("Positions")}>Positions</Button>
                 </div>
-                <div style={{flex: 1, paddingBottom: "1vh", textAlign: "center"}}>
-                    <Button variant="contained" type="submit" style={{background: "black", color: "white"}}>Analysis</Button>
+                <div style={{paddingBottom: "1vh", textAlign: "center"}}>
+                    <Button variant="contained" type="submit" style={{background: "black", color: "white"}} onClick={() => setMode("Analysis")}>Analysis</Button>
                 </div>
-                <div style={{flex: 1, paddingBottom: "1vh", textAlign: "center"}}>
-                    <Button variant="contained" type="submit" style={{background: "black", color: "white"}}>Transactions</Button>
+                <div style={{paddingBottom: "1vh", textAlign: "center"}}>
+                    <Button variant="contained" type="submit" style={{background: "black", color: "white"}} onClick={() => setMode("Transactions")}>Transactions</Button>
                 </div>
             </div>
-            <div style={{justifyContent: "space-around", display: "flex", flexDirection: "column", alignItems: "center"}}>
-                <TransactionList transactions={transactions}/>
-            </div>
+            {
+                mode === "Positions"
+                    ?
+                    <div>
+                        <Positions />
+                    </div>
+                    : mode === "Analysis"
+                        ? 
+                        <div style={{display: "flex", justifyContent: "center"}}>
+                            <Analysis totalOriginalValue={totalOriginalValue} positions={positions} portValue={analysisData.analysisValues} />
+                        </div>
+                        : 
+                        <div style={{display: "flex", flexDirection: "column", paddingLeft: "20vh", alignItems: "center"}}>
+                            <TransactionList transactions={transactions}/>
+                        </div>
+            }
+            
         </div>
         
     )

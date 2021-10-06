@@ -38,7 +38,7 @@ jobs:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "fso2021practicework"
         heroku_email: "olli.glorioso@gmail.com"
-        healthcheck: "https://fso2021practicework.herokuapp.com/healthcheck"
+        healthcheck: "https://fso2021practicework.herokuapp.com/healthcheck"  
         checkstring: "toimii"
         rollbackonhealthcheckfailed: true
     - uses: actions/checkout@v2
@@ -47,5 +47,5 @@ jobs:
         status: ${{ job.status }}
         fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required, change
       if: always() # Pick up events even if the job fails or is canceled.

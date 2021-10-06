@@ -33,7 +33,7 @@ const startServer = async () => {
             const auth = req ? req.headers.authorization : null;
             if (auth && auth.toLowerCase().startsWith('bearer ')) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
-                const currentUser = await User.findById(decodedToken.id).populate('usersHoldings').populate({path: 'usersTransactions', populate: {path: 'transactionStock'}})
+                const currentUser = await User.findById(decodedToken.id).populate({path: 'usersHoldings', populate: {path: 'usersStockName'}}).populate({path: 'usersTransactions', populate: {path: 'transactionStock'}})
                 return {currentUser};
             }
             return null;

@@ -1,5 +1,16 @@
 import {gql} from "@apollo/client"
 
+const STOCKDETAILS = gql`
+  fragment StockDetails on IndividualStock {
+    close
+    date
+    high
+    low
+    open
+    volume
+  }
+`
+
 const ADD_USER = gql`
 mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
     addUser(username: $addUserUsername, password: $addUserPassword) {
@@ -11,8 +22,17 @@ mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
 
 export const CURRENT_PORTFOLIO_VALUE = gql`
 query {
-  currentPortfolioValue
+  currentPortfolioValue {
+    wholeValue
+    analysisValues {
+      name
+      sticks {
+        ...StockDetails
+      }
+    }
+  }
 }
+${STOCKDETAILS}
 `
 
 export const BUY_STOCK = gql`
@@ -33,7 +53,10 @@ export const ME = gql`
     me {
       usersUsername
       usersHoldings {
-        usersStockName
+        usersStockName {
+          stockTotalAmount
+          stockSymbol
+        }
         usersTotalAmount
         usersTotalOriginalPriceValue
       }
@@ -46,6 +69,7 @@ export const ME = gql`
           stockSymbol
           stockTotalAmount
         }
+        _id
       }
     }
   }
@@ -54,14 +78,10 @@ export const ME = gql`
 export const INDIVIDUAL_STOCK = gql`
   query individualStock($company: String!) {
     individualStock (company: $company) {
-      close
-      date
-      high
-      low
-      open
-      volume
+      ...StockDetails
     }
   }
+  ${STOCKDETAILS}
 `
 
 export const LOGIN = gql`

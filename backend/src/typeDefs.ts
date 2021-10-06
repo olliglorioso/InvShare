@@ -22,7 +22,7 @@ export const typeDefs: DocumentNode = gql`
     }
 
     type Holding {
-        usersStockName: ID!
+        usersStockName: Stock!
         usersTotalAmount: Int!
         usersTotalOriginalPriceValue: Float!
     }
@@ -33,6 +33,7 @@ export const typeDefs: DocumentNode = gql`
         transactionStock: Stock!
         transactionStockAmount: Int!
         transactionStockPrice: Float!
+        _id: ID!
     }
 
     type User {
@@ -43,10 +44,20 @@ export const typeDefs: DocumentNode = gql`
         id: ID!
     }
 
+    type AnalysisData {
+        name: String
+        sticks: [IndividualStock]
+    }
+
+    type AnalysisType {
+        wholeValue: Float
+        analysisValues: [AnalysisData]
+    }
+
     type Query {
         me: User
         individualStock (company: String!): [IndividualStock]!
-        currentPortfolioValue: Float!
+        currentPortfolioValue: [AnalysisType]
     }
 
     type Mutation {
