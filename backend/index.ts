@@ -1,29 +1,29 @@
-import { ApolloServer} from 'apollo-server-express';
-import { GraphQLError } from 'graphql';
-import mongoose from 'mongoose'
-import User from './src/models/user'
+import { ApolloServer} from "apollo-server-express";
+import { GraphQLError } from "graphql";
+import mongoose from "mongoose"
+import User from "./src/models/user"
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-require('dotenv').config()
-import jwt from 'jsonwebtoken';
-import resolvers from './src/resolvers';
-import { UserType } from './src/types';
-import {typeDefs} from './src/typeDefs';
-import express from 'express'
-import { v4 as uuidv4 } from 'uuid'
-import cors from 'cors'
+require("dotenv").config()
+import jwt from "jsonwebtoken";
+import resolvers from "./src/resolvers";
+import { UserType } from "./src/types";
+import {typeDefs} from "./src/typeDefs";
+import express from "express"
+import { v4 as uuidv4 } from "uuid"
+import cors from "cors"
 // import history from 'connect-history-api-fallback'
 
 const startServer = async () => {
-    const MONGODB_URI: string = process.env.NODE_ENV === 'test'
-    ? process.env.MONGODB_TEST_URI || ''
-    : process.env.MONGODB_URI || ''
+    const MONGODB_URI: string = process.env.NODE_ENV === "test"
+    ? process.env.MONGODB_TEST_URI || ""
+    : process.env.MONGODB_URI || ""
 
     mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
         .then(()=> {
-            console.log('connected to mongodb');
+            console.log("connected to mongodb");
         })
         .catch((error) => {
-            console.log('error connection to mongodb ', error);
+            console.log("error connection to mongodb ", error);
         });     
 
     const server = new ApolloServer({
@@ -31,9 +31,9 @@ const startServer = async () => {
         resolvers,
         context: async ({ req }): Promise<{currentUser: (UserType | null)} | null> => {
             const auth = req ? req.headers.authorization : null;
-            if (auth && auth.toLowerCase().startsWith('bearer ')) {
+            if (auth && auth.toLowerCase().startsWith("bearer ")) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
-                const currentUser = await User.findById(decodedToken.id).populate({path: 'usersHoldings', populate: {path: 'usersStockName'}}).populate({path: 'usersTransactions', populate: {path: 'transactionStock'}})
+                const currentUser = await User.findById(decodedToken.id).populate({path: "usersHoldings", populate: {path: "usersStockName"}}).populate({path: "usersTransactions", populate: {path: "transactionStock"}})
                 return {currentUser};
             }
             return null;
@@ -50,9 +50,9 @@ const startServer = async () => {
     const app = express()
     app.use(cors())
     // app.use(history())
-    app.use(express.static('build'))
-    app.get('/healthcheck', (_req, res) => {
-        res.send('toimii')
+    app.use(express.static("build"))
+    app.get("/healthcheck", (_req, res) => {
+        res.send("toimii")
     })
     void await server.start()
 

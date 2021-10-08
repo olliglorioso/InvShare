@@ -4,28 +4,18 @@ import { useQuery } from "@apollo/client";
 import { INDIVIDUAL_STOCK } from "../graphql/queries";
 import { useDispatch } from "react-redux";
 import { changePrice } from "../reducers/buyingStockReducer";
-import { useEffect, useState } from "react";
-import { Switch } from "@material-ui/core";
+import { useEffect } from "react";
+
 
 const MainChart = (props: {stock: string}): JSX.Element => {
     const {data, loading} = useQuery(INDIVIDUAL_STOCK, {variables: {company: props.stock}})
     const dispatch = useDispatch()
     if (loading) {<div></div>}
     if (!data) {<div></div>}
-    const [chartMode, setChartMode] = useState(false)
-    // type CandleStock = {
-    //     date: string,
-    //     open: number,
-    //     high: number,
-    //     low: number,
-    //     close: number
-    // }
 
     let stockList: {close: number, date: string}[]= []
-    // let candleStockList: {date: string, open: number, high: number, low: number, close: number}[] = []
     if (data) {
         stockList = data.individualStock.map((b: {__typename: string, close: number, date: string}): {close: number, date: string} => {return {close: b.close, date: b.date}})
-        // candleStockList = data.individualStock.map((b: {__typename: string, close: number, date: string, high: number, low: number, open: number}): CandleStock => {return {date: b.date, open: b.open, high: b.high, low: b.low, close: b.close}})
     }
 
   
@@ -82,13 +72,8 @@ const MainChart = (props: {stock: string}): JSX.Element => {
         name: props.stock.toUpperCase(),
         data: stockList.map((y: {close: number, date: string}) => y.close) || [0],
     }]
-    // const candleStickSeries = [{
-    //     name: props.stock.toUpperCase(),
-    //     data: candleStockList.map((y: CandleStock) => [y.date, y.open, y.high, y.low, y.close]) || []
-    // }]
     return (
         <div>
-            <Switch onChange={() => setChartMode(!chartMode)}/>
             <Chart 
                 options={options}
                 series={series}

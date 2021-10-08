@@ -9,7 +9,7 @@ const Analysis = ({positions, portValue, totalOriginalValue}: any): JSX.Element 
                 <h1 style={{fontWeight: "bold", fontSize: 25, color: "black", textAlign: "center"}}>Analysis</h1>
             </ListSubheader>
             <div>
-                <div style={{width: "100%"}}>
+                <div style={{width: "100%", justifyContent: "center"}}>
                     <AnalysisChart totalOriginalValue={totalOriginalValue} analysisData={portValue} positions={positions} />
                 </div>
             </div>

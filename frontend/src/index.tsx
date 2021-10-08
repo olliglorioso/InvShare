@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import sidebarReducer from "./reducers/sidebarReducer";
 import userLoggedReducer from "./reducers/userLoggedReducer";
+import modeSwitchReducer from "./reducers/modeSwitchReducer";
 import buyingStockReducer from "./reducers/buyingStockReducer"
 import { createStore, combineReducers } from "redux";
 import { Provider } from "react-redux"
@@ -12,7 +13,8 @@ import { setContext } from "@apollo/client/link/context"
 const reducer = combineReducers({
     user: userLoggedReducer,
     sidebar: sidebarReducer,
-    stock: buyingStockReducer
+    stock: buyingStockReducer,
+    mode: modeSwitchReducer,
 })
 
 const store = createStore(reducer)

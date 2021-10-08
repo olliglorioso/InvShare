@@ -26,5 +26,5 @@ const schema = new mongoose.Schema<TransactionType>({
   }
 });
 
-export default mongoose.model<TransactionType>('Transaction', schema);
+export default mongoose.model<TransactionType>("Transaction", schema);
 

@@ -21,8 +21,8 @@ mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
 `
 
 export const CURRENT_PORTFOLIO_VALUE = gql`
-query {
-  currentPortfolioValue {
+query cpv($mode: String!) {
+  currentPortfolioValue(mode: $mode) {
     wholeValue
     analysisValues {
       name

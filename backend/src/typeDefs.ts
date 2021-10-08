@@ -57,7 +57,7 @@ export const typeDefs: DocumentNode = gql`
     type Query {
         me: User
         individualStock (company: String!): [IndividualStock]!
-        currentPortfolioValue: [AnalysisType]
+        currentPortfolioValue (mode: String!): [AnalysisType]
     }
 
     type Mutation {

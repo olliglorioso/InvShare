@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { StockType } from '../types';
+import mongoose from "mongoose";
+import { StockType } from "../types";
 
 const schema = new mongoose.Schema<StockType>({
   stockSymbol: {
@@ -15,4 +15,4 @@ const schema = new mongoose.Schema<StockType>({
 });
 
 
-export default mongoose.model<StockType>('Stock', schema);
+export default mongoose.model<StockType>("Stock", schema);

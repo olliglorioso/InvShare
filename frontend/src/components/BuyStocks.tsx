@@ -10,12 +10,9 @@ import { RootState } from "..";
 import { useDebounce } from "use-debounce"
 import { useMutation } from "@apollo/client";
 import { BUY_STOCK } from "../graphql/queries"
+import { MyFormValues } from "../types";
 
-interface MyFormValues {
-    company: string,
-    amount: string,
-    price_per_stock: string
-}
+
 
 const CssTextField = withStyles({
     root: {

@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { UserType } from '../types';
+import mongoose from "mongoose";
+import { UserType } from "../types";
 
 const schema = new mongoose.Schema<UserType>({
   usersUsername: {
@@ -31,7 +31,7 @@ const schema = new mongoose.Schema<UserType>({
   
 });
 
-schema.set('toJSON', {
+schema.set("toJSON", {
   transform: (returnedObject: {id?: string, _id?: string, __v?: number, usersPasswordHash?: string}): void => {
     if (returnedObject._id) {
       returnedObject.id = returnedObject._id.toString();
@@ -42,4 +42,4 @@ schema.set('toJSON', {
   }
 });
 
-export default mongoose.model<UserType>('User', schema);
+export default mongoose.model<UserType>("User", schema);

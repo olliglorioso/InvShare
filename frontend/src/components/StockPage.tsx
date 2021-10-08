@@ -8,7 +8,6 @@ import { RootState } from "..";
 
 const StockPage = (): JSX.Element => {
     const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
-    console.log(btoa("olliglorioso:M4rkkinointi?"))
     return (
         <div style={{
             backgroundColor: "white",

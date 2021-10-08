@@ -1,35 +1,52 @@
-import { List, ListItem, Typography } from "@material-ui/core"
+import { List, ListItem, Typography, Switch, ListSubheader } from "@material-ui/core"
 import React from "react"
 import Chart from "react-apexcharts"
+import { CandleStock } from "../types"
+import { changeMode } from "../reducers/modeSwitchReducer"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from ".."
+import AnalysisTable from "./AnalysisTable"
+
 
 const AnalysisChart = ({analysisData, positions, totalOriginalValue}: any) => {
-    type CandleStock = {
-        date: string,
-        open: number,
-        high: number,
-        low: number,
-        close: number,
-        volume: number,
-        __typename: string
-    }
 
     const dates = analysisData[0].sticks.map((x: CandleStock) => x.date)
     let valueSeries: number[] = []
+    const dispatch = useDispatch()
+    const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
 
     dates.forEach((element: string, index: number) => {
         let sum = 0
         analysisData.forEach((element2: {name: string, __typename: "AnalysisData", sticks: CandleStock[]}, index2: number) => {
-            sum = sum + (analysisData[index2].sticks[index].close * positions[index2].usersTotalAmount)
+            const valueToAdd = element2.sticks.filter((element3: any) => {
+                return element3.date === element
+            })
+            if (valueToAdd.length > 0) {
+                sum = sum + valueToAdd[0].close
+            } else {
+                sum = sum + element2.sticks[0].close
+            }
         })
-        valueSeries = valueSeries.concat(parseFloat((100 * (-1 + Math.round(sum)/Math.round(totalOriginalValue))).toFixed(2)))
+        valueSeries = valueSeries.concat(parseFloat((100*(-1 + sum/totalOriginalValue)).toFixed(2)))
     })
-
 
     const myString = "zoom"
     const myOption: "zoom" | "selection" | "pan" | undefined = myString as "zoom" | "selection" | "pan" | undefined 
 
     const myDateOption = "datetime"
     const myOption2: "datetime" | "category" | "numeric" | undefined = myDateOption as "datetime" | "category" | "numeric" | undefined
+
+    const changeModeComp = () => {
+        dispatch(changeMode())
+    }
+
+    const checkedOrNot = () => {
+        if (switchMode.mode) {
+            return true
+        } else {
+            return false
+        }
+    }
 
     const options = {
         chart: {
@@ -57,7 +74,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: any) => {
             width: 1
         },
         xaxis: {
-            categories: analysisData[0].sticks.map((x: {close: number, date: string, high: number, low: number, open: number, volume: number, __typename: string}) => x.date),
+            categories: dates,
             type: myOption2,
             labels: {
                 rotate: 0
@@ -71,31 +88,26 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: any) => {
 
     return (
         <div >
+            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <Typography>
+                    Last 48 hours
+                </Typography>
+                <Switch 
+                    color={"default"} 
+                    checked={checkedOrNot()} 
+                    onChange={() => changeModeComp()}
+                ></Switch>
+                <Typography>
+                    Daily since first transaction
+                </Typography>
+            </div>
             <Chart 
                 options={options}
                 series={series}
                 type="line"
                 height={300}
             />
-            <List dense style={{display: "flex", flexDirection: "column"}}>
-                {positions.map((x: {__typename: "Holding", usersStockName: {stockSymbol: string, stockTotalAmount: number, __typename: "Stock"}, usersTotalAmount: number, usersTotalOriginalPriceValue: number}) => {
-                    const individStockProfit = Math.round(x.usersTotalOriginalPriceValue / x.usersTotalAmount)/analysisData.filter((y: {__typename: "AnalysisData", name: string, sticks: {close: number, date: string, high: number, low: number, open: number, volume: number, __typename: string}[]}) => y.name === x.usersStockName.stockSymbol)[0].sticks[analysisData[0].sticks.length - 1].close
-                    return (
-                        <ListItem divider key={x.usersTotalOriginalPriceValue}>
-                            {1 - individStockProfit >= 0
-                                ?
-                                <Typography style={{color: "green", fontWeight: "bold", fontSize: 15, textAlign: "center"}}>
-                                    {`${x.usersStockName.stockSymbol}: ${(1 - individStockProfit).toFixed(2)}`}
-                                </Typography>
-                                :
-                                <Typography style={{color: "red", fontWeight: "bold", fontSize: 15, textAlign: "center"}}>
-                                    {`${x.usersStockName.stockSymbol}: ${(1 - individStockProfit).toFixed(2)}`}
-                                </Typography>
-                            }
-                            
-                        </ListItem>)
-                })}
-            </List>
+            <AnalysisTable analysisData={analysisData} positions={positions} />
         </div>
     )
 }

@@ -18,7 +18,8 @@
       "error",
       { "argsIgnorePattern": "^_" }
     ],
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    "quotes": ["error", "double"],
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

@@ -2,30 +2,23 @@ import React, {useState} from "react";
 import { ListSubheader, Collapse, Button, List, ListItemIcon, ListItemText } from "@material-ui/core";
 import { KeyboardArrowRight, ShoppingCart, Delete } from "@material-ui/icons";
 import { ExpandLess, ExpandMore} from "@material-ui/icons";
-import mongoose from "mongoose";
+import {TransactionType} from "../types"
 
-type StockType = {
-    stockSymbol: string,
-    stockTotalAmount: number,
-    __typename: string
-}
-type TransactionType = {
-    transactionDate: string,
-    transactionStock: StockType,
-    transactionStockAmount: number,
-    transactionStockPrice: number,
-    transactionType: string,
-    __typename: string,
-    _id: mongoose.Types.ObjectId,
-}
-
-const TransactionList = (props: {transactions: TransactionType[]}) => {
+const TransactionList = (props: {transactions: TransactionType[]}): JSX.Element => {
     const transactionStates = props.transactions.map((trans: TransactionType): string => trans._id.toString()).reduce((a, v) => ({ ...a, [v]: false}), {}) 
     const [open, setOpen] = useState(transactionStates);
 
     const handleClick = (id: string) => {
         setOpen((prevState: Record<string, boolean>) => ({...prevState, [id]: !prevState[id]}))
     };
+
+    const leadingZeros = (num: number): string => {
+        if (num < 10) {
+            return "0" + num.toString()
+        } else {
+            return num.toString()
+        }
+    }
 
     return (
         <List
@@ -42,7 +35,7 @@ const TransactionList = (props: {transactions: TransactionType[]}) => {
         >   
             {props.transactions.map((transaction: TransactionType) => {
                 const date = new Date(transaction.transactionDate)
-                const dateFormat = date.getDate() + "." + (date.getMonth() + 1).toString() + "." + date.getFullYear() + ", " + date.getHours() + ":" + date.getMinutes()
+                const dateFormat = date.getDate() + "." + (date.getMonth() + 1).toString() + "." + date.getFullYear() + ", " + leadingZeros(date.getHours()) + ":" + leadingZeros(date.getMinutes())
                 return (
                     <div key={transaction.transactionDate}>
                         <Button onClick={() => handleClick(transaction._id.toString())}>
@@ -71,7 +64,7 @@ const TransactionList = (props: {transactions: TransactionType[]}) => {
                                     <ListItemIcon>
                                         <KeyboardArrowRight />
                                     </ListItemIcon>
-                                    <ListItemText primary={`Price per share: ${transaction.transactionStockPrice}`} />
+                                    <ListItemText primary={`Price per share: ${transaction.transactionStockPrice.toFixed(2)}`} />
                                 </Button>
                                 <Button disabled={true} style={{color: "black"}}>
                                     <ListItemIcon>

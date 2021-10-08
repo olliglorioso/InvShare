@@ -1,17 +1,28 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose"
+
+export interface UserInformation {
+    username: string,
+    password: string
+}
 
 export interface Holding {
-    _id?: mongoose.Types.ObjectId
     usersStockName: mongoose.Types.ObjectId,
     usersTotalAmount: number,
     usersTotalOriginalPriceValue: number,
 }
 
-
-
 export interface CandlesType {
     close: number,
     date: string,
+    high: number,
+    low: number,
+    open: number,
+    volume: number
+}
+
+export interface CandlesTypeWithDate {
+    close: number,
+    date: Date,
     high: number,
     low: number,
     open: number,
@@ -26,7 +37,7 @@ enum BuyOrSell {
 export interface TransactionType {
     transactionType: BuyOrSell,
     transactionDate: Date,
-    transactionStock: mongoose.Types.ObjectId,
+    transactionStock: StockType,
     transactionStockAmount: number,
     transactionStockPrice: number,
     _id?: mongoose.Types.ObjectId
@@ -35,13 +46,20 @@ export interface TransactionType {
 export interface UserType {
     usersUsername: string,
     usersPasswordHash: string, 
-    usersTransactions: mongoose.Types.ObjectId[],
+    usersTransactions: TransactionType[],
     usersHoldings: Holding[],
     _id?: mongoose.Types.ObjectId,
 }
 
 export interface StockType {
     stockSymbol: string,
-    _id?: mongoose.Types.ObjectId,
+    _id: mongoose.Types.ObjectId,
     stockTotalAmount: number
+}
+
+export interface HoldingWithStockType {
+    _id?: StockType
+    usersStockName: mongoose.Types.ObjectId,
+    usersTotalAmount: number,
+    usersTotalOriginalPriceValue: number,
 }
