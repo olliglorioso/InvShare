@@ -6,7 +6,7 @@ import Avatar from "boring-avatars"
 import TransactionList from "./TransactionList"
 import Positions from "./Positions"
 import Analysis from "./Analysis"
-import {TransactionType} from "../types"
+import {TransactionType, NewAnalysisData} from "../types"
 import { useSelector } from "react-redux"
 import { RootState } from ".."
 
@@ -44,17 +44,16 @@ const MyProfile = () => {
         return <div style={{padding: 100}}><h1>LOADING</h1></div>
     }
 
-    let analysisData: any
+    let analysisData: NewAnalysisData
+
     if (switchMode.mode) {
         analysisData = data.currentPortfolioValue[0]
     } else {
         analysisData = res.data.currentPortfolioValue[0]
     }
-    
-    
 
 
-    let totalOriginalValue
+    let totalOriginalValue: number
 
     if (result.data && result.data.me) {
         totalOriginalValue = result.data.me.usersTransactions.reduce((a: number, b: TransactionType): number => a + (b.transactionStockPrice * b.transactionStockAmount), 0)

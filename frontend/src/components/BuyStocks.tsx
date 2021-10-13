@@ -122,7 +122,7 @@ const BuyStocks = (): JSX.Element => {
     const price = useSelector<RootState, number>((state) => state.stock.stockPrice)
     const cName = useSelector<RootState, string>((state) => state.stock.stockName)
     const initialValues: MyFormValues = { company: "", amount: "1", price_per_stock: "" };
-    const [buyStock, {data}] = useMutation(BUY_STOCK)
+    const [buyStock] = useMutation(BUY_STOCK)
     const [isDisabled, setIsDisabled] = useState(false)
     const dispatch = useDispatch()
     
@@ -134,7 +134,6 @@ const BuyStocks = (): JSX.Element => {
             <Formik
                 initialValues={initialValues}
                 onSubmit={(values) => {
-                    const result = false
                     confirmAlert({
                         title: "Confirmation",
                         message: `Are you sure you want to purchase ${values.amount} x ${cName.toUpperCase()} (${price * parseInt(values.amount)}$)?`,

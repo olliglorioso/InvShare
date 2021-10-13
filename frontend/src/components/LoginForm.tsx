@@ -44,7 +44,7 @@ const LoginForm = (): JSX.Element => {
         } catch (e) {
             console.log("ei ole olemassa käyttäjää")
         }
-  }, [result.data]) // eslint-disable-line
+    }, [result.data])
 
     const history = useHistory()
 

@@ -6,12 +6,14 @@ import User from "./src/models/user"
 require("dotenv").config()
 import jwt from "jsonwebtoken";
 import resolvers from "./src/resolvers";
-import { UserType } from "./src/types";
+import { PopulatedUserType } from "./src/types";
 import {typeDefs} from "./src/typeDefs";
 import express from "express"
 import { v4 as uuidv4 } from "uuid"
 import cors from "cors"
 // import history from 'connect-history-api-fallback'
+
+
 
 const startServer = async () => {
     const MONGODB_URI: string = process.env.NODE_ENV === "test"
@@ -29,11 +31,11 @@ const startServer = async () => {
     const server = new ApolloServer({
         typeDefs,
         resolvers,
-        context: async ({ req }): Promise<{currentUser: (UserType | null)} | null> => {
+        context: async ({ req }): Promise<{currentUser: (PopulatedUserType | null)} | null> => {
             const auth = req ? req.headers.authorization : null;
             if (auth && auth.toLowerCase().startsWith("bearer ")) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
-                const currentUser = await User.findById(decodedToken.id).populate({path: "usersHoldings", populate: {path: "usersStockName"}}).populate({path: "usersTransactions", populate: {path: "transactionStock"}})
+                const currentUser = await User.findById(decodedToken.id).populate({path: "usersHoldings", populate: {path: "usersStockName"}}).populate({path: "usersTransactions", populate: {path: "transactionStock"}}) as unknown as PopulatedUserType
                 return {currentUser};
             }
             return null;

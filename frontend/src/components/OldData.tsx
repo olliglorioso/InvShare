@@ -1,10 +1,11 @@
 import React from "react";
 import { Typography } from "@material-ui/core";
 import Chart from "react-apexcharts"
+import { OldDataType } from "../types";
 
-const OldData = ({datas}: any) => {
+const OldData = ({datas}: {datas: OldDataType}) => {
     if (!datas) {
-        return <div>no data yet</div>
+        return <div></div>
     }
     const dates = datas.time_series.map((o: {date: string, value: number}) => o.date)
 

@@ -20,7 +20,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-const AnalysisTable = ({analysisData, positions, getPrediction}: {getPrediction: any, analysisData: AnalysisData[], positions: Positions[]}) => {
+const AnalysisTable = ({analysisData, positions, getPrediction}: {getPrediction: (comp: string) => void, analysisData: AnalysisData[], positions: Positions[]}) => {
     const tableCellStyles = {color: "white"}
     return (
         <TableContainer component={Paper}>
