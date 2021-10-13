@@ -11,7 +11,7 @@ import FinnhubAPI, { MarketDataItem } from "@stoqey/finnhub"
 import { Resolution } from "@stoqey/finnhub"
 
 const getIndividualStockInformation = async (symbol: string, startDate?: Date, resolution?: Resolution): Promise<CandlesType[]> => {
-    const finnhubAPI = new FinnhubAPI("c4hm412ad3ifj3t4h07g");
+    const finnhubAPI = new FinnhubAPI("c4hm412ad3ifj3t4h07g")
     const getCandles = async (): Promise<MarketDataItem[]> => {
         const candles = await finnhubAPI.getCandles(symbol, startDate || new Date(2020,12,1), new Date(), resolution || "D")
         return candles
@@ -20,26 +20,57 @@ const getIndividualStockInformation = async (symbol: string, startDate?: Date, r
     return candles.map((a: CandlesTypeWithDate): CandlesType => {return {...a, date: a.date.toString()}})
 }
 
-const setDate = (hours: number) => {
+const turnToDate = (date: string) => {
+    const res = new Date(parseInt(date.substring(0,4)), parseInt(date.substring(5,7)) - 1, parseInt(date.substring(8, 10))).toString()
+    return res
+}
+
+const getAlphaVantage = async (symbol: string) => {
+    const alpha = require("alphavantage")({key: "05ZXUNQURKT7T3TV"})
+
+    const data2 = await alpha.data.weekly(symbol, "full", "json")
+    let values2: any = {}
+    
+    for (const [_key, _value] of Object.entries(data2)) {
+        values2["metadata"] = data2["Meta Data"]
+        values2["time_series"] = data2["Weekly Time Series"]
+    }
+
+    values2["metadata"] = 
+        {
+            information: values2["metadata"]["1. Information"],
+            symbol: values2["metadata"]["2. Symbol"],
+            lastRefresh: values2["metadata"]["3. Last Refreshed"]  
+        }
+
+    values2["time_series"] = Object.keys(values2["time_series"]).reverse().map((one: any) => {
+        return (
+            [turnToDate(one), parseFloat(values2["time_series"][one]["4. close"])]
+        )
+    }) 
+
+    const returnVals = {metadata: values2["metadata"], time_series: values2["time_series"].map((a: any) => {return {date: a[0], value: a[1]}})}
+    return returnVals
+}
+
+const setDate = (hours: number): Date => {
     const date = new Date()
     date.setHours(date.getHours() + hours + 3)
     return date
 }
 
-// const setDateDays = () => {
-//     const date = new Date()
-//     date.setHours(date.getHours() + 3)
-//     date.setFullYear(date.getFullYear() - 1)
-//     return date
-// }
 
 const resolvers = {
     Query: {
+        stockPrediction: async (_root: undefined, args: {symbol: string}) => {
+            const result = await getAlphaVantage(args.symbol)
+            return result
+        },
         me: (_root: undefined, _args: void, context: {currentUser: UserType}): UserType => {
             return context.currentUser
         },
         individualStock: (_root: undefined, args: {company: string}): Promise<CandlesType[]> => {
-            const candles = getIndividualStockInformation(args.company)
+            const candles = getIndividualStockInformation(args.company, setDate(-96), "5")
             return candles
         },
         currentPortfolioValue: async (_root: undefined, args: {mode: string}, context: {currentUser: UserType}): Promise<[{wholeValue: number, analysisValues: {name: string, sticks: CandlesType[]}[]}]> => {
@@ -47,19 +78,26 @@ const resolvers = {
             let values: {name: string, sticks: CandlesType[]}[] = []
             if (context.currentUser && context.currentUser.usersTransactions.length > 0) {
 
-                // const firstBuyDate = context.currentUser.usersTransactions[0].transactionDate
-                // let lastDate: Date
-                // new Date(firstBuyDate) > setDate(-48)
-                // ? lastDate = new Date(firstBuyDate)
-                // : lastDate = setDate(-48)
-
+                const firstBuyDate = context.currentUser.usersTransactions[0].transactionDate
+                let lastDate: Date
+                new Date(firstBuyDate) > setDate(-96)
+                ? lastDate = new Date(firstBuyDate)
+                : lastDate = setDate(-96)
                 for (const item of context.currentUser.usersHoldings) {
                     const a = await Stock.find({_id: item.usersStockName})
-                    let value
+                    let value: any
                     if (args.mode === "hours") {
-                        value = await getIndividualStockInformation(a[0].stockSymbol, setDate(-48), "5")
+                        value = await getIndividualStockInformation(a[0].stockSymbol, lastDate, "5")
+                        if (value.length < 1) {
+                            value = await getIndividualStockInformation(a[0].stockSymbol, setDate(-96), "5")
+                            value = [value[value.length - 1]]
+                        }
                     } else {
-                        value = await getIndividualStockInformation(a[0].stockSymbol, new Date(2020, 12, 1), "D")
+                        value = await getIndividualStockInformation(a[0].stockSymbol, lastDate, "D")
+                        if (value.length < 1) {
+                            value = await getIndividualStockInformation(a[0].stockSymbol, setDate(-96), "5")
+                            value = [value[value.length - 1]]
+                        }
                     }
                     values = values.concat({name: a[0].stockSymbol, sticks: value})
                     summa += value[value.length - 1].close * item.usersTotalAmount
@@ -105,7 +143,7 @@ const resolvers = {
             return {value: token};
         },
         buyStock: async (_root: undefined, args: {stockName: string, amount: number}, context: {currentUser: UserType}): Promise<TransactionType | null> => {
-            const candles = await getIndividualStockInformation(args.stockName)
+            const candles = await getIndividualStockInformation(args.stockName, setDate(-96), "5")
             const firstBuyEver = await Stock.findOne({stockSymbol: args.stockName.toUpperCase()})
             const loggedUser = context.currentUser
             if(!firstBuyEver) {

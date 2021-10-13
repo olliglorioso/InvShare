@@ -10,6 +10,7 @@ import { Provider } from "react-redux"
 import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from "@apollo/client"
 import { setContext } from "@apollo/client/link/context"
 
+
 const reducer = combineReducers({
     user: userLoggedReducer,
     sidebar: sidebarReducer,

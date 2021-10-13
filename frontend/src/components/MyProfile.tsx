@@ -13,23 +13,46 @@ import { RootState } from ".."
 const MyProfile = () => {
     const result = useQuery(ME)
     const [loadCPV, {data}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
+    const [loadCPV2, {...res}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
     const [mode, setMode] = useState("Analysis")
     const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
-    
+
     useEffect(() => {
-        if (switchMode.mode) {
-            loadCPV({variables: {mode: "days"}})
-        } else {
-            loadCPV({variables: {mode: "hours"}})
+        loadCPV({variables: {mode: "days"}})
+        loadCPV2({variables: {mode: "hours"}})
+    }, [])
+
+    useEffect(() => {
+        if (!data || !res.data) {
+            return 
         }
-        return
+        if (!res.data) {
+            return
+        }
+        if (switchMode.mode) {
+            analysisData = data.currentPortfolioValue[0]
+        } else {
+            analysisData = res.data.currentPortfolioValue[0]
+        }
     }, [switchMode.mode])
+
 
     if (!data) {
         return <div style={{padding: 100}}><h1>LOADING</h1></div>
     }
+    if (!res.data) {
+        return <div style={{padding: 100}}><h1>LOADING</h1></div>
+    }
 
-    const analysisData = data.currentPortfolioValue[0]
+    let analysisData: any
+    if (switchMode.mode) {
+        analysisData = data.currentPortfolioValue[0]
+    } else {
+        analysisData = res.data.currentPortfolioValue[0]
+    }
+    
+    
+
 
     let totalOriginalValue
 
@@ -82,7 +105,7 @@ const MyProfile = () => {
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                             <div style={{justifyContent: "center"}}>
                                 <Typography style={{fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{Math.round(analysisData.wholeValue)}</Typography>
-                                <Typography>Portfolio value</Typography>
+                                <Typography>Current value</Typography>
                             </div>
                             <div>
                                 {
@@ -95,7 +118,7 @@ const MyProfile = () => {
                             </div>
                             <div>
                                 <Typography style={{fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{Math.round(totalOriginalValue)}</Typography>
-                                <Typography>Profit last 3 months</Typography>
+                                <Typography>Original value</Typography>
                             </div>
                         </div>
                     </CardContent>

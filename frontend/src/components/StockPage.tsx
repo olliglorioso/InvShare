@@ -6,6 +6,7 @@ import BuyStocks from "./BuyStocks";
 import { useSelector } from "react-redux";
 import { RootState } from "..";
 
+
 const StockPage = (): JSX.Element => {
     const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
     return (
@@ -24,7 +25,7 @@ const StockPage = (): JSX.Element => {
                 <div style={{width: "100%"}}>
                     <MainChart stock={buyingStockState} />
                 </div>
-                <div style={{paddingTop: 25, width: 500}}>
+                <div style={{paddingTop: 40, width: 150, paddingRight: 5}}>
                     <BuyStocks />
                 </div>
             </div>

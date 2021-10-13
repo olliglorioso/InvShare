@@ -1,8 +1,9 @@
 import { ListSubheader } from "@material-ui/core"
 import React from "react"
 import AnalysisChart from "./AnalysisChart"
+import { AnalysisData, Positions } from "../types"
 
-const Analysis = ({positions, portValue, totalOriginalValue}: any): JSX.Element => {
+const Analysis = ({positions, portValue, totalOriginalValue}: {portValue: AnalysisData[], positions: Positions[], totalOriginalValue: number}): JSX.Element => {
     return (
         <div style={{width: "100%", paddingLeft: "5vh", paddingRight: "5vh"}}>
             <ListSubheader>

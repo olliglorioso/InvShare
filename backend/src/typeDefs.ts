@@ -54,7 +54,24 @@ export const typeDefs: DocumentNode = gql`
         analysisValues: [AnalysisData]
     }
 
+    type Tsvalue {
+        date: String!,
+        value: Float!
+    }
+
+    type Metadata {
+        information: String!,
+        symbol: String!,
+        lastRefresh: String!
+    }
+
+    type Prediction {
+        metadata: Metadata,
+        time_series: [Tsvalue]
+    }
+
     type Query {
+        stockPrediction (symbol: String!): Prediction
         me: User
         individualStock (company: String!): [IndividualStock]!
         currentPortfolioValue (mode: String!): [AnalysisType]

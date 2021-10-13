@@ -11,6 +11,22 @@ const STOCKDETAILS = gql`
   }
 `
 
+export const GET_PREDICTION = gql`
+  query stockPrediction($symbol: String!) {
+    stockPrediction(symbol: $symbol) {
+      time_series {
+        date
+        value
+      }
+      metadata {
+        information
+        symbol
+        lastRefresh
+      }
+    }
+  }
+`
+
 const ADD_USER = gql`
 mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
     addUser(username: $addUserUsername, password: $addUserPassword) {
