@@ -12,7 +12,7 @@ import { Resolution } from "@stoqey/finnhub"
 import alpha from "alphavantage"
 
 const getIndividualStockInformation = async (symbol: string, startDate?: Date, resolution?: Resolution): Promise<CandlesType[]> => {
-    const finnhubAPI = new FinnhubAPI("c4hm412ad3ifj3t4h07g")
+    const finnhubAPI = new FinnhubAPI(process.env.FINNHUB_API_KEY)
     const getCandles = async (): Promise<MarketDataItem[]> => {
         const candles = await finnhubAPI.getCandles(symbol, startDate || new Date(2020,12,1), new Date(), resolution || "D")
         return candles
@@ -27,7 +27,7 @@ const turnToDate = (date: string): string => {
 }
 
 const getAlphaVantage = async (symbol: string) => {
-    const alphavantage = alpha({key: "05ZXUNQURKT7T3TV"})
+    const alphavantage = alpha({key: process.env.ALPHAVANTAGE_API_KEY as string})
 
     const data2: AlphaVantageValues = await alphavantage.data.weekly(symbol, "full", "json")
     const values2 = {
