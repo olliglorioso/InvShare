@@ -11,7 +11,7 @@ import {typeDefs} from "./src/typeDefs";
 import express from "express"
 import { v4 as uuidv4 } from "uuid"
 import cors from "cors"
-// import history from 'connect-history-api-fallback'
+import history from 'connect-history-api-fallback'
 
 
 
@@ -51,7 +51,7 @@ const startServer = async () => {
 
     const app = express()
     app.use(cors())
-    // app.use(history())
+    app.use(history())
     app.use(express.static("build"))
     app.get("/healthcheck", (_req, res) => {
         res.send("toimii")
