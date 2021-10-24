@@ -9,10 +9,11 @@ import { Typography } from "@material-ui/core";
 
 
 const MainChart = (props: {stock: string}): JSX.Element => {
-    const {data, loading} = useQuery(INDIVIDUAL_STOCK, {variables: {company: props.stock}})
+    const {data, loading, ...rest} = useQuery(INDIVIDUAL_STOCK, {variables: {company: props.stock}})
     const dispatch = useDispatch()
     if (loading) {<div></div>}
     if (!data) {<div></div>}
+    console.log(rest.error?.graphQLErrors[0])
 
     let stockList: {close: number, date: string}[]= []
     if (data) {

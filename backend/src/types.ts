@@ -1,5 +1,60 @@
 import mongoose from "mongoose"
 
+export interface CandlesType {
+    close: number,
+    date: string,
+    high: number,
+    low: number,
+    open: number,
+    volume: number
+}
+
+export interface CandlesTypeWithDate extends Omit<CandlesType, "date"> {
+    date: Date
+}
+
+export interface AlphaVantageStick {
+    "1. open": string,
+    "2. high": string,
+    "3. low": string,
+    "4. close": string,
+    "5. volume": string
+}
+
+export interface AlphaVantageValues {
+    "Meta Data": {
+        "1. Information": string,
+        "2. Symbol": string,
+        "3. Last Refreshed": string,
+        "4. Time Zone": string
+    },
+    "Weekly Time Series": {
+        [key: string]: AlphaVantageStick[]
+    }
+}
+
+export interface ReadyAlphaVantageValues {
+    metadata: {
+        information: string,
+        symbol: string,
+        lastRefresh: string
+    },
+    time_series: {
+        date: string,
+        value: number
+    }[]
+}
+
+export interface AnalysisValue {
+    name: string, 
+    sticks: CandlesType[]
+}
+
+export interface CurrentPortfolioType {
+    wholeValue: number, 
+    analysisValues: AnalysisValue[]
+}
+
 export interface UserInformation {
     username: string,
     password: string
@@ -28,49 +83,13 @@ export interface OldDataValues {
     time_series: [string, number][]
 }
 
-export interface AlphaVantageStick {
-    "1. open": string,
-    "2. high": string,
-    "3. low": string,
-    "4. close": string,
-    "5. volume": string
-}
 
-export interface AlphaVantageValues {
-    "Meta Data": {
-        "1. Information": string,
-        "2. Symbol": string,
-        "3. Last Refreshed": string,
-        "4. Time Zone": string
-    },
-    "Weekly Time Series": {
-        [key: string]: {
-            "1. open": string,
-            "2. high": string,
-            "3. low": string,
-            "4. close": string,
-            "5. volume": string
-        }[]
-    }
-}
 
-export interface CandlesType {
-    close: number,
-    date: string,
-    high: number,
-    low: number,
-    open: number,
-    volume: number
-}
 
-export interface CandlesTypeWithDate {
-    close: number,
-    date: Date,
-    high: number,
-    low: number,
-    open: number,
-    volume: number
-}
+
+
+
+
 
 enum BuyOrSell {
     Buy = "Buy",

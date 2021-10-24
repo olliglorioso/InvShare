@@ -122,13 +122,10 @@ const BuyStocks = (): JSX.Element => {
     const price = useSelector<RootState, number>((state) => state.stock.stockPrice)
     const cName = useSelector<RootState, string>((state) => state.stock.stockName)
     const initialValues: MyFormValues = { company: "", amount: "1", price_per_stock: "" };
-    const [buyStock] = useMutation(BUY_STOCK)
+    const [buyStock, {data, loading, error}] = useMutation(BUY_STOCK)
     const [isDisabled, setIsDisabled] = useState(false)
     const dispatch = useDispatch()
-    
-
-
-
+    console.log(error)
     return (
         <div>
             <Formik

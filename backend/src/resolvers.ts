@@ -6,55 +6,11 @@ import {hash, compare} from "bcrypt"
 require("dotenv").config()
 import jwt from "jsonwebtoken";
 import Transaction from "./models/transaction";
-import { CandlesType, CandlesTypeWithDate, TransactionType, UserType, PopulatedUserType, UserInformation, HoldingType, AlphaVantageValues, AlphaVantageStick} from "./types"
-import FinnhubAPI, { MarketDataItem } from "@stoqey/finnhub"
-import { Resolution } from "@stoqey/finnhub"
-import alpha from "alphavantage"
+import { CandlesType, TransactionType, UserType, PopulatedUserType, UserInformation, HoldingType, ReadyAlphaVantageValues, CurrentPortfolioType, AnalysisValue} from "./types"
+import { AuthenticationError, UserInputError} from "apollo-server-express"
+import {getIndividualStockInformation, getAlphaVantage} from "./helpFunctions"
+import { parseCompany } from "./typeGuards"
 
-const getIndividualStockInformation = async (symbol: string, startDate?: Date, resolution?: Resolution): Promise<CandlesType[]> => {
-    const finnhubAPI = new FinnhubAPI(process.env.FINNHUB_API_KEY)
-    const getCandles = async (): Promise<MarketDataItem[]> => {
-        const candles = await finnhubAPI.getCandles(symbol, startDate || new Date(2020,12,1), new Date(), resolution || "D")
-        return candles
-    }
-    const candles = await getCandles()
-    return candles.map((a: CandlesTypeWithDate): CandlesType => {return {...a, date: a.date.toString()}})
-}
-
-const turnToDate = (date: string): string => {
-    const res = new Date(parseInt(date.substring(0,4)), parseInt(date.substring(5,7)) - 1, parseInt(date.substring(8, 10))).toString()
-    return res
-}
-
-const getAlphaVantage = async (symbol: string) => {
-    const alphavantage = alpha({key: process.env.ALPHAVANTAGE_API_KEY as string})
-
-    const data2: AlphaVantageValues = await alphavantage.data.weekly(symbol, "full", "json")
-    const values2 = {
-        metadata: {
-            information: data2["Meta Data"]["1. Information"],
-            symbol: data2["Meta Data"]["2. Symbol"],
-            lastRefresh: data2["Meta Data"]["3. Last Refreshed"]
-        },
-        time_series: data2["Weekly Time Series"]
-    }
-
-    const values3 = {
-        metadata: values2.metadata,
-        time_series: Object.keys(values2["time_series"])
-            .reverse()
-            .map((one: string): [string, number] => {
-                return (
-                    [turnToDate(one), parseFloat((values2.time_series[one] as unknown as AlphaVantageStick)["4. close"])]
-                )
-            })
-    }
-
-
-    const returnVals = {metadata: values2["metadata"], time_series: values3["time_series"]
-        .map((a: [string, number]) => {return {date: a[0], value: a[1]}})}
-    return returnVals
-}
 
 const setDate = (hours: number): Date => {
     const date = new Date()
@@ -66,23 +22,29 @@ const getTransactionToReturn = async (id: mongoose.Types.ObjectId): Promise<Tran
 
 const resolvers = {
     Query: {
-        stockPrediction: async (_root: undefined, args: {symbol: string}) => {
-            const result = await getAlphaVantage(args.symbol)
+        stockPrediction: async (_root: undefined, args: {symbol: string}): Promise<ReadyAlphaVantageValues> => {
+            const parsedSymbol = parseCompany(args.symbol)
+            const result = await getAlphaVantage(parsedSymbol)
             return result
         },
         me: (_root: undefined, _args: void, context: {currentUser: PopulatedUserType}): PopulatedUserType => {
+            console.log(context.currentUser)
             return context.currentUser 
         },
-        individualStock: (_root: undefined, args: {company: string}): Promise<CandlesType[]> => {
-            const candles = getIndividualStockInformation(args.company, setDate(-96), "5")
+        individualStock: async (_root: undefined, args: {company: string}): Promise<CandlesType[]> => {
+            const parsedCompany = parseCompany(args.company)
+            const candles = await getIndividualStockInformation(parsedCompany, setDate(-96), "5")
+            if (candles.length === 0) {
+                throw new UserInputError("The symbol doesn't exist.", {errorCode: 400})
+            }
             return candles
+            
         },
-        currentPortfolioValue: async (_root: undefined, args: {mode: string}, context: {currentUser: PopulatedUserType}): Promise<[{wholeValue: number, analysisValues: {name: string, sticks: CandlesType[]}[]}]> => {
+        currentPortfolioValue: async (_root: undefined, args: {mode: string}, context: {currentUser: PopulatedUserType}): Promise<CurrentPortfolioType[]> => {
             let summa = 0
     
-            let values: {name: string, sticks: CandlesType[]}[] = []
+            let values: AnalysisValue[] = []
             if (context.currentUser && context.currentUser.usersTransactions?.length > 0) {
-
                 const firstBuyDate = context.currentUser.usersTransactions[0].transactionDate
                 let lastDate: Date
                 new Date(firstBuyDate) > setDate(-96)
@@ -113,11 +75,10 @@ const resolvers = {
     },
 
     Mutation: {
-        addUser: async (_root: undefined, args: UserInformation): Promise<UserType | void> => {
+        addUser: async (_root: undefined, args: UserInformation): Promise<UserType | string> => {
             const isUsernameFree = await User.find({usersUsername: args.username})
             if (isUsernameFree.length > 0) {
-                console.log("the username is reserved")
-                return
+                return "moi"
             }
             const passwordHash = await hash(args.password, 10)
             const user = new User({
@@ -136,7 +97,7 @@ const resolvers = {
                 : await compare(args.password, user.usersPasswordHash)
             
             if (!(user && passwordCorrect)) {
-                return
+                throw new AuthenticationError("Something")
             }
             
             const userForToken = {
@@ -187,7 +148,7 @@ const resolvers = {
                 const user = await User.findOne({usersUsername: loggedUser.usersUsername})
 
                 const holdingToBeChanged = user?.usersHoldings.filter((obj: HoldingType): boolean => {
-                    return (obj._id?.toString() === (firstBuyEver._id as mongoose.Types.ObjectId).toString())
+                    return (obj.usersStockName.toString() === (firstBuyEver._id as mongoose.Types.ObjectId).toString())
                 })[0]
 
                 if (holdingToBeChanged) {

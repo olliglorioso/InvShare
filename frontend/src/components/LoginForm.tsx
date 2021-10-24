@@ -46,6 +46,8 @@ const LoginForm = (): JSX.Element => {
         }
     }, [result.data])
 
+    console.log(result.error?.graphQLErrors[0])
+
     const history = useHistory()
 
     const formik = useFormik({

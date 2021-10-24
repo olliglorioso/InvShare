@@ -1,5 +1,4 @@
 import { ApolloServer} from "apollo-server-express";
-import { GraphQLError } from "graphql";
 import mongoose from "mongoose"
 import User from "./src/models/user"
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
@@ -9,11 +8,8 @@ import resolvers from "./src/resolvers";
 import { PopulatedUserType } from "./src/types";
 import {typeDefs} from "./src/typeDefs";
 import express from "express"
-import { v4 as uuidv4 } from "uuid"
 import cors from "cors"
-import history from "connect-history-api-fallback"
-
-
+// import history from "connect-history-api-fallback"
 
 const startServer = async () => {
     const MONGODB_URI: string = process.env.NODE_ENV === "test"
@@ -41,17 +37,11 @@ const startServer = async () => {
             return null;
         },
         introspection: true,
-        formatError: (error: GraphQLError): GraphQLError => {
-            const errId = uuidv4()
-            console.log(errId)
-            console.log(error)
-            return new GraphQLError(`Error occured: ${errId}`)
-        }
     });
 
     const app = express()
     app.use(cors())
-    app.use(history())
+    // app.use(history())
     app.use(express.static("build"))
     app.get("/healthcheck", (_req, res) => {
         res.send("toimii")

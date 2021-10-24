@@ -25,6 +25,8 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
     const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
     const [getData, {...res}] = useLazyQuery(GET_PREDICTION)
 
+    console.log(res)
+
     dates.forEach((element: string) => {
         let sum = 0
         analysisData.forEach((element2: AnalysisData) => {
@@ -156,7 +158,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
             />
             <AnalysisTable getPrediction={getPrediction} analysisData={analysisData} positions={positions} />
             <div style={{width: "100%"}}>
-                <OldData datas={res.data?.stockPrediction} />
+                <OldData datas={res.data?.stockPrediction} loading={res.loading} />
             </div>
             
         </div>

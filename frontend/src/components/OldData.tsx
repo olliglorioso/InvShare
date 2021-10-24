@@ -1,12 +1,37 @@
 import React from "react";
-import { Typography } from "@material-ui/core";
+import { Typography, Button, TextField } from "@material-ui/core";
 import Chart from "react-apexcharts"
 import { OldDataType } from "../types";
+import { Formik } from "formik"
+import { withStyles } from "@material-ui/styles"
 
-const OldData = ({datas}: {datas: OldDataType}) => {
+const CssTextField = withStyles({
+    root: {
+        "& label.Mui-focused": {
+            color: "grey",
+        },
+        "& .MuiInput-underline:after": {
+            borderBottomColor: "black",
+        },
+        "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+                borderColor: "grey",
+            },
+            "&:hover fieldset": {
+                borderColor: "grey",
+            },
+            "&.Mui-focused fieldset": {
+                borderColor: "black",
+            },
+        },
+    },
+})(TextField);
+
+const OldData = ({datas, loading}: {datas: OldDataType, loading: boolean}) => {
     if (!datas) {
         return <div></div>
     }
+    console.log(loading)
     const dates = datas.time_series.map((o: {date: string, value: number}) => o.date)
 
     const myString = "zoom"
@@ -70,6 +95,36 @@ const OldData = ({datas}: {datas: OldDataType}) => {
                     height={300}
                 />
             </div>
+            
+            <Formik
+                initialValues={{
+                    amount: ""
+                }}
+                onSubmit={(input: {amount: string}) => {
+                    console.log(input)
+                }}
+            >
+                {({
+                    handleSubmit, values, handleChange
+                }) => (
+                    <form onSubmit={handleSubmit}>
+                        <p></p>
+                        <CssTextField
+                            id="amount"
+                            type="number"
+                            variant="outlined"
+                            label="Amount"
+                            onChange={handleChange}
+                            value={values.amount}
+                            style={{width: 150}}
+                        />
+                        <p></p>
+                        <Button variant="contained" type="submit" style={{background: "black", color: "white", width: 150}}>Sell</Button>
+                        <p style={{fontSize: 20, alignContent: "center"}}></p>
+                    </form>
+                )}
+
+            </Formik>
         </div>
     )
 }
