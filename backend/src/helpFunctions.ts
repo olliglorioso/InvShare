@@ -3,11 +3,16 @@ import { Resolution } from "@stoqey/finnhub"
 import { CandlesTypeWithDate, AlphaVantageStick, CandlesType, AlphaVantageValues, ReadyAlphaVantageValues } from "./types"
 import alpha from "alphavantage"
 import { ForbiddenError } from "apollo-server-express"
+import mongoose from "mongoose"
+import { TransactionType } from "./types"
+import Transaction from "./models/transaction"
 
 export const turnToDate = (date: string): string => {
     const res = new Date(parseInt(date.substring(0,4)), parseInt(date.substring(5,7)) - 1, parseInt(date.substring(8, 10))).toString()
     return res
 }
+
+export const createDate = () => new Date((new Date()).setHours(new Date().getHours()))
 
 export const getIndividualStockInformation = async (symbol: string, startDate?: Date, resolution?: Resolution): Promise<CandlesType[]> => {
     const finnhubAPI = new FinnhubAPI(process.env.FINNHUB_API_KEY)
@@ -47,3 +52,5 @@ export const getAlphaVantage = async (symbol: string): Promise<ReadyAlphaVantage
         .map((a: [string, number]) => {return {date: a[0], value: a[1]}})}
     return returnVals
 }
+
+export const getTransactionToReturn = async (id: mongoose.Types.ObjectId): Promise<TransactionType | null> => await Transaction.findOne({_id: id}).populate("transactionStock")

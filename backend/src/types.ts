@@ -21,6 +21,8 @@ export interface AlphaVantageStick {
     "5. volume": string
 }
 
+export type Mode = "hours" | "days"
+
 export interface AlphaVantageValues {
     "Meta Data": {
         "1. Information": string,
@@ -52,7 +54,7 @@ export interface AnalysisValue {
 
 export interface CurrentPortfolioType {
     wholeValue: number, 
-    analysisValues: AnalysisValue[]
+    analysisValues: AnalysisValue[],
 }
 
 export interface UserInformation {

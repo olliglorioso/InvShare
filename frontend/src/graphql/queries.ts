@@ -36,6 +36,15 @@ mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
   }
 `
 
+export const SELL_STOCK = gql`
+mutation sellStock($stockName: String!, $amount: Int!, $price: Float!) {
+  sellStock(stockName: $stockName, amount: $amount, price: $price) {
+    res
+  }
+}
+`
+
+
 export const CURRENT_PORTFOLIO_VALUE = gql`
 query cpv($mode: String!) {
   currentPortfolioValue(mode: $mode) {

@@ -9,6 +9,7 @@ import AnalysisTable from "./AnalysisTable"
 import OldData from "./OldData"
 import { useLazyQuery } from "@apollo/client"
 import { GET_PREDICTION } from "../graphql/queries"
+import LoadingAnimation from "./LoadingAnimation"
 
 const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisData: AnalysisData[], positions: Positions[], totalOriginalValue: number}) => {
     let stickcount = 0
@@ -25,7 +26,6 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
     const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
     const [getData, {...res}] = useLazyQuery(GET_PREDICTION)
 
-    console.log(res)
 
     dates.forEach((element: string) => {
         let sum = 0
@@ -111,8 +111,8 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
                     const a = new Date(value)
                     let xLabel: string
                     switchMode.mode === false
-                        ?   xLabel = `${a.getDate()}.${a.getMonth()}, ${leadingZeros(a.getHours())}:${leadingZeros(a.getMinutes())}`
-                        :   xLabel = `${a.getDate()}.${a.getMonth()}`
+                        ?   xLabel = `${a.getDate()}.${a.getMonth() + 1}, ${leadingZeros(a.getHours())}:${leadingZeros(a.getMinutes())}`
+                        :   xLabel = `${a.getDate()}.${a.getMonth() + 1}`
                     return xLabel
                 }, 
             },
@@ -158,7 +158,11 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
             />
             <AnalysisTable getPrediction={getPrediction} analysisData={analysisData} positions={positions} />
             <div style={{width: "100%"}}>
-                <OldData datas={res.data?.stockPrediction} loading={res.loading} />
+                {
+                    res.loading
+                        ? <div style={{display: "flex", justifyContent: "center", paddingTop: 15}}><LoadingAnimation type={"spin"} color={"black"}/></div>
+                        : <OldData datas={res.data?.stockPrediction} loading={res.loading} analysisData={analysisData} positions={positions} />
+                }
             </div>
             
         </div>

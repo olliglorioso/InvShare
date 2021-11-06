@@ -4,6 +4,9 @@ import Chart from "react-apexcharts"
 import { OldDataType } from "../types";
 import { Formik } from "formik"
 import { withStyles } from "@material-ui/styles"
+import { AnalysisData, Positions } from "../types";
+import { useMutation } from "@apollo/client"
+import {SELL_STOCK} from "../graphql/queries"
 
 const CssTextField = withStyles({
     root: {
@@ -27,11 +30,11 @@ const CssTextField = withStyles({
     },
 })(TextField);
 
-const OldData = ({datas, loading}: {datas: OldDataType, loading: boolean}) => {
+const OldData = ({datas, loading, analysisData, positions}: {datas: OldDataType, loading: boolean, analysisData: AnalysisData[], positions: Positions[]}) => {
+    const [sell, {...result}] = useMutation(SELL_STOCK)
     if (!datas) {
         return <div></div>
     }
-    console.log(loading)
     const dates = datas.time_series.map((o: {date: string, value: number}) => o.date)
 
     const myString = "zoom"
@@ -78,10 +81,8 @@ const OldData = ({datas, loading}: {datas: OldDataType, loading: boolean}) => {
         data: datas.time_series.map((o: {date: string, value: number}) => o.value.toFixed(2))
     }]
 
-
-    if (!datas) {
-        return <div>loading.....</div>
-    }
+    const theStock = analysisData.filter((o: AnalysisData): boolean => o.name === datas.metadata.symbol)[0]
+    const lastPrice = theStock.sticks[theStock.sticks.length - 1].close
     return (
         <div style={{display: "flex", paddingTop: "5vh", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
             <Typography style={{fontSize: 20, fontWeight: "bold"}}>
@@ -95,13 +96,13 @@ const OldData = ({datas, loading}: {datas: OldDataType, loading: boolean}) => {
                     height={300}
                 />
             </div>
-            
             <Formik
                 initialValues={{
                     amount: ""
                 }}
                 onSubmit={(input: {amount: string}) => {
-                    console.log(input)
+                    console.log(input.amount, lastPrice, theStock.name)
+                    sell({variables: {stockName: theStock.name, amount: parseInt(input.amount), price: lastPrice}})
                 }}
             >
                 {({
@@ -118,6 +119,8 @@ const OldData = ({datas, loading}: {datas: OldDataType, loading: boolean}) => {
                             value={values.amount}
                             style={{width: 150}}
                         />
+                        <p></p>
+                        <Typography style={{display: "flex", justifyContent: "center"}}>Sell {datas.metadata.symbol} for {lastPrice}$?</Typography>
                         <p></p>
                         <Button variant="contained" type="submit" style={{background: "black", color: "white", width: 150}}>Sell</Button>
                         <p style={{fontSize: 20, alignContent: "center"}}></p>

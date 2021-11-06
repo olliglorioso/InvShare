@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { changePrice } from "../reducers/buyingStockReducer";
 import { useEffect } from "react";
 import { Typography } from "@material-ui/core";
+import LoadingAnimation from "./LoadingAnimation"
 
 
 const MainChart = (props: {stock: string}): JSX.Element => {
@@ -13,6 +14,8 @@ const MainChart = (props: {stock: string}): JSX.Element => {
     const dispatch = useDispatch()
     if (loading) {<div></div>}
     if (!data) {<div></div>}
+
+
     console.log(rest.error?.graphQLErrors[0])
 
     let stockList: {close: number, date: string}[]= []
@@ -88,12 +91,19 @@ const MainChart = (props: {stock: string}): JSX.Element => {
     return (
         <div>
             <Typography>Last 96 hours</Typography>
-            <Chart 
-                options={options}
-                series={series}
-                type="line"
-                height={300}
-            />
+            
+            {
+                loading
+                    ? <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "50vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
+                    : rest.error
+                        ? <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", color: "red"}}>{rest.error.graphQLErrors[0].message}</div>
+                        :   <Chart 
+                            options={options}
+                            series={series}
+                            type="line"
+                            height={300}
+                        />
+            }
         </div>
     )
 }

@@ -15,6 +15,7 @@ import { store } from "react-notifications-component"
 import "react-notifications-component/dist/theme.css"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
+import * as Yup from "yup"
 
 const CssTextField = withStyles({
     root: {
@@ -74,7 +75,7 @@ const PricePerStock = ({price, handleChange}: {price: number, handleChange: any}
     )
 }
 
-const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setIsDisabled: (boo: boolean) => void, cName: string}) => {
+const Company = ({companyName, handleChange, setIsDisabled, cName}: {handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void, companyName: string, setIsDisabled: (boo: boolean) => void, cName: string}) => {
     const [name, setName] = useState(companyName)
     const dispatch = useDispatch()
     const [debounceName] = useDebounce(name, 1500)
@@ -94,6 +95,7 @@ const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setI
     const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsDisabled(true)
         setName(event.target.value)
+        handleChange(event)
     }
 
     return (
@@ -103,6 +105,7 @@ const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setI
                 autoComplete="off"
                 type="company"
                 variant="outlined"
+                name="company"
                 label="Company"
                 onChange={onChange}
                 value={name}
@@ -118,6 +121,15 @@ const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setI
     )
 }
 
+const ValidationSchema = Yup.object().shape({
+    company: Yup.string()
+        .required("Required field."),
+    amount: Yup.number()
+        .required("Required field.")
+        .transform((value: string) => parseInt(value))
+        .min(1, "Amount must be at least one.")
+})
+
 const BuyStocks = (): JSX.Element => {
     const price = useSelector<RootState, number>((state) => state.stock.stockPrice)
     const cName = useSelector<RootState, string>((state) => state.stock.stockName)
@@ -125,11 +137,13 @@ const BuyStocks = (): JSX.Element => {
     const [buyStock, {data, loading, error}] = useMutation(BUY_STOCK)
     const [isDisabled, setIsDisabled] = useState(false)
     const dispatch = useDispatch()
-    console.log(error)
+
+    
     return (
         <div>
             <Formik
                 initialValues={initialValues}
+                validationSchema={ValidationSchema}
                 onSubmit={(values) => {
                     confirmAlert({
                         title: "Confirmation",
@@ -179,10 +193,18 @@ const BuyStocks = (): JSX.Element => {
                 }}
             >
                 {({
-                    handleSubmit, values, handleChange
+                    handleSubmit, values, handleChange, errors, touched
                 }) => (
                     <form onSubmit={handleSubmit}>
-                        <Company setIsDisabled={(val: boolean) => setIsDisabled(val)} companyName={values.company} cName={cName}/>
+                        <Company handleChange={handleChange} setIsDisabled={(val: boolean) => setIsDisabled(val)} companyName={values.company} cName={cName}/>
+                        {
+                            errors.company
+                                ? <div style={{color: "red"}}>{errors.company}</div>
+                                : null
+                        }
+                        {
+                            console.log(errors)
+                        }
                         <p></p>
                         <CssTextField
                             id="amount"
@@ -196,9 +218,15 @@ const BuyStocks = (): JSX.Element => {
                                     <InputAdornment position="start">
                                         <Add />
                                     </InputAdornment>
-                                )
+                                ),
+                                inputProps: {min: 0}
                             }}
                         />
+                        {
+                            errors.amount
+                                ? <div style={{color: "red"}}>{errors.amount}</div>
+                                : null
+                        }
                         <p></p>
                         <PricePerStock price={price} handleChange={handleChange} />
                         <FinalInformation price={price} amount={values.amount} />

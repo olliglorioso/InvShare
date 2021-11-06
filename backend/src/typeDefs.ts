@@ -77,6 +77,10 @@ export const typeDefs: DocumentNode = gql`
         currentPortfolioValue (mode: String!): [AnalysisType]
     }
 
+    type Resp {
+        res: Int!
+    }
+
     type Mutation {
         addUser (
             username: String!
@@ -90,6 +94,11 @@ export const typeDefs: DocumentNode = gql`
             stockName: String!
             amount: Int!
         ): Transaction
+        sellStock(
+            stockName: String!
+            amount: Int!
+            price: Float!
+        ): Resp
     }
 `;
 

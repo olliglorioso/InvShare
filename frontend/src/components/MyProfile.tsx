@@ -9,12 +9,14 @@ import Analysis from "./Analysis"
 import {TransactionType, NewAnalysisData} from "../types"
 import { useSelector } from "react-redux"
 import { RootState } from ".."
+import LoadingAnimation from "./LoadingAnimation"
 
-const MyProfile = () => {
+const MyProfile = (): JSX.Element => {
     const result = useQuery(ME)
     const [loadCPV, {data}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
     const [loadCPV2, {...res}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
     const [mode, setMode] = useState("Analysis")
+    const [finalWholeValue, setFinalWholeValue] = useState(0)
     const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
 
     useEffect(() => {
@@ -38,10 +40,10 @@ const MyProfile = () => {
 
 
     if (!data) {
-        return <div style={{padding: 100}}><h1>LOADING</h1></div>
+        return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
     }
     if (!res.data) {
-        return <div style={{padding: 100}}><h1>LOADING</h1></div>
+        return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
     }
 
     let analysisData: NewAnalysisData
@@ -63,8 +65,13 @@ const MyProfile = () => {
 
     const positions = result.data.me.usersHoldings
     const transactions = result.data.me.usersTransactions
-    const allTimeProfit = (100 * (-1 + analysisData.wholeValue/totalOriginalValue)).toFixed(2)
-    
+
+
+    if (!switchMode.mode && finalWholeValue === 0) {
+        setFinalWholeValue(analysisData.wholeValue)
+    }
+
+    const allTimeProfit = (100 * (-1 + finalWholeValue/totalOriginalValue)).toFixed(2)
     return (
         <div style={{
             background: "white",
