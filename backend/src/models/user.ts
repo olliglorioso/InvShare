@@ -6,7 +6,7 @@ const schema = new mongoose.Schema<UserType>({
     type: String,
     required: true,
     unique: true, 
-    minglength: 5
+    minglength: 4
   },
   usersPasswordHash: {
     type: String,
@@ -28,7 +28,10 @@ const schema = new mongoose.Schema<UserType>({
       usersTotalOriginalPriceValue: {type: Number}
     }
   ],
-  
+  moneyMade: {
+    type: Number,
+    required: true
+  }
 });
 
 schema.set("toJSON", {

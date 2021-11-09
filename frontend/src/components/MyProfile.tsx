@@ -4,19 +4,23 @@ import { CURRENT_PORTFOLIO_VALUE, ME } from "../graphql/queries"
 import {Card, CardContent, CardHeader, Typography, Button} from "@material-ui/core"
 import Avatar from "boring-avatars"
 import TransactionList from "./TransactionList"
-import Positions from "./Positions"
 import Analysis from "./Analysis"
-import {TransactionType, NewAnalysisData} from "../types"
+import {TransactionType, NewAnalysisData, Positions} from "../types"
 import { useSelector } from "react-redux"
 import { RootState } from ".."
 import LoadingAnimation from "./LoadingAnimation"
+import {AnimateKeyframes} from "react-simple-animate"
+import { noPurchases } from "../reducers/firstBuyReducer"
+import {ArrowRightAlt} from "@material-ui/icons"
+import { useDispatch } from "react-redux"
+import PositionsSite from "./Positions"
 
 const MyProfile = (): JSX.Element => {
     const result = useQuery(ME)
+    const dispatch = useDispatch()
     const [loadCPV, {data}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
     const [loadCPV2, {...res}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
     const [mode, setMode] = useState("Analysis")
-    const [finalWholeValue, setFinalWholeValue] = useState(0)
     const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
 
     useEffect(() => {
@@ -24,20 +28,7 @@ const MyProfile = (): JSX.Element => {
         loadCPV2({variables: {mode: "hours"}})
     }, [])
 
-    useEffect(() => {
-        if (!data || !res.data) {
-            return 
-        }
-        if (!res.data) {
-            return
-        }
-        if (switchMode.mode) {
-            analysisData = data.currentPortfolioValue[0]
-        } else {
-            analysisData = res.data.currentPortfolioValue[0]
-        }
-    }, [switchMode.mode])
-
+    let analysisData: NewAnalysisData
 
     if (!data) {
         return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
@@ -46,32 +37,59 @@ const MyProfile = (): JSX.Element => {
         return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
     }
 
-    let analysisData: NewAnalysisData
-
     if (switchMode.mode) {
         analysisData = data.currentPortfolioValue[0]
     } else {
         analysisData = res.data.currentPortfolioValue[0]
+        
     }
 
+    if (!result.data || !result.data.me) {
+        return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
+    }
 
-    let totalOriginalValue: number
+    
 
-    if (result.data && result.data.me) {
-        totalOriginalValue = result.data.me.usersTransactions.reduce((a: number, b: TransactionType): number => a + (b.transactionStockPrice * b.transactionStockAmount), 0)
-    } else {
-        return <div></div>
+    if (result.data.me.usersHoldings.length === 0 && result.data.me.usersTransactions.length >= 0) {
+        dispatch(noPurchases())
+        return (
+            <div>
+                <div style={{width: "0px", height: "0px", }}>
+                    <AnimateKeyframes
+                        play
+                        iterationCount="infinite"
+                        keyframes={["opacity: 0", "opacity: 1"]}
+                        duration={3}
+                    >
+                        <ArrowRightAlt style={{fontSize: "250px", color: "black", paddingLeft: "25vh", paddingBottom: "15vh", transform: "rotate(225deg)"}}/>
+                    </AnimateKeyframes>
+                </div>
+                <div style={{display: "flex", opacity: "100%", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}>
+                    <Typography>You have bought no stocks. Follow the instructions in order to buy one.</Typography>
+                </div>
+            </div>
+        )
     }
 
     const positions = result.data.me.usersHoldings
     const transactions = result.data.me.usersTransactions
+    const totalOriginalValue = result.data.me.usersTransactions.reduce(
+        (a: number, b: TransactionType): number =>
+        {
+            if (positions.find((position: Positions) => position.usersStockName.stockSymbol === b.transactionStock.stockSymbol)) {
+                if (b.transactionType === "Buy") {
+                    
+                    return a + (b.transactionStockPrice * b.transactionStockAmount)
+                } else if (b.transactionType === "Sell") {
+                    return a - (b.transactionStockPrice * b.transactionStockAmount)
+                } else {
+                    throw new Error("Invalid transaction type.")
+                }
+            } else {return a}
+        }
+        , 0)
+    const allTimeProfit = (100 * (-1 + res.data.currentPortfolioValue[0].wholeValue/totalOriginalValue)).toFixed(2)
 
-
-    if (!switchMode.mode && finalWholeValue === 0) {
-        setFinalWholeValue(analysisData.wholeValue)
-    }
-
-    const allTimeProfit = (100 * (-1 + finalWholeValue/totalOriginalValue)).toFixed(2)
     return (
         <div style={{
             background: "white",
@@ -111,7 +129,7 @@ const MyProfile = (): JSX.Element => {
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                             <div style={{justifyContent: "center"}}>
                                 <Typography style={{fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{Math.round(analysisData.wholeValue)}</Typography>
-                                <Typography>Current value</Typography>
+                                <Typography style={{textAlign: "center"}}>Current value</Typography>
                             </div>
                             <div>
                                 {
@@ -120,11 +138,15 @@ const MyProfile = (): JSX.Element => {
                                         : <Typography style={{color: "red", fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{allTimeProfit}%</Typography>
                                 }
                                 
-                                <Typography>Profit all time</Typography>
+                                <Typography style={{textAlign: "center"}}>Profit all time</Typography>
                             </div>
                             <div>
                                 <Typography style={{fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{Math.round(totalOriginalValue)}</Typography>
-                                <Typography>Original value</Typography>
+                                <Typography style={{textAlign: "center"}}>Original value</Typography>
+                            </div>
+                            <div>
+                                <Typography style={{fontWeight: "bold", fontSize: 30, textAlign: "center"}}>{Math.round(result.data.me.moneyMade)}</Typography>
+                                <Typography style={{textAlign: "center"}}>Profit</Typography>
                             </div>
                         </div>
                     </CardContent>
@@ -145,7 +167,7 @@ const MyProfile = (): JSX.Element => {
                 mode === "Positions"
                     ?
                     <div>
-                        <Positions />
+                        <PositionsSite />
                     </div>
                     : mode === "Analysis"
                         ? 

@@ -68,24 +68,26 @@ const resolvers = {
 
     Mutation: {
         addUser: async (_root: undefined, args: UserInformation): Promise<UserType | string> => {
+            console.log(args)
             const parsedUserInformation = parseUserInformation(args)
             const isUsernameFree = await User.find({usersUsername: parsedUserInformation.username})
             if (isUsernameFree.length > 0) {
                 throw new UserInputError("The username is already in use.", {errorCode: 400})
             }
+            
             const passwordHash = await hash(parsedUserInformation.password, 10)
             const user = new User({
                 usersUsername: parsedUserInformation.username,
                 usersPasswordHash: passwordHash,
                 usersTransactions: [],
-                usersHoldings: []
+                usersHoldings: [],
+                moneyMade: 0
             });
             return await user.save();
         },
         login: async (_root: undefined, args: UserInformation): Promise<void | {value: string}> => {
             const parsedUserInformation = parseUserInformation(args)
             const user = await User.findOne({usersUsername: parsedUserInformation.username})
-
             const passwordCorrect = user === null
                 ? false
                 : await compare(parsedUserInformation.password, user.usersPasswordHash)
@@ -218,7 +220,7 @@ const resolvers = {
                                         _id: obj._id as mongoose.Types.ObjectId,
                                         usersStockName: obj.usersStockName._id as mongoose.Types.ObjectId,
                                         usersTotalAmount: obj.usersTotalAmount - parsedAmount,
-                                        usersTotalOriginalPriceValue: obj.usersTotalOriginalPriceValue
+                                        usersTotalOriginalPriceValue: obj.usersTotalOriginalPriceValue - (parsedAmount * parsedPrice)
                                     }
                                 } else {
                                     return {
@@ -228,7 +230,8 @@ const resolvers = {
                                         usersTotalOriginalPriceValue: obj.usersTotalOriginalPriceValue
                                     }
                                 }
-                            })
+                            }),
+                            moneyMade: context.currentUser.moneyMade + (-1) * ((holding.usersTotalOriginalPriceValue / holding.usersTotalAmount) * parsedAmount - parsedAmount * parsedPrice)
                         }})
                     } else {
                         const user = await User.findOne({_id: context.currentUser._id})
@@ -244,8 +247,6 @@ const resolvers = {
             } else {
                 throw new UserInputError("You don't own this stock.")
             }
-            console.log(holding)
-            console.log(parsedCompany, parsedAmount, parsedPrice)
             return {res: 1}
         }
     }

@@ -1,9 +1,11 @@
 import React from "react"
 import {useFormik} from "formik"
 import { Button, TextField, InputAdornment } from "@material-ui/core";
-import { AccountCircle, LockRounded, EmailOutlined } from "@material-ui/icons";
+import { AccountCircle, LockRounded} from "@material-ui/icons";
 import { withStyles } from "@material-ui/styles";
 import { useHistory } from "react-router-dom";
+import ADD_USER from "../graphql/queries";
+import { useMutation} from "@apollo/client";
 
 const CssTextField = withStyles({
     root: {
@@ -29,23 +31,23 @@ const CssTextField = withStyles({
 
 const SignUpForm = (): JSX.Element => {
     const history = useHistory()
+    const [addUser, ...res] = useMutation(ADD_USER)
 
     const formik = useFormik({
         initialValues: {
             username: "",
-            email: "",
             password: "",
             password_again: ""
         },
         onSubmit: values => {
-            alert(JSON.stringify(values, null, 2));
-            history.push("/")
+            addUser({variables: {username: values.username, password: values.password}})
+            console.log(res)
         },
     });
     return (
         <form onSubmit={formik.handleSubmit}>
             <CssTextField
-                id="su_username"
+                id="username"
                 type="username"
                 variant="outlined"
                 label="Username"
@@ -61,23 +63,7 @@ const SignUpForm = (): JSX.Element => {
             />
             <p></p>
             <CssTextField
-                id="email"
-                type="email"
-                variant="outlined"
-                label="Email"
-                onChange={formik.handleChange}
-                value={formik.values.username}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <EmailOutlined />
-                        </InputAdornment>
-                    )
-                }}
-            />
-            <p></p>
-            <CssTextField
-                id="su_password"
+                id="password"
                 type="password"
                 variant="outlined"
                 label="Password"
@@ -98,7 +84,7 @@ const SignUpForm = (): JSX.Element => {
                 variant="outlined"
                 label="Password again"
                 onChange={formik.handleChange}
-                value={formik.values.username}
+                value={formik.values.password_again}
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">

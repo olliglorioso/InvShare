@@ -28,10 +28,9 @@ export const GET_PREDICTION = gql`
 `
 
 const ADD_USER = gql`
-mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
-    addUser(username: $addUserUsername, password: $addUserPassword) {
-        username
-        passwordHash
+mutation addUser($username: String!, $password: String!) {
+    addUser(username: $username, password: $password) {
+        usersUsername
     }
   }
 `
@@ -96,6 +95,7 @@ export const ME = gql`
         }
         _id
       }
+      moneyMade
     }
   }
 `

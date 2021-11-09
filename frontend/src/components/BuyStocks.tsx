@@ -3,7 +3,7 @@ import { Formik } from "formik"
 import { withStyles } from "@material-ui/styles"
 import { TextField, Button, Typography } from "@material-ui/core"
 import { InputAdornment } from "@material-ui/core"
-import { Business, MonetizationOn, Add } from "@material-ui/icons"
+import { Business, MonetizationOn, Add, ArrowRightAlt } from "@material-ui/icons"
 import { changeStock } from "../reducers/buyingStockReducer"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from ".."
@@ -16,6 +16,7 @@ import "react-notifications-component/dist/theme.css"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
 import * as Yup from "yup"
+import { buyFirstStock } from "../reducers/firstBuyReducer"
 
 const CssTextField = withStyles({
     root: {
@@ -167,6 +168,7 @@ const BuyStocks = (): JSX.Element => {
                                     })
                                     buyStock({variables: {stockName: cName.toUpperCase(), amount: parseInt(values.amount)}})
                                     dispatch(changeStock(""))
+                                    dispatch(buyFirstStock())
                                 }
                             },
                             {
@@ -196,14 +198,12 @@ const BuyStocks = (): JSX.Element => {
                     handleSubmit, values, handleChange, errors, touched
                 }) => (
                     <form onSubmit={handleSubmit}>
+                        
                         <Company handleChange={handleChange} setIsDisabled={(val: boolean) => setIsDisabled(val)} companyName={values.company} cName={cName}/>
                         {
                             errors.company
                                 ? <div style={{color: "red"}}>{errors.company}</div>
                                 : null
-                        }
-                        {
-                            console.log(errors)
                         }
                         <p></p>
                         <CssTextField

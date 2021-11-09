@@ -113,6 +113,7 @@ export interface UserType {
     usersTransactions: TransactionType[],
     usersHoldings: HoldingType[],
     _id?: mongoose.Types.ObjectId,
+    moneyMade: number
 }
 
 
@@ -134,5 +135,6 @@ export interface PopulatedUserType {
     usersPasswordHash: string, 
     usersTransactions: TransactionType[],
     usersHoldings: PopulatedHoldingType[],
-    _id?: mongoose.Types.ObjectId
+    _id?: mongoose.Types.ObjectId,
+    moneyMade: number
 }

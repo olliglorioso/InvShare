@@ -21,6 +21,12 @@ export const parseUserInformation = (userInformation: any): UserInformation => {
         !isString(userInformation.username) || !isString(userInformation.password)) {
         throw new UserInputError("Incorrect type of username or password.", {errorCode: 400})
     }
+    if (userInformation.username.length < 4) {
+        throw new UserInputError("Username too short.", {errorCode: 400})
+    }
+    if (userInformation.password.length < 8) {
+        throw new UserInputError("Password too short.", {errorCode: 400})
+    }
     return userInformation
 }
 

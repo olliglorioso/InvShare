@@ -41,6 +41,7 @@ export const typeDefs: DocumentNode = gql`
         usersPasswordHash: String!
         usersTransactions: [Transaction]!
         usersHoldings: [Holding]!
+        moneyMade: Float!
         id: ID!
     }
 

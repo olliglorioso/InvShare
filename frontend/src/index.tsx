@@ -9,6 +9,7 @@ import { createStore, combineReducers } from "redux";
 import { Provider } from "react-redux"
 import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from "@apollo/client"
 import { setContext } from "@apollo/client/link/context"
+import firstBuyReducer from "./reducers/firstBuyReducer";
 
 
 const reducer = combineReducers({
@@ -16,6 +17,7 @@ const reducer = combineReducers({
     sidebar: sidebarReducer,
     stock: buyingStockReducer,
     mode: modeSwitchReducer,
+    purchase: firstBuyReducer,
 })
 
 const store = createStore(reducer)
