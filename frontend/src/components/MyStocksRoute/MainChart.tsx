@@ -1,34 +1,21 @@
 import React from "react";
 import Chart from "react-apexcharts"
 import { useQuery } from "@apollo/client";
-import { INDIVIDUAL_STOCK } from "../graphql/queries";
+import { INDIVIDUAL_STOCK } from "../../graphql/queries";
 import { useDispatch } from "react-redux";
-import { changePrice } from "../reducers/buyingStockReducer";
+import { changePrice } from "../../reducers/buyingStockReducer";
 import { useEffect } from "react";
 import { Typography } from "@material-ui/core";
-import LoadingAnimation from "./LoadingAnimation"
-
+import LoadingAnimation from "../Other/LoadingAnimation"
+import leadingZeros, {myOption2, options} from "../Other/helpers";
 
 const MainChart = (props: {stock: string}): JSX.Element => {
     const {data, loading, ...rest} = useQuery(INDIVIDUAL_STOCK, {variables: {company: props.stock}})
     const dispatch = useDispatch()
-    if (loading) {<div></div>}
-    if (!data) {<div></div>}
-
-
-    console.log(rest.error?.graphQLErrors[0])
 
     let stockList: {close: number, date: string}[]= []
     if (data) {
         stockList = data.individualStock.map((b: {__typename: string, close: number, date: string}): {close: number, date: string} => {return {close: b.close, date: b.date}})
-    }
-
-    const leadingZeros = (num: number): string => {
-        if (num < 10) {
-            return "0" + num.toString()
-        } else {
-            return num.toString()
-        }
     }
 
     useEffect(() => {
@@ -40,38 +27,7 @@ const MainChart = (props: {stock: string}): JSX.Element => {
         }
     },[data])
   
-
-    const myString = "zoom"
-    const myOption: "zoom" | "selection" | "pan" | undefined = myString as "zoom" | "selection" | "pan" | undefined 
-
-    const myDateOption = "category"
-    const myOption2: "datetime" | "category" | "numeric" | undefined = myDateOption as "datetime" | "category" | "numeric" | undefined
-
-    const options = {
-        chart: {
-            id: "börse",
-            fontFamily: "Roboto",
-            background: "FFFFFF",
-            toolbar: {
-                show: true,
-                offsetX: 0,
-                offsetY: 0,
-                tools: {
-                    download: false,
-                    selection: false,
-                    zoom: "<img src=\"https://image.flaticon.com/icons/png/512/1086/1086933.png\" style=\"padding-top: 3px;\" width=\"22\">",
-                    zoomin: false,
-                    zoomout: false,
-                    pan: "<img src=\"https://image.flaticon.com/icons/png/512/1/1427.png\" width=\"30\">",
-                    reset: "<img src=\"https://image.flaticon.com/icons/png/512/32/32303.png\" width=\"22\" style=\"padding-top: 3px;\">"
-                },
-                autoSelected: myOption,
-            },
-        },
-        colors: ["#000000", "#000000"],
-        stroke: {
-            width: 1
-        },
+    const options2 = {...options,
         xaxis: {
             categories: stockList.map((x: {close: number, date: string}) => x.date),
             type: myOption2,
@@ -84,6 +40,7 @@ const MainChart = (props: {stock: string}): JSX.Element => {
             }
         },
     }
+
     const series = [{
         name: props.stock.toUpperCase(),
         data: stockList.map((y: {close: number, date: string}) => y.close.toFixed(2)) || [0],
@@ -95,10 +52,10 @@ const MainChart = (props: {stock: string}): JSX.Element => {
             {
                 loading
                     ? <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "50vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
-                    : rest.error
+                    : rest.error && rest.error.graphQLErrors[0].message !== "Incorrect or missing symbol."
                         ? <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", color: "red"}}>{rest.error.graphQLErrors[0].message}</div>
                         :   <Chart 
-                            options={options}
+                            options={options2}
                             series={series}
                             type="line"
                             height={300}

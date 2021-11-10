@@ -45,6 +45,10 @@ export const typeDefs: DocumentNode = gql`
         id: ID!
     }
 
+    type Subscription {
+        stockPurchased: Transaction!
+    }
+
     type AnalysisData {
         name: String
         sticks: [IndividualStock]
@@ -99,7 +103,7 @@ export const typeDefs: DocumentNode = gql`
             stockName: String!
             amount: Int!
             price: Float!
-        ): Resp
+        ): Transaction!
     }
 `;
 

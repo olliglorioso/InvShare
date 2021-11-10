@@ -1,19 +1,19 @@
 import React, {useState, useEffect} from "react"
 import { useLazyQuery, useQuery } from "@apollo/client"
-import { CURRENT_PORTFOLIO_VALUE, ME } from "../graphql/queries"
+import { CURRENT_PORTFOLIO_VALUE, ME } from "../../graphql/queries"
 import {Card, CardContent, CardHeader, Typography, Button} from "@material-ui/core"
 import Avatar from "boring-avatars"
 import TransactionList from "./TransactionList"
 import Analysis from "./Analysis"
-import {TransactionType, NewAnalysisData, Positions} from "../types"
+import {TransactionType, Positions} from "../../types"
 import { useSelector } from "react-redux"
-import { RootState } from ".."
-import LoadingAnimation from "./LoadingAnimation"
+import { RootState } from "../.."
+import LoadingAnimation from "../Other/LoadingAnimation"
 import {AnimateKeyframes} from "react-simple-animate"
-import { noPurchases } from "../reducers/firstBuyReducer"
-import {ArrowRightAlt} from "@material-ui/icons"
+import { noPurchases } from "../../reducers/firstBuyReducer"
 import { useDispatch } from "react-redux"
 import PositionsSite from "./Positions"
+import {Arrow90degUp} from "react-bootstrap-icons"
 
 const MyProfile = (): JSX.Element => {
     const result = useQuery(ME)
@@ -23,49 +23,36 @@ const MyProfile = (): JSX.Element => {
     const [mode, setMode] = useState("Analysis")
     const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
 
+    
+
     useEffect(() => {
         loadCPV({variables: {mode: "days"}})
         loadCPV2({variables: {mode: "hours"}})
     }, [])
 
-    let analysisData: NewAnalysisData
-
-    if (!data) {
-        return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
-    }
-    if (!res.data) {
+    if (!data || !res.data || !result.data || !result.data.me) {
         return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
     }
 
-    if (switchMode.mode) {
-        analysisData = data.currentPortfolioValue[0]
-    } else {
-        analysisData = res.data.currentPortfolioValue[0]
-        
-    }
-
-    if (!result.data || !result.data.me) {
-        return <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}><LoadingAnimation type={"spin"} color={"black"}/></div>
-    }
-
-    
+    const analysisData = switchMode.mode ? data.currentPortfolioValue[0]: res.data.currentPortfolioValue[0]
 
     if (result.data.me.usersHoldings.length === 0 && result.data.me.usersTransactions.length >= 0) {
         dispatch(noPurchases())
         return (
-            <div>
-                <div style={{width: "0px", height: "0px", }}>
+            <div style={{background: "white"}}>
+                <div style={{width: "0px", height: "0px"}}>
                     <AnimateKeyframes
                         play
                         iterationCount="infinite"
                         keyframes={["opacity: 0", "opacity: 1"]}
                         duration={3}
                     >
-                        <ArrowRightAlt style={{fontSize: "250px", color: "black", paddingLeft: "25vh", paddingBottom: "15vh", transform: "rotate(225deg)"}}/>
+                        <Arrow90degUp size={50} style={{paddingTop: 60, paddingLeft: 7}}/>
+                        <Typography style={{width: 200, paddingLeft: 7}}>Open the sidebar!</Typography>
                     </AnimateKeyframes>
                 </div>
-                <div style={{display: "flex", opacity: "100%", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh"}}>
-                    <Typography>You have bought no stocks. Follow the instructions in order to buy one.</Typography>
+                <div style={{display: "flex", opacity: "100%", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh", paddingLeft: "2vh", paddingRight: "2vh"}}>
+                    <Typography>You have bought no stocks. Follow the instructions and glinting objects in order to buy one.</Typography>
                 </div>
             </div>
         )
@@ -89,7 +76,6 @@ const MyProfile = (): JSX.Element => {
         }
         , 0)
     const allTimeProfit = (100 * (-1 + res.data.currentPortfolioValue[0].wholeValue/totalOriginalValue)).toFixed(2)
-
     return (
         <div style={{
             background: "white",
@@ -108,18 +94,6 @@ const MyProfile = (): JSX.Element => {
                                 <div style={{flex: 1}}>
                                     <Typography style={{fontSize: 30, flex: 1}}>{result.data.me.usersUsername}</Typography>
                                 </div>
-                                {/* <div style={{paddingRight: "3vh"}}>
-                                    <Typography style={{fontWeight: "bold", textAlign: "center"}}>{Math.round(totalOriginalValue)}</Typography>
-                                    <Typography>Rating</Typography>
-                                </div>
-                                <div style={{paddingRight: "3vh"}}>
-                                    <Typography style={{fontWeight: "bold", textAlign: "center"}}>{Math.round(totalOriginalValue)}</Typography>
-                                    <Typography>Account created</Typography>
-                                </div>
-                                <div>
-                                    <Typography style={{fontWeight: "bold", textAlign: "center"}}>{Math.round(totalOriginalValue)}</Typography>
-                                    <Typography>Followers</Typography>
-                                </div> */}
                             </div>
                             
                         }

@@ -1,15 +1,16 @@
 import { Typography, Switch} from "@material-ui/core"
 import React from "react"
 import Chart from "react-apexcharts"
-import { AnalysisData, CandleStock, Positions } from "../types"
-import { changeMode } from "../reducers/modeSwitchReducer"
+import { AnalysisData, CandleStock, Positions } from "../../types"
+import { changeMode } from "../../reducers/modeSwitchReducer"
 import { useDispatch, useSelector } from "react-redux"
-import { RootState } from ".."
+import { RootState } from "../.."
 import AnalysisTable from "./AnalysisTable"
 import OldData from "./OldData"
 import { useLazyQuery } from "@apollo/client"
-import { GET_PREDICTION } from "../graphql/queries"
-import LoadingAnimation from "./LoadingAnimation"
+import { GET_PREDICTION } from "../../graphql/queries"
+import LoadingAnimation from "../Other/LoadingAnimation"
+import leadingZeros, {myOption2, options} from "../Other/helpers"
 
 const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisData: AnalysisData[], positions: Positions[], totalOriginalValue: number}) => {
     let stickcount = 0
@@ -51,58 +52,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
         valueSeries = valueSeries.concat(parseFloat((100*(-1 + sum/totalOriginalValue)).toFixed(2)))
     })
 
-
-    const myString = "zoom"
-    const myOption: "zoom" | "selection" | "pan" | undefined = myString as "zoom" | "selection" | "pan" | undefined 
-
-    const myDateOption = "category"
-    const myOption2: "datetime" | "category" | "numeric" | undefined = myDateOption as "datetime" | "category" | "numeric" | undefined
-
-    const leadingZeros = (num: number): string => {
-        if (num < 10) {
-            return "0" + num.toString()
-        } else {
-            return num.toString()
-        }
-    }
-
-    const changeModeComp = () => {
-        dispatch(changeMode())
-    }
-
-    const checkedOrNot = () => {
-        if (switchMode.mode) {
-            return true
-        } else {
-            return false
-        }
-    }
-
-    const options = {
-        chart: {
-            id: "börse",
-            fontFamily: "Roboto",
-            background: "FFFFFF",
-            toolbar: {
-                show: true,
-                offsetX: 0,
-                offsetY: 0,
-                tools: {
-                    download: false,
-                    selection: false,
-                    zoom: "<img src=\"https://image.flaticon.com/icons/png/512/1086/1086933.png\" style=\"padding-top: 3px;\" width=\"22\">",
-                    zoomin: false,
-                    zoomout: false,
-                    pan: "<img src=\"https://image.flaticon.com/icons/png/512/1/1427.png\" width=\"30\">",
-                    reset: "<img src=\"https://image.flaticon.com/icons/png/512/32/32303.png\" width=\"22\" style=\"padding-top: 3px;\">"
-                },
-                autoSelected: myOption,
-            },
-        },
-        colors: ["#000000", "#000000"],
-        stroke: {
-            width: 1
-        },
+    const options2 = {...options, 
         xaxis: {
             categories: dates,
             type: myOption2,
@@ -123,8 +73,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
                     return `${value.toFixed(2)}%`
                 },
             }
-        }
-    }
+        }}
     const series = [{
         name: "Portfolio value (%)",
         data: valueSeries.map((x: number): number => x)
@@ -143,15 +92,15 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
                 </Typography>
                 <Switch 
                     color={"default"} 
-                    checked={checkedOrNot()} 
-                    onChange={() => changeModeComp()}
+                    checked={switchMode.mode} 
+                    onChange={() => dispatch(changeMode())}
                 ></Switch>
                 <Typography>
                     Daily since first transaction
                 </Typography>
             </div>
             <Chart 
-                options={options}
+                options={options2}
                 series={series}
                 type="line"
                 height={300}
@@ -161,7 +110,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
                 {
                     res.loading
                         ? <div style={{display: "flex", justifyContent: "center", paddingTop: 15}}><LoadingAnimation type={"spin"} color={"black"}/></div>
-                        : <OldData datas={res.data?.stockPrediction} loading={res.loading} analysisData={analysisData} positions={positions} />
+                        : <OldData datas={res.data?.stockPrediction} analysisData={analysisData} />
                 }
             </div>
             

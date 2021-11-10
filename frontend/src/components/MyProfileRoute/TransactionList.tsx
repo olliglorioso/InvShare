@@ -2,7 +2,8 @@ import React, {useState} from "react";
 import { ListSubheader, Collapse, Button, List, ListItemIcon, ListItemText } from "@material-ui/core";
 import { KeyboardArrowRight, ShoppingCart, Delete } from "@material-ui/icons";
 import { ExpandLess, ExpandMore} from "@material-ui/icons";
-import {TransactionType} from "../types"
+import {TransactionType} from "../../types"
+import leadingZeros from "../Other/helpers";
 
 const TransactionList = (props: {transactions: TransactionType[]}): JSX.Element => {
     const transactionStates = props.transactions.map((trans: TransactionType): string => trans._id.toString()).reduce((a, v) => ({ ...a, [v]: false}), {}) 
@@ -12,17 +13,8 @@ const TransactionList = (props: {transactions: TransactionType[]}): JSX.Element 
         setOpen((prevState: Record<string, boolean>) => ({...prevState, [id]: !prevState[id]}))
     };
 
-    const leadingZeros = (num: number): string => {
-        if (num < 10) {
-            return "0" + num.toString()
-        } else {
-            return num.toString()
-        }
-    }
-
     return (
         <List
-            // sx={{ width: "100%", maxWidth: 360 }}
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={

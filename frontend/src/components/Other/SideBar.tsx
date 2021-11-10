@@ -1,32 +1,20 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { ListItem, List, Divider, ListItemText, Drawer } from "@material-ui/core";
-import { actionEnableSidebar } from "../reducers/sidebarReducer";
-import { RootState } from "..";
-import { makeStyles } from "@material-ui/core";
+import { actionEnableSidebar } from "../../reducers/sidebarReducer";
+import { RootState } from "../..";
 import { AccountCircle, Explore, Settings, ShowChart } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
 import { AnimateKeyframes } from "react-simple-animate";
+import {useStylesSidebar} from "../Other/helpers"
 
-const useStyles = makeStyles({
-    paper: {
-        background: "black",
-        color: "white"
-    },
-    divider: {
-        background: "white",
-        height: 3
-    }
-})
 
 const SideBar = (): JSX.Element => {
     const dispatch = useDispatch()
     const sidebarState = useSelector<RootState, boolean>((state): boolean => state.sidebar)
-    const styles = useStyles()
+    const styles = useStylesSidebar()
     const history = useHistory()
     const purchaseState = useSelector<RootState, boolean>((state): boolean => state.purchase)
-
-    console.log(purchaseState)
 
     return (
         <div>

@@ -1,13 +1,13 @@
 import React from "react";
 import MenuIcon from "@material-ui/icons/Menu";
-import useStyles from "../styles/styles";
-import { actionEnableSidebar } from "../reducers/sidebarReducer";
+import useStyles from "../../styles/styles";
+import { actionEnableSidebar } from "../../reducers/sidebarReducer";
 import {IconButton, AppBar, Toolbar, Typography, Button} from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { RootState } from "..";
+import { RootState } from "../..";
 import { useApolloClient } from "@apollo/client";
-import { logUserOut } from "../reducers/userLoggedReducer";
+import { logUserOut } from "../../reducers/userLoggedReducer";
 
 const MenuBar = (): JSX.Element => {
     const styles = useStyles()

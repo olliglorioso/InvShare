@@ -10,6 +10,9 @@ import { CandlesType, TransactionType, UserType, PopulatedUserType, UserInformat
 import { AuthenticationError, UserInputError} from "apollo-server-express"
 import {getIndividualStockInformation, getAlphaVantage, createDate, getTransactionToReturn } from "./helpFunctions"
 import { parseCompany, parseUserInformation, parseAmount } from "./typeGuards"
+import { PubSub } from "graphql-subscriptions"
+
+const pubsub = new PubSub()
 
 const setDate = (hours: number): Date => {
     const date = new Date()
@@ -41,22 +44,22 @@ const resolvers = {
             let values: AnalysisValue[] = []
             if (context.currentUser && context.currentUser.usersTransactions?.length > 0) {
                 const firstBuyDate = context.currentUser.usersTransactions[0].transactionDate
-                let lastDate: Date
-                new Date(firstBuyDate) < setDate(-96)
-                ? lastDate = new Date(firstBuyDate)
-                : lastDate = setDate(-96)
 
                 for (const item of context.currentUser.usersHoldings) {
                     const a = await Stock.find({stockSymbol: item.usersStockName.stockSymbol})
                     let value: CandlesType[]
                     if (args.mode === "hours") {
-                        value = await getIndividualStockInformation(a[0].stockSymbol, setDate(-96), "5")
-                    } else {
-                        value = await getIndividualStockInformation(a[0].stockSymbol, lastDate, "D")
-                        if (value.length < 1) {
-                            value = await getIndividualStockInformation(a[0].stockSymbol, setDate(-96), "5")
-                            value = [value[value.length - 1]]
+                        const value1 = await getIndividualStockInformation(a[0].stockSymbol, setDate(-96), "5")
+                        new Date(firstBuyDate) > setDate(-96)
+                        ? value = value1.filter((item: CandlesType) => {return new Date(item.date) > new Date(firstBuyDate)})
+                        : value = value1
+
+                        if (value.length === 0) {
+                            value = value.concat(value1[value1.length - 1])
                         }
+                        
+                    } else  {
+                        value = await getIndividualStockInformation(a[0].stockSymbol, new Date(firstBuyDate), "D")
                     }
                     values = values.concat({name: a[0].stockSymbol, sticks: value})
                     summa += value[value.length - 1].close * item.usersTotalAmount
@@ -134,6 +137,7 @@ const resolvers = {
                 }
                 await User.updateOne({usersUsername: loggedUser.usersUsername}, {$set: newHolding})
                 await newTransaction.save()
+                pubsub.publish("STOCK_PURCHASED", {stockPurchased: newTransaction})
                 return await getTransactionToReturn(newTransaction._id)
             } else {
                 const newTransaction = new Transaction({
@@ -167,6 +171,8 @@ const resolvers = {
                         }
                     )
                     await newTransaction.save()
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: newTransaction})
+
                     return await getTransactionToReturn(newTransaction._id)
                 } else {
                     await Stock.updateOne({_id: (firstBuyEver._id as mongoose.Types.ObjectId)},
@@ -185,12 +191,14 @@ const resolvers = {
                         }}
                     )
                     await newTransaction.save()
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: newTransaction})
+
                     return await getTransactionToReturn(newTransaction._id)
                 }
                 
             }
         },
-        sellStock: async (_root: undefined, args: {stockName: string, amount: number, price: number}, context: {currentUser: PopulatedUserType}): Promise<{res: number}> => {
+        sellStock: async (_root: undefined, args: {stockName: string, amount: number, price: number}, context: {currentUser: PopulatedUserType}): Promise<TransactionType | null> => {
             const parsedCompany = parseCompany(args.stockName)
             const parsedAmount = parseAmount(args.amount)
             const parsedPrice = parseAmount(args.price)
@@ -220,7 +228,7 @@ const resolvers = {
                                         _id: obj._id as mongoose.Types.ObjectId,
                                         usersStockName: obj.usersStockName._id as mongoose.Types.ObjectId,
                                         usersTotalAmount: obj.usersTotalAmount - parsedAmount,
-                                        usersTotalOriginalPriceValue: obj.usersTotalOriginalPriceValue - (parsedAmount * parsedPrice)
+                                        usersTotalOriginalPriceValue: obj.usersTotalOriginalPriceValue - (obj.usersTotalOriginalPriceValue / obj.usersTotalAmount) * parsedAmount
                                     }
                                 } else {
                                     return {
@@ -231,23 +239,30 @@ const resolvers = {
                                     }
                                 }
                             }),
-                            moneyMade: context.currentUser.moneyMade + (-1) * ((holding.usersTotalOriginalPriceValue / holding.usersTotalAmount) * parsedAmount - parsedAmount * parsedPrice)
+                            moneyMade: context.currentUser.moneyMade + ((-1) * (holding.usersTotalOriginalPriceValue / holding.usersTotalAmount) * parsedAmount + parsedAmount * parsedPrice)
                         }})
                     } else {
                         const user = await User.findOne({_id: context.currentUser._id})
                         await User.updateOne({_id: context.currentUser._id}, {$set: {
                             usersHoldings: user?.usersHoldings.filter((obj: HoldingType): boolean => {
                                 return obj.usersStockName.toString() !== holding.usersStockName._id?.toString()
-                            })
+                            }),
+                            moneyMade: context.currentUser.moneyMade + ((-1) * (holding.usersTotalOriginalPriceValue / holding.usersTotalAmount) * parsedAmount + parsedAmount * parsedPrice)
                         }})
                     }
                     newTransaction.save()
+                    return await getTransactionToReturn(newTransaction._id)
                 }
                 
             } else {
                 throw new UserInputError("You don't own this stock.")
             }
-            return {res: 1}
+            
+        }
+    },
+    Subscription: {
+        stockPurchased: {
+            subscribe: () => pubsub.asyncIterator(["STOCK_PURCHASED"])
         }
     }
 }

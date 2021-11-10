@@ -27,6 +27,19 @@ export const GET_PREDICTION = gql`
   }
 `
 
+export const STOCK_PURCHASED = gql`
+  subscription {
+    stockPurchased {
+      transactionDate
+      transactionStock {
+        transactionSymbol
+      }
+      transactionType
+      transactionStockPrice
+    }
+  }
+`
+
 const ADD_USER = gql`
 mutation addUser($username: String!, $password: String!) {
     addUser(username: $username, password: $password) {

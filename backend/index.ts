@@ -9,6 +9,10 @@ import { PopulatedUserType } from "./src/types";
 import {typeDefs} from "./src/typeDefs";
 import express from "express"
 import cors from "cors"
+import {createServer} from "http"
+import {SubscriptionServer} from "subscriptions-transport-ws"
+import { execute, subscribe } from "graphql"
+import { makeExecutableSchema } from "@graphql-tools/schema";
 // import history from "connect-history-api-fallback"
 
 const startServer = async () => {
@@ -17,16 +21,21 @@ const startServer = async () => {
     : process.env.MONGODB_URI || ""
 
     mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-        .then(()=> {
-            console.log("connected to mongodb");
-        })
-        .catch((error) => {
-            console.log("error connection to mongodb ", error);
-        });     
+
+    const app = express()
+    app.use(cors())
+    
+    // app.use(history())
+    app.use(express.static("build"))
+    app.get("/healthcheck", (_req, res) => {
+        res.send("toimii")
+    })
+
+    const httpServer = createServer(app)
+    const schema = makeExecutableSchema({ typeDefs, resolvers })
 
     const server = new ApolloServer({
-        typeDefs,
-        resolvers,
+        schema,
         context: async ({ req }): Promise<{currentUser: (PopulatedUserType | null)} | null> => {
             const auth = req ? req.headers.authorization : null;
             if (auth && auth.toLowerCase().startsWith("bearer ")) {
@@ -37,22 +46,35 @@ const startServer = async () => {
             return null;
         },
         introspection: true,
+        plugins: [
+            {
+                async serverWillStart() {
+                    return {
+                        async drainServer () {
+                            subscriptionServer.close()
+                        }
+                    }
+                }
+            }
+        ]
     });
 
-    const app = express()
-    app.use(cors())
-    // app.use(history())
-    app.use(express.static("build"))
-    app.get("/healthcheck", (_req, res) => {
-        res.send("toimii")
-    })
+    const subscriptionServer = new SubscriptionServer({
+        execute,
+        subscribe,
+        schema,
+    }, {
+        server: httpServer,
+        path: server.graphqlPath,
+    });
+
     void await server.start()
 
     server.applyMiddleware({app})
-    void app.listen(({port: process.env.PORT}), () => {
+    void httpServer.listen(({port: process.env.PORT}), () => {
         console.log(`Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`);
-        console.log("Server works!")
-    });
+        console.log(server.graphqlPath)
+    })
     return app
 }
 

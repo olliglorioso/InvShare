@@ -1,37 +1,15 @@
 import React from "react"
 import {Formik} from "formik"
-import { Button, TextField, InputAdornment } from "@material-ui/core";
+import { Button, InputAdornment } from "@material-ui/core";
 import { AccountCircle, LockRounded } from "@material-ui/icons";
-import { withStyles } from "@material-ui/styles";
-import { LOGIN } from "../graphql/queries"
+import { LOGIN } from "../../graphql/queries"
 import {useMutation} from "@apollo/client"
 import { useHistory } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import {logUserIn} from "../reducers/userLoggedReducer"
+import {logUserIn} from "../../reducers/userLoggedReducer"
 import * as Yup from "yup"
-
-const CssTextField = withStyles({
-    root: {
-        "& label.Mui-focused": {
-            color: "grey",
-        },
-        "& .MuiInput-underline:after": {
-            borderBottomColor: "black",
-        },
-        "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-                borderColor: "grey",
-            },
-            "&:hover fieldset": {
-                borderColor: "grey",
-            },
-            "&.Mui-focused fieldset": {
-                borderColor: "black",
-            },
-        },
-    },
-})(TextField);
+import {CssTextField} from "../Other/helpers"
 
 const ValidationSchema = Yup.object().shape({
     username: Yup.string()
@@ -91,7 +69,7 @@ const LoginForm = (): JSX.Element => {
                     />
                     {
                         errors.username && touched.username
-                            ? <div style={{color: "red"}}>{errors.password}</div>
+                            ? <div style={{color: "red"}}>{errors.username}</div>
                             : null
                     }
                     <p></p>

@@ -1,78 +1,29 @@
 import React from "react";
-import { Typography, Button, TextField } from "@material-ui/core";
+import { Typography, Button} from "@material-ui/core";
 import Chart from "react-apexcharts"
-import { OldDataType } from "../types";
+import { OldDataType } from "../../types";
 import { Formik } from "formik"
-import { withStyles } from "@material-ui/styles"
-import { AnalysisData, Positions } from "../types";
+import { AnalysisData} from "../../types";
 import { useMutation } from "@apollo/client"
-import {SELL_STOCK} from "../graphql/queries"
+import {SELL_STOCK} from "../../graphql/queries"
 import * as Yup from "yup"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
 import { store } from "react-notifications-component"
+import { CssTextField, options } from "../Other/helpers";
 
-
-const CssTextField = withStyles({
-    root: {
-        "& label.Mui-focused": {
-            color: "grey",
-        },
-        "& .MuiInput-underline:after": {
-            borderBottomColor: "black",
-        },
-        "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-                borderColor: "grey",
-            },
-            "&:hover fieldset": {
-                borderColor: "grey",
-            },
-            "&.Mui-focused fieldset": {
-                borderColor: "black",
-            },
-        },
-    },
-})(TextField);
-
-const OldData = ({datas, loading, analysisData, positions}: {datas: OldDataType, loading: boolean, analysisData: AnalysisData[], positions: Positions[]}) => {
+const OldData = ({datas, analysisData}: {datas: OldDataType, analysisData: AnalysisData[]}) => {
     const [sell, {...result}] = useMutation(SELL_STOCK)
     if (!datas) {
         return <div></div>
     }
     const dates = datas.time_series.map((o: {date: string, value: number}) => o.date)
 
-    const myString = "zoom"
-    const myOption: "zoom" | "selection" | "pan" | undefined = myString as "zoom" | "selection" | "pan" | undefined 
-
     const myDateOption = "datetime"
     const myOption2: "datetime" | "category" | "numeric" | undefined = myDateOption as "datetime" | "category" | "numeric" | undefined
 
-    const options = {
-        chart: {
-            id: "moi",
-            fontFamily: "Roboto",
-            background: "FFFFFF",
-            toolbar: {
-                show: true,
-                offsetX: 0,
-                offsetY: 0,
-                tools: {
-                    download: false,
-                    selection: false,
-                    zoom: "<img src=\"https://image.flaticon.com/icons/png/512/1086/1086933.png\" style=\"padding-top: 3px;\" width=\"22\">",
-                    zoomin: false,
-                    zoomout: false,
-                    pan: "<img src=\"https://image.flaticon.com/icons/png/512/1/1427.png\" width=\"30\">",
-                    reset: "<img src=\"https://image.flaticon.com/icons/png/512/32/32303.png\" width=\"22\" style=\"padding-top: 3px;\">"
-                },
-                autoSelected: myOption,
-            },
-        },
-        colors: ["#000000", "#000000"],
-        stroke: {
-            width: 1
-        },
+    const options2 = {
+        ...options,
         xaxis: {
             categories: dates,
             type: myOption2,
@@ -102,7 +53,7 @@ const OldData = ({datas, loading, analysisData, positions}: {datas: OldDataType,
             </Typography>
             <div style={{width: "100%"}}>
                 <Chart 
-                    options={options}
+                    options={options2}
                     series={series}
                     type="line"
                     height={300}

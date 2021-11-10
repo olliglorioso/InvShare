@@ -3,20 +3,21 @@ import { Formik } from "formik"
 import { withStyles } from "@material-ui/styles"
 import { TextField, Button, Typography } from "@material-ui/core"
 import { InputAdornment } from "@material-ui/core"
-import { Business, MonetizationOn, Add, ArrowRightAlt } from "@material-ui/icons"
-import { changeStock } from "../reducers/buyingStockReducer"
+import { Business, MonetizationOn, Add} from "@material-ui/icons"
+import { changeStock } from "../../reducers/buyingStockReducer"
 import { useDispatch, useSelector } from "react-redux"
-import { RootState } from ".."
+import { RootState } from "../.."
 import { useDebounce } from "use-debounce"
 import { useMutation } from "@apollo/client"
-import { BUY_STOCK } from "../graphql/queries"
-import { MyFormValues } from "../types"
+import { BUY_STOCK } from "../../graphql/queries"
+import { MyFormValues } from "../../types"
 import { store } from "react-notifications-component"
 import "react-notifications-component/dist/theme.css"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
 import * as Yup from "yup"
-import { buyFirstStock } from "../reducers/firstBuyReducer"
+import { buyFirstStock } from "../../reducers/firstBuyReducer"
+import { AnimateKeyframes } from "react-simple-animate"
 
 const CssTextField = withStyles({
     root: {
@@ -138,6 +139,8 @@ const BuyStocks = (): JSX.Element => {
     const [buyStock, {data, loading, error}] = useMutation(BUY_STOCK)
     const [isDisabled, setIsDisabled] = useState(false)
     const dispatch = useDispatch()
+    const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
+    const purchase = useSelector<RootState, boolean>((state): boolean => state.purchase)
 
     
     return (
@@ -230,7 +233,21 @@ const BuyStocks = (): JSX.Element => {
                         <p></p>
                         <PricePerStock price={price} handleChange={handleChange} />
                         <FinalInformation price={price} amount={values.amount} />
-                        <Button disabled={isDisabled} variant="contained" type="submit" style={{background: "black", color: "white", width: 150}}>Buy</Button>
+                        {!purchase && buyingStockState
+                            ? <div >
+                                <AnimateKeyframes
+                                    play
+                                    iterationCount="infinite"
+                                    keyframes={["opacity: 0", "opacity: 1"]}
+                                    duration={3}
+                                >  
+                                    <Button disabled={isDisabled} variant="contained" type="submit" style={{background: "black", color: "white", width: "20vw"}}>Buy</Button>
+                                    <Typography style={{fontSize: 15, paddingTop: 4}}>{"Press buy and confirm."}</Typography>
+                                </AnimateKeyframes>
+                            </div>
+                            : <Button disabled={isDisabled} variant="contained" type="submit" style={{background: "black", color: "white", width: "20vw"}}>Buy</Button>
+                        
+                        }
                         <p style={{fontSize: 20, alignContent: "center"}}></p>
                     </form>
                 )}

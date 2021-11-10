@@ -1,13 +1,13 @@
 import React from "react";
-import SideBar from "./SideBar"
-import MenuBar from "./AppBar"
+import SideBar from "../Other/SideBar"
+import MenuBar from "../Other/AppBar"
 import MainChart from "./MainChart";
 import BuyStocks from "./BuyStocks";
 import { useSelector } from "react-redux";
-import { RootState } from "..";
+import { RootState } from "../..";
 import {Typography} from "@material-ui/core";
 import {AnimateKeyframes} from "react-simple-animate"
-import { ArrowRightAlt } from "@material-ui/icons";
+import { ArrowDownRight} from "react-bootstrap-icons";
 
 const StockPage = (): JSX.Element => {
     const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
@@ -19,41 +19,16 @@ const StockPage = (): JSX.Element => {
             textAlign: "center",
             paddingTop: "20vh",
             paddingBottom: "20vh",
-            margin: 10
+            margin: 10,
         }}>
             <div>
                 <SideBar />
                 <MenuBar />
             </div>
-            <div style={{display: "flex", flexDirection: "row", justifyContent: "end", paddingRight: "3%"}}>
+            <div style={{display: "flex", flexDirection: "row", justifyContent: "end"}}>
                 {
                     !purchase && !buyingStockState
-                        ? <div style={{height: "0px", paddingBottom: "20vh"}}>
-                            <Typography style={{width: 160}}>{"Write here the symbol & select an amount."}</Typography>
-                            <AnimateKeyframes
-                                play
-                                iterationCount="infinite"
-                                keyframes={["opacity: 0", "opacity: 1"]}
-                                duration={3}
-                            >  
-                                <ArrowRightAlt style={{transform: "rotate(120deg)", fontSize: "100px"}} />
-                            </AnimateKeyframes>
-                        </div>
-                        : <></>
-                }
-            </div>
-            <div style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
-                <div style={{width: "100%"}}>
-                    <MainChart stock={buyingStockState} />
-                </div>
-                <div style={{paddingTop: 40, width: "40%", paddingRight: 5}}>
-                    <BuyStocks />
-                </div>
-            </div>
-            <div style={{display: "flex", flexDirection: "row", justifyContent: "end", paddingRight: "1%"}}>
-                {
-                    !purchase && buyingStockState
-                        ? <div style={{height: "40px"}}>
+                        ? <div style={{height: "0px", paddingBottom: 55, paddingRight: "10vw"}}>
                             
                             <AnimateKeyframes
                                 play
@@ -61,12 +36,22 @@ const StockPage = (): JSX.Element => {
                                 keyframes={["opacity: 0", "opacity: 1"]}
                                 duration={3}
                             >  
-                                <ArrowRightAlt style={{transform: "rotate(230deg)", fontSize: "100px"}} />
+                                <Typography style={{width: 160, fontSize: 15}}>{"Write here the symbol & select an amount."}</Typography>
+                                <ArrowDownRight size={40} />
                             </AnimateKeyframes>
-                            <Typography>{"Press buy and confirm."}</Typography>
                         </div>
                         : <></>
                 }
+            </div>
+            <div style={{display: "flex", flexDirection: "row"}}>
+                <div style={{width: "100%"}}>
+                    <MainChart stock={buyingStockState} />
+                </div>
+                <div style={{paddingTop: 40, width: "20vw", paddingRight: 5}}>
+                    <BuyStocks />
+                </div>
+            </div>
+            <div style={{display: "flex", flexDirection: "row", justifyContent: "end", paddingRight: "1%"}}>
             </div>
         </div>
     )
