@@ -21,10 +21,6 @@ const StockPage = (): JSX.Element => {
             paddingBottom: "20vh",
             margin: 10,
         }}>
-            <div>
-                <SideBar />
-                <MenuBar />
-            </div>
             <div style={{display: "flex", flexDirection: "row", justifyContent: "end"}}>
                 {
                     !purchase && !buyingStockState

@@ -9,14 +9,15 @@ import {SELL_STOCK} from "../../graphql/queries"
 import * as Yup from "yup"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
-import { store } from "react-notifications-component"
 import { CssTextField, options } from "../Other/helpers";
+import notification from "../Other/Notification";
 
 const OldData = ({datas, analysisData}: {datas: OldDataType, analysisData: AnalysisData[]}) => {
     const [sell, {...result}] = useMutation(SELL_STOCK)
     if (!datas) {
         return <div></div>
     }
+
     const dates = datas.time_series.map((o: {date: string, value: number}) => o.date)
 
     const myDateOption = "datetime"
@@ -70,56 +71,19 @@ const OldData = ({datas, analysisData}: {datas: OldDataType, analysisData: Analy
                         buttons: [
                             {
                                 label: "Yes",
-                                onClick: () => {
-                                    if (!result.error) {
-                                        store.addNotification({
-                                            title: "Success",
-                                            message: `You sold: ${input.amount} x ${datas.metadata.symbol.toUpperCase()}`,
-                                            type: "success",
-                                            insert: "top",
-                                            container: "top-right",
-                                            animationIn: ["animate__animated", "animate__fadeIn"],
-                                            animationOut: ["animate__animated", "animate__fadeOut"],
-                                            dismiss: {
-                                                duration: 5000,
-                                                onScreen: true
-                                            }
-                                        })
-                                        sell({variables: {stockName: theStock.name, amount: parseInt(input.amount), price: lastPrice}})
-                                    } else {
-                                        store.addNotification({
-                                            title: "An error occured.",
-                                            message: result.error.message,
-                                            type: "danger",
-                                            insert: "top",
-                                            container: "top-right",
-                                            animationIn: ["animate__animated", "animate__fadeIn"],
-                                            animationOut: ["animate__animated", "animate__fadeOut"],
-                                            dismiss: {
-                                                duration: 5000,
-                                                onScreen: true
-                                            }
-                                        })
+                                onClick: async () => {
+                                    try {
+                                        await sell({variables: {stockName: theStock.name, amount: parseInt(input.amount), price: lastPrice}})
+                                        notification("Success.", `You sold: ${input.amount} x ${datas.metadata.symbol.toUpperCase()}.`, "success")
+                                    } catch (e: unknown) {
+                                        notification("An error occured", (e as Error).message, "danger")
                                     }
-                                    
                                 }
                             },
                             {
                                 label: "No",
                                 onClick: () => {
-                                    store.addNotification({
-                                        title: "Canceled",
-                                        message: "The sale was canceled.",
-                                        type: "danger",
-                                        insert: "top",
-                                        container: "top-right",
-                                        animationIn: ["animate__animated", "animate__fadeIn"],
-                                        animationOut: ["animate__animated", "animate__fadeOut"],
-                                        dismiss: {
-                                            duration: 5000,
-                                            onScreen: true
-                                        }
-                                    })
+                                    notification("Canceled", "The sale was canceled.", "info")
                                 }
                             }
                         ]

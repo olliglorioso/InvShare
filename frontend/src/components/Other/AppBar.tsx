@@ -16,7 +16,6 @@ const MenuBar = (): JSX.Element => {
     const userState = useSelector<RootState, boolean>((state) => state.user)
     const client = useApolloClient()
     const history = useHistory()
-
     const logOut = () => {
         history.push("/")
         dispatch(logUserOut())

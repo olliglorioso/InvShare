@@ -25,9 +25,9 @@ const reducer = combineReducers({
 const httpLink = new HttpLink({ uri: "http://localhost:3001/graphql" })
 
 const wsLink = new WebSocketLink({
-    uri: "ws://localhost:3001/graphql",
+    uri: "ws://localhost:3001/subscriptions",
     options: {
-        reconnect: true,
+        reconnect: true
     },
 })
 
@@ -62,12 +62,10 @@ const client = new ApolloClient({
 })
 
 ReactDOM.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <ApolloProvider client={client}>
-                <App />
-            </ApolloProvider>
-        </Provider>
-    </React.StrictMode>,
+    <Provider store={store}>
+        <ApolloProvider client={client}>
+            <App />
+        </ApolloProvider>
+    </Provider>,
     document.getElementById("root")
 );

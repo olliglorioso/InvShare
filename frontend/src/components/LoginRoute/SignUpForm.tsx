@@ -10,6 +10,7 @@ import "react-notifications-component/dist/theme.css"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
 import * as Yup from "yup"
+import notification from "../Other/Notification";
 
 const ValidationSchema = Yup.object().shape({
     username: Yup.string()
@@ -45,57 +46,18 @@ const SignUpForm = (): JSX.Element => {
                             onClick: async () => {
                                 try {
                                     await addUser({variables: {username: values.username, password: values.password}})
-                                    store.addNotification({
-                                        title: "Success",
-                                        message: `You created an account with the name ${values.username}.`,
-                                        type: "success",
-                                        insert: "top",
-                                        container: "top-right",
-                                        animationIn: ["animate__animated", "animate__fadeIn"],
-                                        animationOut: ["animate__animated", "animate__fadeOut"],
-                                        dismiss: {
-                                            duration: 5000,
-                                            onScreen: true
-                                        }
-                                    })
+                                    notification("Success.", `You created an account with the name ${values.username}.`, "success")
                                 } catch (e: unknown) {
-                                    store.addNotification({
-                                        title: "Error",
-                                        message: (e as Error).message || "Something went wrong.",
-                                        type: "danger",
-                                        insert: "top",
-                                        container: "top-right",
-                                        animationIn: ["animated", "fadeIn"],
-                                        animationOut: ["animated", "fadeOut"],
-                                        dismiss: {
-                                            duration: 5000,
-                                            onScreen: true
-                                        }
-                                    })
-                                    if ((e as Error).message.includes("password")) {
-                                        values.password = ""
-                                    } else if ((e as Error).message.includes("username")) {
-                                        values.username = ""
-                                    }
+                                    notification("Error.", (e as Error).message || "Something went wrong.", "danger")
+                                    if ((e as Error).message.includes("password")) {values.password = ""} 
+                                    else if ((e as Error).message.includes("username")) {values.username = ""}
                                 }
                             }
                         },
                         {
                             label: "No",
                             onClick: () => {
-                                store.addNotification({
-                                    title: "Canceled",
-                                    message: "You didn't create a new account.",
-                                    type: "danger",
-                                    insert: "top",
-                                    container: "top-right",
-                                    animationIn: ["animate__animated", "animate__fadeIn"],
-                                    animationOut: ["animate__animated", "animate__fadeOut"],
-                                    dismiss: {
-                                        duration: 5000,
-                                        onScreen: true
-                                    }
-                                })
+                                notification("Canceled", "You didn't create a new account.", "info")
                             }
                         }
                     ]

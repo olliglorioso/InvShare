@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import MenuBar from "./components/Other/AppBar";
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
 import LoginPage from "./components/LoginRoute/LoginPage";
@@ -7,20 +7,11 @@ import SideBar from "./components/Other/SideBar";
 import MyProfile from "./components/MyProfileRoute/MyProfile"
 import ReactNotification from "react-notifications-component"
 import DefaultPage from "./components/Other/DefaultPage";
-import STOCK_PURCHASED from "./graphql/queries";
-import {useSubscription} from "@apollo/client"
+import { useLazyQuery, useSubscription } from "@apollo/client";
+import { ME, STOCK_PURCHASED } from "./graphql/queries";
 
 function App(): JSX.Element {
-
-    useSubscription(STOCK_PURCHASED, {
-        onSubscriptionData: ({subscriptionData}) => {
-            console.log(subscriptionData)
-            // if (subscriptionData.data.stockPurchased) {
-            //     loadCPV()
-            // }
-        }
-    })
-
+    const resultti = useSubscription(STOCK_PURCHASED)
     return (
         <div>
             <ReactNotification />
@@ -29,7 +20,7 @@ function App(): JSX.Element {
                     <Route path="/" exact>
                         <div>
                             <SideBar />
-                            <MenuBar  />
+                            <MenuBar />
                             <DefaultPage />
                         </div>
                     </Route>
@@ -38,12 +29,20 @@ function App(): JSX.Element {
                             <SideBar />
                             <MenuBar />
                         </div>
-                        <MyProfile />
+                        <MyProfile subscriptionData={resultti.data?.stockPurchased?.transactionDate} />
                     </Route>
                     <Route path="/mystocks" exact>
+                        <div>
+                            <SideBar />
+                            <MenuBar />
+                        </div>
                         <StockPage />
                     </Route>
                     <Route path="/login" exact>
+                        <div>
+                            <SideBar />
+                            <MenuBar />
+                        </div>
                         <LoginPage />
                     </Route>
                 </Switch>

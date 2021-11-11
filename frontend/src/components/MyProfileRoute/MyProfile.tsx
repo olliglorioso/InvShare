@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react"
 import { useLazyQuery, useQuery } from "@apollo/client"
-import { CURRENT_PORTFOLIO_VALUE, ME } from "../../graphql/queries"
+import { CURRENT_PORTFOLIO_VALUE, ME} from "../../graphql/queries"
 import {Card, CardContent, CardHeader, Typography, Button} from "@material-ui/core"
 import Avatar from "boring-avatars"
 import TransactionList from "./TransactionList"
@@ -15,15 +15,22 @@ import { useDispatch } from "react-redux"
 import PositionsSite from "./Positions"
 import {Arrow90degUp} from "react-bootstrap-icons"
 
-const MyProfile = (): JSX.Element => {
+
+const MyProfile = ({subscriptionData}: {subscriptionData: any}): JSX.Element => {
+    
     const result = useQuery(ME)
     const dispatch = useDispatch()
     const [loadCPV, {data}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
     const [loadCPV2, {...res}] = useLazyQuery(CURRENT_PORTFOLIO_VALUE)
     const [mode, setMode] = useState("Analysis")
     const switchMode = useSelector<RootState, {mode: boolean}>((state) => state.mode)
+    useEffect(() => {
+        if (subscriptionData) {
+            result.refetch()
+            console.log(res)
+        }
+    }, [subscriptionData])
 
-    
 
     useEffect(() => {
         loadCPV({variables: {mode: "days"}})

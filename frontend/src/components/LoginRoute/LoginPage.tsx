@@ -15,10 +15,6 @@ const LoginPage = (): JSX.Element => {
             display: "flex",
             flexDirection: "column",
         }}>
-            <div>
-                <SideBar />
-                <MenuBar />
-            </div>
             <div >
                 <div style={{display: "flex", justifyContent: "center"}}>
                     <Typography variant="h5">Log in</Typography>

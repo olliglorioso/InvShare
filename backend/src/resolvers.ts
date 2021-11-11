@@ -71,7 +71,6 @@ const resolvers = {
 
     Mutation: {
         addUser: async (_root: undefined, args: UserInformation): Promise<UserType | string> => {
-            console.log(args)
             const parsedUserInformation = parseUserInformation(args)
             const isUsernameFree = await User.find({usersUsername: parsedUserInformation.username})
             if (isUsernameFree.length > 0) {
@@ -137,7 +136,7 @@ const resolvers = {
                 }
                 await User.updateOne({usersUsername: loggedUser.usersUsername}, {$set: newHolding})
                 await newTransaction.save()
-                pubsub.publish("STOCK_PURCHASED", {stockPurchased: newTransaction})
+                pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
                 return await getTransactionToReturn(newTransaction._id)
             } else {
                 const newTransaction = new Transaction({
@@ -171,8 +170,7 @@ const resolvers = {
                         }
                     )
                     await newTransaction.save()
-                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: newTransaction})
-
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
                     return await getTransactionToReturn(newTransaction._id)
                 } else {
                     await Stock.updateOne({_id: (firstBuyEver._id as mongoose.Types.ObjectId)},
@@ -191,8 +189,7 @@ const resolvers = {
                         }}
                     )
                     await newTransaction.save()
-                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: newTransaction})
-
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
                     return await getTransactionToReturn(newTransaction._id)
                 }
                 
@@ -250,7 +247,8 @@ const resolvers = {
                             moneyMade: context.currentUser.moneyMade + ((-1) * (holding.usersTotalOriginalPriceValue / holding.usersTotalAmount) * parsedAmount + parsedAmount * parsedPrice)
                         }})
                     }
-                    newTransaction.save()
+                    await newTransaction.save()
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
                     return await getTransactionToReturn(newTransaction._id)
                 }
                 
@@ -263,7 +261,7 @@ const resolvers = {
     Subscription: {
         stockPurchased: {
             subscribe: () => pubsub.asyncIterator(["STOCK_PURCHASED"])
-        }
+        },
     }
 }
 

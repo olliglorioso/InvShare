@@ -32,7 +32,11 @@ const startServer = async () => {
     })
 
     const httpServer = createServer(app)
-    const schema = makeExecutableSchema({ typeDefs, resolvers })
+
+    const schema = makeExecutableSchema({ 
+        typeDefs, 
+        resolvers
+    })
 
     const server = new ApolloServer({
         schema,
@@ -56,24 +60,23 @@ const startServer = async () => {
                     }
                 }
             }
-        ]
+        ],
     });
 
-    const subscriptionServer = new SubscriptionServer({
-        execute,
-        subscribe,
-        schema,
-    }, {
-        server: httpServer,
-        path: server.graphqlPath,
-    });
+    const subscriptionServer = SubscriptionServer.create(
+        {schema, execute, subscribe,
+            onConnect: () => console.log("connected"),
+            onDisconnect: () => console.log("disconnected")
+        }, 
+        {server: httpServer, path: "/subscriptions"},
+    )
 
+    
     void await server.start()
 
     server.applyMiddleware({app})
     void httpServer.listen(({port: process.env.PORT}), () => {
         console.log(`Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`);
-        console.log(server.graphqlPath)
     })
     return app
 }

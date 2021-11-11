@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Formik } from "formik"
+import { Formik, FormikBag } from "formik"
 import { withStyles } from "@material-ui/styles"
 import { TextField, Button, Typography } from "@material-ui/core"
 import { InputAdornment } from "@material-ui/core"
@@ -18,6 +18,7 @@ import "react-confirm-alert/src/react-confirm-alert.css"
 import * as Yup from "yup"
 import { buyFirstStock } from "../../reducers/firstBuyReducer"
 import { AnimateKeyframes } from "react-simple-animate"
+import notification from "../Other/Notification"
 
 const CssTextField = withStyles({
     root: {
@@ -77,7 +78,7 @@ const PricePerStock = ({price, handleChange}: {price: number, handleChange: any}
     )
 }
 
-const Company = ({companyName, handleChange, setIsDisabled, cName}: {handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void, companyName: string, setIsDisabled: (boo: boolean) => void, cName: string}) => {
+const Company = ({companyName, handleChange, setIsDisabled, cName, handleBlur}: {handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void, companyName: string, setIsDisabled: (boo: boolean) => void, cName: string, handleBlur: (e: React.FocusEvent<any>) => void}) => {
     const [name, setName] = useState(companyName)
     const dispatch = useDispatch()
     const [debounceName] = useDebounce(name, 1500)
@@ -106,6 +107,7 @@ const Company = ({companyName, handleChange, setIsDisabled, cName}: {handleChang
                 id="company"
                 autoComplete="off"
                 type="company"
+                onBlur={handleBlur}
                 variant="outlined"
                 name="company"
                 label="Company"
@@ -136,11 +138,13 @@ const BuyStocks = (): JSX.Element => {
     const price = useSelector<RootState, number>((state) => state.stock.stockPrice)
     const cName = useSelector<RootState, string>((state) => state.stock.stockName)
     const initialValues: MyFormValues = { company: "", amount: "1", price_per_stock: "" };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [buyStock, {data, loading, error}] = useMutation(BUY_STOCK)
     const [isDisabled, setIsDisabled] = useState(false)
     const dispatch = useDispatch()
     const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
     const purchase = useSelector<RootState, boolean>((state): boolean => state.purchase)
+    
 
     
     return (
@@ -156,40 +160,20 @@ const BuyStocks = (): JSX.Element => {
                             {
                                 label: "Yes",
                                 onClick: () => {
-                                    store.addNotification({
-                                        title: "Success",
-                                        message: `You purchased: ${values.amount} x ${cName.toUpperCase()}`,
-                                        type: "success",
-                                        insert: "top",
-                                        container: "top-right",
-                                        animationIn: ["animate__animated", "animate__fadeIn"],
-                                        animationOut: ["animate__animated", "animate__fadeOut"],
-                                        dismiss: {
-                                            duration: 5000,
-                                            onScreen: true
-                                        }
-                                    })
-                                    buyStock({variables: {stockName: cName.toUpperCase(), amount: parseInt(values.amount)}})
-                                    dispatch(changeStock(""))
-                                    dispatch(buyFirstStock())
+                                    try {
+                                        buyStock({variables: {stockName: cName.toUpperCase(), amount: parseInt(values.amount)}})
+                                        dispatch(changeStock(""))
+                                        dispatch(buyFirstStock())
+                                        notification("Success", `You purchased: ${values.amount} x ${cName.toUpperCase()}.`, "success")
+                                    } catch (e: unknown) {
+                                        notification("Error", (e as Error).message || "Something went wrong.", "danger")
+                                    }
                                 }
                             },
                             {
                                 label: "No",
                                 onClick: () => {
-                                    store.addNotification({
-                                        title: "Canceled",
-                                        message: "The purchase was canceled.",
-                                        type: "danger",
-                                        insert: "top",
-                                        container: "top-right",
-                                        animationIn: ["animate__animated", "animate__fadeIn"],
-                                        animationOut: ["animate__animated", "animate__fadeOut"],
-                                        dismiss: {
-                                            duration: 5000,
-                                            onScreen: true
-                                        }
-                                    })
+                                    notification("Canceled", "The purchase was canceled.", "info")
                                 }
                             }
                         ]
@@ -198,13 +182,13 @@ const BuyStocks = (): JSX.Element => {
                 }}
             >
                 {({
-                    handleSubmit, values, handleChange, errors, touched
+                    handleSubmit, values, handleChange, errors, touched, handleBlur
                 }) => (
                     <form onSubmit={handleSubmit}>
                         
-                        <Company handleChange={handleChange} setIsDisabled={(val: boolean) => setIsDisabled(val)} companyName={values.company} cName={cName}/>
+                        <Company handleChange={handleChange} handleBlur={handleBlur} setIsDisabled={(val: boolean) => setIsDisabled(val)} companyName={values.company} cName={cName}/>
                         {
-                            errors.company
+                            errors.company && touched.company
                                 ? <div style={{color: "red"}}>{errors.company}</div>
                                 : null
                         }
@@ -216,6 +200,7 @@ const BuyStocks = (): JSX.Element => {
                             label="Amount"
                             onChange={handleChange}
                             value={values.amount}
+                            onBlur={handleBlur}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -226,7 +211,7 @@ const BuyStocks = (): JSX.Element => {
                             }}
                         />
                         {
-                            errors.amount
+                            errors.amount && touched.amount
                                 ? <div style={{color: "red"}}>{errors.amount}</div>
                                 : null
                         }
