@@ -41,8 +41,11 @@ export const typeDefs: DocumentNode = gql`
         usersPasswordHash: String!
         usersTransactions: [Transaction]!
         usersHoldings: [Holding]!
+        moneyMade: Float!
         id: ID!
     }
+
+    
 
     type AnalysisData {
         name: String
@@ -90,6 +93,15 @@ export const typeDefs: DocumentNode = gql`
             stockName: String!
             amount: Int!
         ): Transaction
+        sellStock(
+            stockName: String!
+            amount: Int!
+            price: Float!
+        ): Transaction!
+    }
+
+    type Subscription {
+        stockPurchased: Transaction!
     }
 `;
 

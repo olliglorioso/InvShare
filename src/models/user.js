@@ -9,7 +9,8 @@ const schema = new mongoose_1.default.Schema({
         type: String,
         required: true,
         unique: true,
-        minglength: 5
+        minglength: 5,
+        maxlength: 15,
     },
     usersPasswordHash: {
         type: String,

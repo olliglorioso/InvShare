@@ -1,27 +1,20 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { ListItem, List, Divider, ListItemText, Drawer } from "@material-ui/core";
-import { actionEnableSidebar } from "../reducers/sidebarReducer";
-import { RootState } from "..";
-import { makeStyles } from "@material-ui/core";
+import { actionEnableSidebar } from "../../reducers/sidebarReducer";
+import { RootState } from "../..";
 import { AccountCircle, Explore, Settings, ShowChart } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
+import { AnimateKeyframes } from "react-simple-animate";
+import {useStylesSidebar} from "../Other/helpers"
 
-const useStyles = makeStyles({
-    paper: {
-        background: "black",
-        color: "white"
-    },
-    divider: {
-        background: "white"
-    }
-})
 
 const SideBar = (): JSX.Element => {
     const dispatch = useDispatch()
     const sidebarState = useSelector<RootState, boolean>((state): boolean => state.sidebar)
-    const styles = useStyles()
+    const styles = useStylesSidebar()
     const history = useHistory()
+    const purchaseState = useSelector<RootState, boolean>((state): boolean => state.purchase)
 
     return (
         <div>
@@ -42,7 +35,33 @@ const SideBar = (): JSX.Element => {
                         </ListItem>
                         <Divider classes={{root: styles.divider}} />
                         <ListItem button onClick={() => history.push("/mystocks")}>
-                            <ShowChart /><ListItemText inset={true} primary={"Buy stocks"} />
+                            {
+                                !purchaseState
+                                    ? <>
+                                        <AnimateKeyframes
+                                            play
+                                            iterationCount="infinite"
+                                            keyframes={["opacity: 0", "opacity: 1"]}
+                                            duration={3}
+                                        >  
+                                            <ShowChart style={{paddingTop: 3}}/>
+                                        </AnimateKeyframes>
+                                        <AnimateKeyframes
+                                            play
+                                            iterationCount="infinite"
+                                            keyframes={["opacity: 0", "opacity: 1"]}
+                                            duration={3}
+                                        >  
+                                            <ListItemText inset primary={"Buy stocks"} />
+                                        </AnimateKeyframes>
+                                    </>
+                                    : <>
+                                        <ShowChart style={{paddingTop: 3}}/><ListItemText inset  primary={"Buy stocks"} />
+                                    </>
+                            }
+                            
+                            
+                            
                         </ListItem>
                         <Divider classes={{root: styles.divider}} />
                         <ListItem button onClick={() => {return}}>

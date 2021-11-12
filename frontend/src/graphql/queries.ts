@@ -11,6 +11,17 @@ const STOCKDETAILS = gql`
   }
 `
 
+const TRANSACTIONDETAILS = gql`
+  fragment TransactionDetails on Transaction {
+    transactionDate
+    transactionStock {
+      stockSymbol
+    }
+    transactionStockAmount
+    transactionStockPrice
+  }
+`
+
 export const GET_PREDICTION = gql`
   query stockPrediction($symbol: String!) {
     stockPrediction(symbol: $symbol) {
@@ -27,14 +38,31 @@ export const GET_PREDICTION = gql`
   }
 `
 
+export const STOCK_PURCHASED = gql`
+subscription StockPurchased {
+  stockPurchased {
+    ...TransactionDetails
+  }
+}
+${TRANSACTIONDETAILS}
+`
+
 const ADD_USER = gql`
-mutation addUser($addUserUsername: String!, $addUserPassword: String!) {
-    addUser(username: $addUserUsername, password: $addUserPassword) {
-        username
-        passwordHash
+mutation addUser($username: String!, $password: String!) {
+    addUser(username: $username, password: $password) {
+        usersUsername
     }
   }
 `
+
+export const SELL_STOCK = gql`
+mutation sellStock($stockName: String!, $amount: Int!, $price: Float!) {
+  sellStock(stockName: $stockName, amount: $amount, price: $price) {
+    ...TransactionDetails
+  }
+}
+${TRANSACTIONDETAILS}`
+
 
 export const CURRENT_PORTFOLIO_VALUE = gql`
 query cpv($mode: String!) {
@@ -54,14 +82,10 @@ ${STOCKDETAILS}
 export const BUY_STOCK = gql`
 mutation buyStock($stockName: String!, $amount: Int!) {
   buyStock(stockName: $stockName, amount: $amount) {
-    transactionDate
-    transactionStock {
-      stockSymbol
-    }
-    transactionStockAmount
-    transactionStockPrice
+    ...TransactionDetails
   }
 }
+${TRANSACTIONDETAILS}
 `
 
 export const ME = gql`
@@ -87,6 +111,7 @@ export const ME = gql`
         }
         _id
       }
+      moneyMade
     }
   }
 `

@@ -1,14 +1,18 @@
 import React from "react";
-import MenuBar from "./components/AppBar";
+import MenuBar from "./components/Other/AppBar";
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
-import LoginPage from "./components/LoginPage";
-import StockPage from "./components/StockPage";
-import SideBar from "./components/SideBar";
-import MyProfile from "./components/MyProfile"
+import LoginPage from "./components/LoginRoute/LoginPage/";
+import StockPage from "./components/MyStocksRoute/StockPage";
+import SideBar from "./components/Other/SideBar";
+import MyProfile from "./components/MyProfileRoute/MyProfile/"
 import ReactNotification from "react-notifications-component"
-
+import DefaultPage from "./components/Other/DefaultPage";
+import { useSubscription } from "@apollo/client";
+import { STOCK_PURCHASED } from "./graphql/queries";
 
 function App(): JSX.Element {
+    const resultti = useSubscription(STOCK_PURCHASED)
+
     return (
         <div>
             <ReactNotification />
@@ -17,7 +21,8 @@ function App(): JSX.Element {
                     <Route path="/" exact>
                         <div>
                             <SideBar />
-                            <MenuBar  />
+                            <MenuBar />
+                            <DefaultPage />
                         </div>
                     </Route>
                     <Route path="/myprofile" exact>
@@ -25,12 +30,20 @@ function App(): JSX.Element {
                             <SideBar />
                             <MenuBar />
                         </div>
-                        <MyProfile />
+                        <MyProfile subscriptionData={resultti.data?.stockPurchased?.transactionDate} />
                     </Route>
                     <Route path="/mystocks" exact>
+                        <div>
+                            <SideBar />
+                            <MenuBar />
+                        </div>
                         <StockPage />
                     </Route>
                     <Route path="/login" exact>
+                        <div>
+                            <SideBar />
+                            <MenuBar />
+                        </div>
                         <LoginPage />
                     </Route>
                 </Switch>

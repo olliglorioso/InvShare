@@ -3,18 +3,20 @@ import { Formik } from "formik"
 import { withStyles } from "@material-ui/styles"
 import { TextField, Button, Typography } from "@material-ui/core"
 import { InputAdornment } from "@material-ui/core"
-import { Business, MonetizationOn, Add } from "@material-ui/icons"
-import { changeStock } from "../reducers/buyingStockReducer"
+import { Business, MonetizationOn, Add} from "@material-ui/icons"
+import { changeStock } from "../../reducers/buyingStockReducer"
 import { useDispatch, useSelector } from "react-redux"
-import { RootState } from ".."
+import { RootState } from "../.."
 import { useDebounce } from "use-debounce"
 import { useMutation } from "@apollo/client"
-import { BUY_STOCK } from "../graphql/queries"
-import { MyFormValues } from "../types"
-import { store } from "react-notifications-component"
-import "react-notifications-component/dist/theme.css"
+import { BUY_STOCK } from "../../graphql/queries"
+import { MyFormValues } from "../../types"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
+import * as Yup from "yup"
+import { buyFirstStock } from "../../reducers/firstBuyReducer"
+import { AnimateKeyframes } from "react-simple-animate"
+import notification from "../Other/Notification"
 
 const CssTextField = withStyles({
     root: {
@@ -74,7 +76,7 @@ const PricePerStock = ({price, handleChange}: {price: number, handleChange: any}
     )
 }
 
-const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setIsDisabled: (boo: boolean) => void, cName: string}) => {
+const Company = ({companyName, handleChange, setIsDisabled, cName, handleBlur}: {handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void, companyName: string, setIsDisabled: (boo: boolean) => void, cName: string, handleBlur: (e: React.FocusEvent<unknown>) => void}) => {
     const [name, setName] = useState(companyName)
     const dispatch = useDispatch()
     const [debounceName] = useDebounce(name, 1500)
@@ -94,6 +96,7 @@ const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setI
     const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsDisabled(true)
         setName(event.target.value)
+        handleChange(event)
     }
 
     return (
@@ -102,7 +105,9 @@ const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setI
                 id="company"
                 autoComplete="off"
                 type="company"
+                onBlur={handleBlur}
                 variant="outlined"
+                name="company"
                 label="Company"
                 onChange={onChange}
                 value={name}
@@ -118,62 +123,53 @@ const Company = ({companyName, setIsDisabled, cName}: {companyName: string, setI
     )
 }
 
+const ValidationSchema = Yup.object().shape({
+    company: Yup.string()
+        .required("Required field."),
+    amount: Yup.number()
+        .required("Required field.")
+        .transform((value: string) => parseInt(value))
+        .min(1, "Amount must be at least one.")
+})
+
 const BuyStocks = (): JSX.Element => {
     const price = useSelector<RootState, number>((state) => state.stock.stockPrice)
     const cName = useSelector<RootState, string>((state) => state.stock.stockName)
     const initialValues: MyFormValues = { company: "", amount: "1", price_per_stock: "" };
-    const [buyStock] = useMutation(BUY_STOCK)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [buyStock, {data, loading, error}] = useMutation(BUY_STOCK)
     const [isDisabled, setIsDisabled] = useState(false)
     const dispatch = useDispatch()
+    const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
+    const purchase = useSelector<RootState, boolean>((state): boolean => state.purchase)
     
-
-
-
     return (
         <div>
             <Formik
                 initialValues={initialValues}
+                validationSchema={ValidationSchema}
                 onSubmit={(values) => {
                     confirmAlert({
                         title: "Confirmation",
-                        message: `Are you sure you want to purchase ${values.amount} x ${cName.toUpperCase()} (${price * parseInt(values.amount)}$)?`,
+                        message: `Are you sure you want to purchase ${values.amount} x ${cName.toUpperCase()} (${(price * parseInt(values.amount)).toFixed(2)}$)?`,
                         buttons: [
                             {
                                 label: "Yes",
                                 onClick: () => {
-                                    store.addNotification({
-                                        title: "Success",
-                                        message: `You purchased: ${values.amount} x ${cName.toUpperCase()}`,
-                                        type: "success",
-                                        insert: "top",
-                                        container: "top-right",
-                                        animationIn: ["animate__animated", "animate__fadeIn"],
-                                        animationOut: ["animate__animated", "animate__fadeOut"],
-                                        dismiss: {
-                                            duration: 5000,
-                                            onScreen: true
-                                        }
-                                    })
-                                    buyStock({variables: {stockName: cName.toUpperCase(), amount: parseInt(values.amount)}})
-                                    dispatch(changeStock(""))
+                                    try {
+                                        buyStock({variables: {stockName: cName.toUpperCase(), amount: parseInt(values.amount)}})
+                                        dispatch(changeStock(""))
+                                        dispatch(buyFirstStock())
+                                        notification("Success", `You purchased: ${values.amount} x ${cName.toUpperCase()}.`, "success")
+                                    } catch (e: unknown) {
+                                        notification("Error", (e as Error).message || "Something went wrong.", "danger")
+                                    }
                                 }
                             },
                             {
                                 label: "No",
                                 onClick: () => {
-                                    store.addNotification({
-                                        title: "Canceled",
-                                        message: "The purchase was canceled.",
-                                        type: "danger",
-                                        insert: "top",
-                                        container: "top-right",
-                                        animationIn: ["animate__animated", "animate__fadeIn"],
-                                        animationOut: ["animate__animated", "animate__fadeOut"],
-                                        dismiss: {
-                                            duration: 5000,
-                                            onScreen: true
-                                        }
-                                    })
+                                    notification("Canceled", "The purchase was canceled.", "info")
                                 }
                             }
                         ]
@@ -182,10 +178,16 @@ const BuyStocks = (): JSX.Element => {
                 }}
             >
                 {({
-                    handleSubmit, values, handleChange
+                    handleSubmit, values, handleChange, errors, touched, handleBlur
                 }) => (
                     <form onSubmit={handleSubmit}>
-                        <Company setIsDisabled={(val: boolean) => setIsDisabled(val)} companyName={values.company} cName={cName}/>
+                        
+                        <Company handleChange={handleChange} handleBlur={handleBlur} setIsDisabled={(val: boolean) => setIsDisabled(val)} companyName={values.company} cName={cName}/>
+                        {
+                            errors.company && touched.company
+                                ? <div style={{color: "red"}}>{errors.company}</div>
+                                : null
+                        }
                         <p></p>
                         <CssTextField
                             id="amount"
@@ -194,18 +196,39 @@ const BuyStocks = (): JSX.Element => {
                             label="Amount"
                             onChange={handleChange}
                             value={values.amount}
+                            onBlur={handleBlur}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
                                         <Add />
                                     </InputAdornment>
-                                )
+                                ),
+                                inputProps: {min: 0}
                             }}
                         />
+                        {
+                            errors.amount && touched.amount
+                                ? <div style={{color: "red"}}>{errors.amount}</div>
+                                : null
+                        }
                         <p></p>
                         <PricePerStock price={price} handleChange={handleChange} />
                         <FinalInformation price={price} amount={values.amount} />
-                        <Button disabled={isDisabled} variant="contained" type="submit" style={{background: "black", color: "white", width: 150}}>Buy</Button>
+                        {!purchase && buyingStockState
+                            ? <div >
+                                <AnimateKeyframes
+                                    play
+                                    iterationCount="infinite"
+                                    keyframes={["opacity: 0", "opacity: 1"]}
+                                    duration={3}
+                                >  
+                                    <Button disabled={isDisabled} variant="contained" type="submit" style={{background: "black", color: "white", width: "20vw"}}>Buy</Button>
+                                    <Typography style={{fontSize: 15, paddingTop: 4}}>{"Press buy and confirm."}</Typography>
+                                </AnimateKeyframes>
+                            </div>
+                            : <Button disabled={isDisabled} variant="contained" type="submit" style={{background: "black", color: "white", width: "20vw"}}>Buy</Button>
+                        
+                        }
                         <p style={{fontSize: 20, alignContent: "center"}}></p>
                     </form>
                 )}
