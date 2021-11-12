@@ -20,7 +20,7 @@ const startServer = async () => {
     ? process.env.MONGODB_TEST_URI || ""
     : process.env.MONGODB_URI || ""
 
-    mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+    void mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
     const app = express()
     app.use(cors())
@@ -54,7 +54,7 @@ const startServer = async () => {
             {
                 async serverWillStart() {
                     return {
-                        async drainServer () {
+                        async drainServer() {
                             subscriptionServer.close()
                         }
                     }

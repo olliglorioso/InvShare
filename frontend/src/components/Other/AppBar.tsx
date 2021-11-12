@@ -8,7 +8,6 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import { RootState } from "../..";
 import { useApolloClient } from "@apollo/client";
 import { logUserOut } from "../../reducers/userLoggedReducer";
-import { changeStock } from "../../reducers/buyingStockReducer";
 
 const MenuBar = (): JSX.Element => {
     const styles = useStyles()

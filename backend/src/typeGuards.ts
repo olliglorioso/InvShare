@@ -16,7 +16,7 @@ export const parseCompany = (company: unknown): string => {
     return company
 }
 
-export const parseUserInformation = (userInformation: any): UserInformation => {
+export const parseUserInformation = (userInformation: UserInformation): UserInformation => {
     if (!userInformation || !userInformation.username || !userInformation.password || 
         !isString(userInformation.username) || !isString(userInformation.password)) {
         throw new UserInputError("Incorrect type of username or password.", {errorCode: 400})

@@ -21,7 +21,9 @@ export const getIndividualStockInformation = async (symbol: string, startDate?: 
         return candles
     }
     const candles = await getCandles()
-    return candles.map((a: CandlesTypeWithDate): CandlesType => {return {...a, date: a.date.toString()}})
+    // eslint-disable-next-line 
+    const returnCandles: CandlesType[] = candles.map((a: CandlesTypeWithDate): CandlesType => {return {...a, date: a.date.toString()}})
+    return returnCandles
 }
 
 export const getAlphaVantage = async (symbol: string): Promise<ReadyAlphaVantageValues> => {
