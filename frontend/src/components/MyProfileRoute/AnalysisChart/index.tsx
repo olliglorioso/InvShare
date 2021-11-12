@@ -1,18 +1,20 @@
 import { Typography, Switch} from "@material-ui/core"
 import React from "react"
 import Chart from "react-apexcharts"
-import { AnalysisData, CandleStock, Positions } from "../../types"
-import { changeMode } from "../../reducers/modeSwitchReducer"
+import { AnalysisData, CandleStock, Positions } from "../../../types"
+import { changeMode } from "../../../reducers/modeSwitchReducer"
 import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../.."
-import AnalysisTable from "./AnalysisTable"
-import OldData from "./OldData"
+import { RootState } from "../../.."
+import AnalysisTable from "../AnalysisTable"
+import OldData from "../OldData"
 import { useLazyQuery } from "@apollo/client"
-import { GET_PREDICTION } from "../../graphql/queries"
-import LoadingAnimation from "../Other/LoadingAnimation"
-import leadingZeros, {myOption2, options} from "../Other/helpers"
+import { GET_PREDICTION } from "../../../graphql/queries"
+import LoadingAnimation from "../../Other/LoadingAnimation"
+import leadingZeros, {myOption2, options} from "../../Other/helpers"
+import styles from "./analysischart.module.css"
 
 const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisData: AnalysisData[], positions: Positions[], totalOriginalValue: number}) => {
+    const {analysisChart2Div, loadingAnimationDiv} = styles
     let stickcount = 0
     let least_sticks = analysisData[0]
     analysisData.forEach((element2: AnalysisData) => {
@@ -35,7 +37,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
                 return element3.date === element
             })
             if (valueToAdd.length > 0) {
-                sum = sum + valueToAdd[0].close * positions.filter((pos: Positions) => pos.usersStockName.stockSymbol === element2.name)[0].usersTotalAmount
+                sum = sum + valueToAdd[0].close * positions.filter((pos: Positions) => pos.usersStockName.stockSymbol === element2.name)[0]?.usersTotalAmount
             } else {
                 let biggestDiff = 99999
                 let stickToSum = element2.sticks[0]
@@ -46,7 +48,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
                         stickToSum = e
                     }
                 })
-                sum = sum + stickToSum.close * positions.filter((pos: Positions) => pos.usersStockName.stockSymbol === element2.name)[0].usersTotalAmount
+                sum = sum + stickToSum.close * positions.filter((pos: Positions) => pos.usersStockName.stockSymbol === element2.name)[0]?.usersTotalAmount
             }
         })
         valueSeries = valueSeries.concat(parseFloat((100*(-1 + sum/totalOriginalValue)).toFixed(2)))
@@ -86,7 +88,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
 
     return (
         <div >
-            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+            <div className={analysisChart2Div} >
                 <Typography>
                     Last 96 hours
                 </Typography>
@@ -109,7 +111,7 @@ const AnalysisChart = ({analysisData, positions, totalOriginalValue}: {analysisD
             <div style={{width: "100%"}}>
                 {
                     res.loading
-                        ? <div style={{display: "flex", justifyContent: "center", paddingTop: 15}}><LoadingAnimation type={"spin"} color={"black"}/></div>
+                        ? <div className={loadingAnimationDiv}><LoadingAnimation type={"spin"} color={"black"}/></div>
                         : <OldData datas={res.data?.stockPrediction} analysisData={analysisData} />
                 }
             </div>

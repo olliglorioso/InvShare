@@ -1,17 +1,18 @@
-import React, {useEffect} from "react";
+import React from "react";
 import MenuBar from "./components/Other/AppBar";
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
-import LoginPage from "./components/LoginRoute/LoginPage";
+import LoginPage from "./components/LoginRoute/LoginPage/";
 import StockPage from "./components/MyStocksRoute/StockPage";
 import SideBar from "./components/Other/SideBar";
-import MyProfile from "./components/MyProfileRoute/MyProfile"
+import MyProfile from "./components/MyProfileRoute/MyProfile/"
 import ReactNotification from "react-notifications-component"
 import DefaultPage from "./components/Other/DefaultPage";
-import { useLazyQuery, useSubscription } from "@apollo/client";
-import { ME, STOCK_PURCHASED } from "./graphql/queries";
+import { useSubscription } from "@apollo/client";
+import { STOCK_PURCHASED } from "./graphql/queries";
 
 function App(): JSX.Element {
     const resultti = useSubscription(STOCK_PURCHASED)
+
     return (
         <div>
             <ReactNotification />

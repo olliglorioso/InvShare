@@ -1,6 +1,4 @@
 import React from "react";
-import SideBar from "../Other/SideBar"
-import MenuBar from "../Other/AppBar"
 import MainChart from "./MainChart";
 import BuyStocks from "./BuyStocks";
 import { useSelector } from "react-redux";
@@ -12,14 +10,14 @@ import { ArrowDownRight} from "react-bootstrap-icons";
 const StockPage = (): JSX.Element => {
     const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
     const purchase = useSelector<RootState, boolean>((state): boolean => state.purchase)
-
+    
     return (
         <div style={{
             backgroundColor: "white",
             textAlign: "center",
             paddingTop: "20vh",
             paddingBottom: "20vh",
-            margin: 10,
+            margin: 5,
         }}>
             <div style={{display: "flex", flexDirection: "row", justifyContent: "end"}}>
                 {

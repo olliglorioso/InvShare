@@ -1,4 +1,5 @@
 import { ReactNotificationOptions, store } from "react-notifications-component"
+import "react-notifications-component/dist/theme.css"
 
 const notification = (title: string, message: string, type: ReactNotificationOptions["type"]) => {
     store.addNotification({

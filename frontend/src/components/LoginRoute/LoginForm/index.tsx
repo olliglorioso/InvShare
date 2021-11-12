@@ -2,14 +2,16 @@ import React from "react"
 import {Formik} from "formik"
 import { Button, InputAdornment } from "@material-ui/core";
 import { AccountCircle, LockRounded } from "@material-ui/icons";
-import { LOGIN } from "../../graphql/queries"
+import { LOGIN } from "../../../graphql/queries"
 import {useMutation} from "@apollo/client"
 import { useHistory } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import {logUserIn} from "../../reducers/userLoggedReducer"
+import {logUserIn} from "../../../reducers/userLoggedReducer"
 import * as Yup from "yup"
-import {CssTextField} from "../Other/helpers"
+import {CssTextField} from "../../Other/helpers"
+import styles from "./loginform.module.css"
+import notification from "../../Other/Notification";
 
 const ValidationSchema = Yup.object().shape({
     username: Yup.string()
@@ -21,6 +23,7 @@ const ValidationSchema = Yup.object().shape({
 })
 
 const LoginForm = (): JSX.Element => {
+    const {loginButton} = styles
     const [login, result] = useMutation(LOGIN)
     const dispatch = useDispatch()
 
@@ -33,8 +36,6 @@ const LoginForm = (): JSX.Element => {
         }
     }, [result.data])
 
-    console.log(result.error?.graphQLErrors[0])
-
     const history = useHistory()
 
     const initialValues = {
@@ -45,9 +46,14 @@ const LoginForm = (): JSX.Element => {
         <Formik
             initialValues={initialValues}
             onSubmit ={async (values: {username: string, password: string}) => {
-                await login({variables: {username: values.username, password: values.password}})
+                try {
+                    await login({variables: {username: values.username, password: values.password}})
+                } catch (e: unknown) {
+                    notification("Failed.", (e as Error).message, "danger")
+                }
             }}
             validationSchema={ValidationSchema}
+            
         >
             {({handleSubmit, values, errors, handleChange, handleBlur, touched}) => (
                 <form onSubmit={handleSubmit}>
@@ -95,8 +101,16 @@ const LoginForm = (): JSX.Element => {
                             : null
                     }
                     <p></p>
-                    <Button id="tryToLoginButton" variant="contained" type="submit" style={{background: "black", color: "white", width: 255}}>Log in</Button>
-                    <p style={{fontSize: 20, alignContent: "center"}}></p>
+                    <Button 
+                        className={loginButton} 
+                        id="tryToLoginButton" 
+                        variant="contained" 
+                        type="submit" 
+                        style={{background: "black", color: "white", width: 255}}
+                    >
+                            Log in
+                    </Button>
+                    <p style={{fontSize: 20}} ></p>
                 </form>
             )}
             

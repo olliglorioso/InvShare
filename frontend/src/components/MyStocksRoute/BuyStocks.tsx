@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Formik, FormikBag } from "formik"
+import { Formik } from "formik"
 import { withStyles } from "@material-ui/styles"
 import { TextField, Button, Typography } from "@material-ui/core"
 import { InputAdornment } from "@material-ui/core"
@@ -11,8 +11,6 @@ import { useDebounce } from "use-debounce"
 import { useMutation } from "@apollo/client"
 import { BUY_STOCK } from "../../graphql/queries"
 import { MyFormValues } from "../../types"
-import { store } from "react-notifications-component"
-import "react-notifications-component/dist/theme.css"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
 import * as Yup from "yup"
@@ -78,7 +76,7 @@ const PricePerStock = ({price, handleChange}: {price: number, handleChange: any}
     )
 }
 
-const Company = ({companyName, handleChange, setIsDisabled, cName, handleBlur}: {handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void, companyName: string, setIsDisabled: (boo: boolean) => void, cName: string, handleBlur: (e: React.FocusEvent<any>) => void}) => {
+const Company = ({companyName, handleChange, setIsDisabled, cName, handleBlur}: {handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void, companyName: string, setIsDisabled: (boo: boolean) => void, cName: string, handleBlur: (e: React.FocusEvent<unknown>) => void}) => {
     const [name, setName] = useState(companyName)
     const dispatch = useDispatch()
     const [debounceName] = useDebounce(name, 1500)
@@ -145,8 +143,6 @@ const BuyStocks = (): JSX.Element => {
     const buyingStockState = useSelector<RootState, string>((state) => state.stock.stockName)
     const purchase = useSelector<RootState, boolean>((state): boolean => state.purchase)
     
-
-    
     return (
         <div>
             <Formik
@@ -155,7 +151,7 @@ const BuyStocks = (): JSX.Element => {
                 onSubmit={(values) => {
                     confirmAlert({
                         title: "Confirmation",
-                        message: `Are you sure you want to purchase ${values.amount} x ${cName.toUpperCase()} (${price * parseInt(values.amount)}$)?`,
+                        message: `Are you sure you want to purchase ${values.amount} x ${cName.toUpperCase()} (${(price * parseInt(values.amount)).toFixed(2)}$)?`,
                         buttons: [
                             {
                                 label: "Yes",

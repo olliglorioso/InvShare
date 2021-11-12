@@ -8,6 +8,7 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import { RootState } from "../..";
 import { useApolloClient } from "@apollo/client";
 import { logUserOut } from "../../reducers/userLoggedReducer";
+import { changeStock } from "../../reducers/buyingStockReducer";
 
 const MenuBar = (): JSX.Element => {
     const styles = useStyles()
@@ -17,10 +18,15 @@ const MenuBar = (): JSX.Element => {
     const client = useApolloClient()
     const history = useHistory()
     const logOut = () => {
-        history.push("/")
-        dispatch(logUserOut())
-        localStorage.clear()
-        client.resetStore()
+        try {
+            history.push("/")
+            dispatch(logUserOut())
+            localStorage.clear()
+            client.resetStore()
+        } catch (e) {
+            console.log(e)
+        }
+        
     }
 
     return (

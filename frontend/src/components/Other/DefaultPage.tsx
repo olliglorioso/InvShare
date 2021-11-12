@@ -4,17 +4,16 @@ import { RootState } from "../.."
 
 const DefaultPage = () => {
     const userState = useSelector<RootState, boolean>((state) => state.user)
-    console.log(userState)
     return (
         <div style={{
             background: "white",
             paddingBottom: "60vh",
             paddingTop: "15vh",
-            margin: 10,
+            margin: 5,
             display: "flex",
             flexDirection: "column",
         }}>
-            <h1 style={{}}>Default Page</h1>
+            <h1 >{userState ? "You are logged in " : "You are not logged in :/"} </h1>
         </div>
     )
 }

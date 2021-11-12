@@ -1,0 +1,45 @@
+.myProfileLoadingAnimation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.buttoni {
+    background: black;
+    color: white;
+}
+
+.tutorialFirstPart {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding-left: 2vh;
+    padding-right: 2vh;
+}
+
+.myProfile1Div {
+    background: white;
+    padding-bottom: 60vh;
+    padding-top: 10vh;
+    margin: 5;
+    display: flex;
+    flex-direction: column;
+}
+
+.cardHeaderTitle {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.transactionList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+}
+

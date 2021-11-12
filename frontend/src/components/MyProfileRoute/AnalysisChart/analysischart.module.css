@@ -1,0 +1,15 @@
+.analysisChart2Div
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+.loadingAnimationDiv {
+    display: flex;
+    justify-content: center;
+    padding-top: 15px;
+}
+
+

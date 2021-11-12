@@ -2,15 +2,14 @@ import React from "react"
 import {Formik} from "formik"
 import { Button, InputAdornment } from "@material-ui/core";
 import { AccountCircle, LockRounded} from "@material-ui/icons";
-import ADD_USER from "../../graphql/queries";
+import ADD_USER from "../../../graphql/queries";
 import { useMutation} from "@apollo/client";
-import { CssTextField } from "../Other/helpers";
-import { store } from "react-notifications-component"
-import "react-notifications-component/dist/theme.css"
+import { CssTextField } from "../../Other/helpers";
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
 import * as Yup from "yup"
-import notification from "../Other/Notification";
+import notification from "../../Other/Notification";
+import styles from "./signupform.module.css"
 
 const ValidationSchema = Yup.object().shape({
     username: Yup.string()
@@ -27,6 +26,7 @@ const ValidationSchema = Yup.object().shape({
 })
 
 const SignUpForm = (): JSX.Element => {
+    const {signUpButton} = styles
     const [addUser] = useMutation(ADD_USER)
     return (
         <Formik
@@ -64,7 +64,7 @@ const SignUpForm = (): JSX.Element => {
                 });
             }}
         >
-            {({ values, handleChange, handleSubmit, errors, touched, handleBlur }) => (
+            {({ values, handleChange, handleSubmit, errors, touched, handleBlur }): JSX.Element => (
                 <form onSubmit={handleSubmit}>
                     <CssTextField
                         id="username2"
@@ -137,6 +137,7 @@ const SignUpForm = (): JSX.Element => {
                         variant="contained"
                         color="primary"
                         style={{background: "black", color: "white", width: 255}}
+                        className={signUpButton}
                     >
                         Sign up
                     </Button>

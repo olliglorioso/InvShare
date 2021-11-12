@@ -1,19 +1,19 @@
 import React from "react";
 import { Typography, Button} from "@material-ui/core";
 import Chart from "react-apexcharts"
-import { OldDataType } from "../../types";
+import { OldDataType } from "../../../types";
 import { Formik } from "formik"
-import { AnalysisData} from "../../types";
+import { AnalysisData} from "../../../types";
 import { useMutation } from "@apollo/client"
-import {SELL_STOCK} from "../../graphql/queries"
+import {SELL_STOCK} from "../../../graphql/queries"
 import * as Yup from "yup"
 import { confirmAlert } from "react-confirm-alert"
 import "react-confirm-alert/src/react-confirm-alert.css"
-import { CssTextField, options } from "../Other/helpers";
-import notification from "../Other/Notification";
+import { CssTextField, options } from "../../Other/helpers"
+import notification from "../../Other/Notification";
 
 const OldData = ({datas, analysisData}: {datas: OldDataType, analysisData: AnalysisData[]}) => {
-    const [sell, {...result}] = useMutation(SELL_STOCK)
+    const [sell] = useMutation(SELL_STOCK)
     if (!datas) {
         return <div></div>
     }
@@ -46,6 +46,11 @@ const OldData = ({datas, analysisData}: {datas: OldDataType, analysisData: Analy
     })
 
     const theStock = analysisData.filter((o: AnalysisData): boolean => o.name === datas.metadata.symbol)[0]
+    
+    if (!theStock) {
+        return <div></div>
+    }
+
     const lastPrice = theStock.sticks[theStock.sticks.length - 1].close
     return (
         <div style={{display: "flex", paddingTop: "5vh", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
@@ -76,7 +81,7 @@ const OldData = ({datas, analysisData}: {datas: OldDataType, analysisData: Analy
                                         await sell({variables: {stockName: theStock.name, amount: parseInt(input.amount), price: lastPrice}})
                                         notification("Success.", `You sold: ${input.amount} x ${datas.metadata.symbol.toUpperCase()}.`, "success")
                                     } catch (e: unknown) {
-                                        notification("An error occured", (e as Error).message, "danger")
+                                        notification("An error occured", (e as Error).message || "Something went wrong.", "danger")
                                     }
                                 }
                             },
