@@ -22,10 +22,10 @@ const reducer = combineReducers({
     purchase: firstBuyReducer,
 })
 
-const httpLink = new HttpLink({ uri: "http://localhost:3001/graphql" })
+const httpLink = new HttpLink({ uri: "https://fso2021practicework.herokuapp.com/graphql" })
 
 const wsLink = new WebSocketLink({
-    uri: "ws://localhost:3001/subscriptions",
+    uri: "ws://fso2021practicework.herokuapp.com/subscriptions",
     options: {
         reconnect: true
     },
