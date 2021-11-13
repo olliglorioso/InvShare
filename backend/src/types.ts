@@ -85,14 +85,6 @@ export interface OldDataValues {
     time_series: [string, number][]
 }
 
-
-
-
-
-
-
-
-
 enum BuyOrSell {
     Buy = "Buy",
     Sell = "Sell"
@@ -113,7 +105,11 @@ export interface UserType {
     usersTransactions: TransactionType[],
     usersHoldings: HoldingType[],
     _id?: mongoose.Types.ObjectId,
-    moneyMade: number
+    moneyMade: number,
+    usersFollowers: UserType[],
+    usersFollowing: UserType[],
+    followerCount: number,
+    followingCount: number
 }
 
 
@@ -136,5 +132,9 @@ export interface PopulatedUserType {
     usersTransactions: TransactionType[],
     usersHoldings: PopulatedHoldingType[],
     _id?: mongoose.Types.ObjectId,
-    moneyMade: number
+    moneyMade: number,
+    followerCount: number,
+    followingCount: number,
+    usersFollowers: {user: PopulatedUserType, date: string}[],
+    usersFollowing: {user: PopulatedUserType, date: string}[]
 }

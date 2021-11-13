@@ -16,6 +16,7 @@ export const createDate = () => new Date((new Date()).setHours(new Date().getHou
 
 export const getIndividualStockInformation = async (symbol: string, startDate?: Date, resolution?: Resolution): Promise<CandlesType[]> => {
     const finnhubAPI = new FinnhubAPI(process.env.FINNHUB_API_KEY)
+    
     const getCandles = async (): Promise<MarketDataItem[] | ForbiddenError> => {
         const candles = await finnhubAPI.getCandles(symbol, startDate || new Date(2020,12,1), new Date(), resolution || "D")
         return candles

@@ -6,14 +6,14 @@ require("dotenv").config()
 import jwt from "jsonwebtoken";
 import resolvers from "./src/resolvers";
 import { PopulatedUserType } from "./src/types";
-import {typeDefs} from "./src/typeDefs";
+import { typeDefs } from "./src/typeDefs";
 import express from "express"
 import cors from "cors"
-import {createServer} from "http"
-import {SubscriptionServer} from "subscriptions-transport-ws"
+import { createServer } from "http"
+import { SubscriptionServer } from "subscriptions-transport-ws"
 import { execute, subscribe } from "graphql"
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import history from "connect-history-api-fallback"
+// import history from "connect-history-api-fallback"
 
 const startServer = async () => {
     const MONGODB_URI: string = process.env.NODE_ENV === "test"
@@ -25,7 +25,7 @@ const startServer = async () => {
     const app = express()
     app.use(cors())
     
-    app.use(history())
+    // app.use(history())
     app.use(express.static("build"))
     app.get("/healthcheck", (_req, res) => {
         res.send("toimii")
@@ -44,7 +44,11 @@ const startServer = async () => {
             const auth = req ? req.headers.authorization : null;
             if (auth && auth.toLowerCase().startsWith("bearer ")) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
-                const currentUser = await User.findById(decodedToken.id).populate({path: "usersHoldings", populate: {path: "usersStockName"}}).populate({path: "usersTransactions", populate: {path: "transactionStock"}}) as unknown as PopulatedUserType
+                const currentUser = await User.findById(decodedToken.id)
+                    .populate({path: "usersHoldings", populate: {path: "usersStockName"}})
+                    .populate({path: "usersTransactions", populate: {path: "transactionStock"}})
+                    .populate({path: "usersFollowing", populate: {path: "user"}})
+                    .populate({path: "usersFollower", populate: {path: "user"}}) as unknown as PopulatedUserType
                 return {currentUser};
             }
             return null;

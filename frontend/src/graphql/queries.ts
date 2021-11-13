@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client"
+import { gql } from "@apollo/client";
 
 const STOCKDETAILS = gql`
   fragment StockDetails on IndividualStock {
@@ -9,7 +9,7 @@ const STOCKDETAILS = gql`
     open
     volume
   }
-`
+`;
 
 const TRANSACTIONDETAILS = gql`
   fragment TransactionDetails on Transaction {
@@ -20,7 +20,53 @@ const TRANSACTIONDETAILS = gql`
     transactionStockAmount
     transactionStockPrice
   }
-`
+`;
+
+export const SEARCH_USER_FINAL = gql`
+  query searchUser($username: String!) {
+    searchUser(username: $username) {
+      usersUsername
+      usersHoldings {
+        usersStockName {
+          stockTotalAmount
+          stockSymbol
+        }
+        usersTotalAmount
+        usersTotalOriginalPriceValue
+      }
+      usersTransactions {
+        transactionDate
+        transactionStockAmount
+        transactionStockPrice
+        transactionType
+        transactionStock {
+          stockSymbol
+          stockTotalAmount
+        }
+        _id
+      }
+      moneyMade
+      followerCount
+      followingCount
+      usersFollowing {
+        user
+        date
+      }
+      usersFollowers {
+        user
+        date
+      }
+    }
+  }
+`;
+
+export const SEARCH_USER = gql`
+  query searchUser($username: String!) {
+    searchUser(username: $username) {
+      usersUsername
+    }
+  }
+`;
 
 export const GET_PREDICTION = gql`
   query stockPrediction($symbol: String!) {
@@ -36,57 +82,57 @@ export const GET_PREDICTION = gql`
       }
     }
   }
-`
+`;
 
 export const STOCK_PURCHASED = gql`
-subscription StockPurchased {
-  stockPurchased {
-    ...TransactionDetails
-  }
-}
-${TRANSACTIONDETAILS}
-`
-
-const ADD_USER = gql`
-mutation addUser($username: String!, $password: String!) {
-    addUser(username: $username, password: $password) {
-        usersUsername
+  subscription StockPurchased {
+    stockPurchased {
+      ...TransactionDetails
     }
   }
-`
+  ${TRANSACTIONDETAILS}
+`;
+
+const ADD_USER = gql`
+  mutation addUser($username: String!, $password: String!) {
+    addUser(username: $username, password: $password) {
+      usersUsername
+    }
+  }
+`;
 
 export const SELL_STOCK = gql`
-mutation sellStock($stockName: String!, $amount: Int!, $price: Float!) {
-  sellStock(stockName: $stockName, amount: $amount, price: $price) {
-    ...TransactionDetails
+  mutation sellStock($stockName: String!, $amount: Int!, $price: Float!) {
+    sellStock(stockName: $stockName, amount: $amount, price: $price) {
+      ...TransactionDetails
+    }
   }
-}
-${TRANSACTIONDETAILS}`
-
+  ${TRANSACTIONDETAILS}
+`;
 
 export const CURRENT_PORTFOLIO_VALUE = gql`
-query cpv($mode: String!) {
-  currentPortfolioValue(mode: $mode) {
-    wholeValue
-    analysisValues {
-      name
-      sticks {
-        ...StockDetails
+  query cpv($mode: String!) {
+    currentPortfolioValue(mode: $mode) {
+      wholeValue
+      analysisValues {
+        name
+        sticks {
+          ...StockDetails
+        }
       }
     }
   }
-}
-${STOCKDETAILS}
-`
+  ${STOCKDETAILS}
+`;
 
 export const BUY_STOCK = gql`
-mutation buyStock($stockName: String!, $amount: Int!) {
-  buyStock(stockName: $stockName, amount: $amount) {
-    ...TransactionDetails
+  mutation buyStock($stockName: String!, $amount: Int!) {
+    buyStock(stockName: $stockName, amount: $amount) {
+      ...TransactionDetails
+    }
   }
-}
-${TRANSACTIONDETAILS}
-`
+  ${TRANSACTIONDETAILS}
+`;
 
 export const ME = gql`
   query {
@@ -112,25 +158,35 @@ export const ME = gql`
         _id
       }
       moneyMade
+      followerCount
+      followingCount
+      usersFollowing {
+        user
+        date
+      }
+      usersFollowers {
+        user
+        date
+      }
     }
   }
-`
+`;
 
 export const INDIVIDUAL_STOCK = gql`
   query individualStock($company: String!) {
-    individualStock (company: $company) {
+    individualStock(company: $company) {
       ...StockDetails
     }
   }
   ${STOCKDETAILS}
-`
+`;
 
 export const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password)  {
+    login(username: $username, password: $password) {
       value
     }
   }
-`
+`;
 
-export default ADD_USER
+export default ADD_USER;

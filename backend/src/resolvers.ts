@@ -30,6 +30,14 @@ const resolvers = {
         me: (_root: undefined, _args: void, context: {currentUser: PopulatedUserType}): PopulatedUserType => {
             return context.currentUser 
         },
+        searchUser: async (_root: undefined, args: {username: string}): Promise<PopulatedUserType[] | [{}]> => {
+            const users = await User.find({usersUsername: {$regex: `^${args.username}`}})
+                .populate({path: "usersFollowers", populate: {path: "user"}})
+                .populate({path: "usersFollowing", populate: {path: "user"}})
+                .populate({path: "usersHoldings", populate: {path: "usersStockName"}})
+                .populate({path: "usersTransactions", populate: {path: "transactionStock"}}) as unknown as PopulatedUserType[]
+            return users
+        },
         individualStock: async (_root: undefined, args: {company: string}): Promise<CandlesType[]> => {
             const parsedCompany = parseCompany(args.company)
             const candles = await getIndividualStockInformation(parsedCompany, setDate(-96), "5")
@@ -44,7 +52,6 @@ const resolvers = {
             let values: AnalysisValue[] = []
             if (context.currentUser && context.currentUser.usersTransactions?.length > 0) {
                 const firstBuyDate = context.currentUser.usersTransactions[0].transactionDate
-
                 for (const item of context.currentUser.usersHoldings) {
                     const a = await Stock.find({stockSymbol: item.usersStockName.stockSymbol})
                     let value: CandlesType[]
@@ -70,6 +77,18 @@ const resolvers = {
     },
 
     Mutation: {
+        followUser: async (_root: undefined, args: {username: string}, context: {currentUser: PopulatedUserType}): Promise<{result: boolean}> => {
+            const user = await User.findOne({usersUsername: args.username})
+            if (!user) {
+                throw new AuthenticationError("User doesn't exist.")
+            }
+            if (context.currentUser.usersFollowing.find((item: {user: PopulatedUserType, date: string}) => item.user.usersUsername === args.username)) {
+                throw new AuthenticationError("You are already following this user.")
+            }
+            await User.updateOne({_id: context.currentUser._id}, {$push: {usersFollowing: {user: user._id, date: new Date().toString()}}, $set: {followingCount: context.currentUser.followingCount + 1}})
+            await User.updateOne({_id: user._id}, {$push: {usersFollowers: {user: context.currentUser._id, date: new Date().toString()}}, $set: {followerCount: user.followerCount + 1}})
+            return {result: true}
+        },
         addUser: async (_root: undefined, args: UserInformation): Promise<UserType | string> => {
             const parsedUserInformation = parseUserInformation(args)
             const isUsernameFree = await User.find({usersUsername: parsedUserInformation.username})
@@ -83,7 +102,11 @@ const resolvers = {
                 usersPasswordHash: passwordHash,
                 usersTransactions: [],
                 usersHoldings: [],
-                moneyMade: 0
+                moneyMade: 0,
+                usersFollowers: [],
+                usersFollowing: [],
+                followerCount: 0,
+                followingCount: 0
             });
             return await user.save();
         },

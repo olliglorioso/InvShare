@@ -21,6 +21,6 @@
       "@typescript-eslint/explicit-function-return-type": 0,
       "@typescript-eslint/explicit-module-boundary-types": 0,
       "quotes": ["error", "double"],
-      "indent": ["error", 4]
+      "indent": ["error", 2]
     }
   }

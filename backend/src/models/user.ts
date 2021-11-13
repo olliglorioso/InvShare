@@ -32,6 +32,36 @@ const schema = new mongoose.Schema<UserType>({
   moneyMade: {
     type: Number,
     required: true
+  },
+  usersFollowers: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      },
+      followDate: {
+        type: String
+      }
+    }
+  ],
+  usersFollowing: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      },
+      followDate: {
+        type: String
+      }
+    }
+  ],
+  followerCount: {
+    type: Number,
+    required: true
+  },
+  followingCount: {
+    type: Number,
+    required: true
   }
 });
 

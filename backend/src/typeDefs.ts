@@ -42,6 +42,10 @@ export const typeDefs: DocumentNode = gql`
         usersTransactions: [Transaction]!
         usersHoldings: [Holding]!
         moneyMade: Float!
+        followerCount: Int!
+        followingCount: Int!
+        usersFollowers: [User]
+        usersFollowing: [User]
         id: ID!
     }
 
@@ -73,18 +77,28 @@ export const typeDefs: DocumentNode = gql`
         time_series: [Tsvalue]
     }
 
+    type Result {
+        result: Boolean
+    }
+
     type Query {
         stockPrediction (symbol: String!): Prediction
         me: User
+        searchUser (username: String!): [User]
         individualStock (company: String!): [IndividualStock]!
         currentPortfolioValue (mode: String!): [AnalysisType]
     }
+
+    
 
     type Mutation {
         addUser (
             username: String!
             password: String!
         ): User
+        followUser (
+            username: String!
+        ): Result
         login (
             username: String!
             password: String!
