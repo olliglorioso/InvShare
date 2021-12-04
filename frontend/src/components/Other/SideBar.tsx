@@ -12,7 +12,8 @@ import { RootState } from "../..";
 import {
   AccountCircle,
   Explore,
-  Settings,
+  NotificationsActive,
+  NotificationsNone,
   ShowChart,
 } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
@@ -53,8 +54,8 @@ const SideBar = (): JSX.Element => {
                 return;
               }}
             >
-              <Settings />
-              <ListItemText inset={true} primary={"Settings"} />
+              <NotificationsNone />
+              <ListItemText inset={true} primary={"Notifications"} />
             </ListItem>
             <Divider classes={{ root: styles.divider }} />
             <ListItem button onClick={() => history.push("/mystocks")}>

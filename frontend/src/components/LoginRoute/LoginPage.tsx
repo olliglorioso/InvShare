@@ -16,7 +16,7 @@ const LoginPage = (): JSX.Element => {
       }}
     >
       <div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ display: "flex", justifyContent: "center"}}>
           <Typography variant="h5">Log in</Typography>
         </div>
         <p></p>

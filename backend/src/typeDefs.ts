@@ -36,17 +36,22 @@ export const typeDefs: DocumentNode = gql`
         _id: ID!
     }
 
+    type FollowType {
+        date: String
+        user: User
+    }
+
     type User {
         usersUsername: String!
         usersPasswordHash: String!
         usersTransactions: [Transaction]!
         usersHoldings: [Holding]!
         moneyMade: Float!
-        followerCount: Int!
-        followingCount: Int!
-        usersFollowers: [User]
-        usersFollowing: [User]
-        id: ID!
+        followerCount: Int
+        followingCount: Int
+        usersFollowers: [FollowType]
+        usersFollowing: [FollowType]
+        id: ID
     }
 
     
@@ -81,10 +86,11 @@ export const typeDefs: DocumentNode = gql`
         result: Boolean
     }
 
+
     type Query {
         stockPrediction (symbol: String!): Prediction
         me: User
-        searchUser (username: String!): [User]
+        searchUser (username: String!): [User]!
         individualStock (company: String!): [IndividualStock]!
         currentPortfolioValue (mode: String!): [AnalysisType]
     }

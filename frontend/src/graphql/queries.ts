@@ -48,17 +48,17 @@ export const SEARCH_USER_FINAL = gql`
       moneyMade
       followerCount
       followingCount
-      usersFollowing {
-        user
-        date
-      }
-      usersFollowers {
-        user
-        date
-      }
     }
   }
 `;
+
+export const FOLLOW = gql`
+  mutation follow($username: String!) {
+    followUser(username: $username) {
+      result
+    }
+  }
+`
 
 export const SEARCH_USER = gql`
   query searchUser($username: String!) {
@@ -160,14 +160,6 @@ export const ME = gql`
       moneyMade
       followerCount
       followingCount
-      usersFollowing {
-        user
-        date
-      }
-      usersFollowers {
-        user
-        date
-      }
     }
   }
 `;

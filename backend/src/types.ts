@@ -99,6 +99,10 @@ export interface TransactionType {
     _id?: mongoose.Types.ObjectId
 }
 
+export interface FinalSearchResult extends PopulatedUserType {
+    currentUser: string
+}
+
 export interface UserType {
     usersUsername: string,
     usersPasswordHash: string, 

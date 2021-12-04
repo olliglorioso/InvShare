@@ -24,10 +24,10 @@ const MenuBar = (): JSX.Element => {
   const history = useHistory();
   const logOut = () => {
     try {
-      history.push("/");
-      dispatch(logUserOut());
       localStorage.clear();
-      client.resetStore();
+      client.clearStore();
+      dispatch(logUserOut());
+      history.push("/");
     } catch (e) {
       console.log(e);
     }

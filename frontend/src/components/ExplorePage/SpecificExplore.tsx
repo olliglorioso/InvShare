@@ -1,98 +1,17 @@
-import React, { useState, useEffect } from "react";
-import AnalysisChart from "./AnalysisChart";
-import { useQuery } from "@apollo/client";
-import { CURRENT_PORTFOLIO_VALUE, ME } from "../../graphql/queries";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-  Button,
-} from "@material-ui/core";
-import Avatar from "boring-avatars";
-import TransactionList from "./TransactionList";
-import { Positions } from "../../types";
-import { useSelector } from "react-redux";
-import { RootState } from "../..";
-import LoadingAnimation from "../Other/LoadingAnimation";
-import { AnimateKeyframes } from "react-simple-animate";
-import { noPurchases } from "../../reducers/firstBuyReducer";
-import { useDispatch } from "react-redux";
-import { Arrow90degUp } from "react-bootstrap-icons";
+import { useMutation, useQuery } from "@apollo/client"
+import React from "react"
+import { useParams } from "react-router-dom"
+import { FOLLOW, SEARCH_USER_FINAL } from "../../graphql/queries"
+import { Card, CardHeader, Typography, CardContent, Button } from "@material-ui/core"
+import Avatar from "boring-avatars"
+import LoadingAnimation from "../Other/LoadingAnimation"
+import notification from "../Other/Notification"
 
-const MyProfile = ({
-  subscriptionData,
-}: {
-  subscriptionData: string;
-}): JSX.Element => {
-  const result = useQuery(ME);
-  const dispatch = useDispatch();
-  const data = useQuery(CURRENT_PORTFOLIO_VALUE, { 
-    variables: { mode: "days" }
-  });
-  const res = useQuery(CURRENT_PORTFOLIO_VALUE, {
-    variables: { mode: "hours" }
-  });
-  const [mode, setMode] = useState("Analysis");
-  const switchMode = useSelector<RootState, { mode: boolean }>(
-    (state) => state.mode
-  )
-
-  useEffect(() => {
-    if (subscriptionData) {
-      try {
-        result.refetch();
-        data.refetch();
-        res.refetch();
-      } catch (e: unknown) {
-        console.log(e)
-      }
-    }
-  }, [subscriptionData]);
-
-  if (
-    data.error?.message === "This user has no transactions." || res.error?.message === "This user has no transactions."
-  ) {
-    dispatch(noPurchases());
-    return (
-      <div style={{ background: "white" }}>
-        <div style={{ width: "0px", height: "0px" }}>
-          <AnimateKeyframes
-            play
-            iterationCount="infinite"
-            keyframes={["opacity: 0", "opacity: 1"]}
-            duration={3}
-          >
-            <Arrow90degUp
-              size={50}
-              style={{ paddingTop: 60, paddingLeft: 7 }}
-            />
-            <Typography style={{ width: 200, paddingLeft: 7 }}>
-              Open the sidebar!
-            </Typography>
-          </AnimateKeyframes>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-            paddingLeft: "2vh",
-            paddingRight: "2vh",
-          }}
-        >
-          <Typography>
-            You have bought no stocks. Follow the instructions and glinting
-            objects in order to buy one.
-          </Typography>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data || !result.data || !result.data.me || res.error || !res.data || result.error) {
+const SpecificExplore = () => {
+  const id: {id: string} = useParams()
+  const response = useQuery(SEARCH_USER_FINAL, {variables: {username: id.id}})
+  const [follow, ...result] = useMutation(FOLLOW, {variables: {username: id.id}})
+  if (response.loading) {
     return (
       <div
         style={{
@@ -105,65 +24,16 @@ const MyProfile = ({
       >
         <LoadingAnimation type={"spin"} color={"black"} />
       </div>
-    );
+    )
   }
-
-  
-  if (
-    result.data.me.usersHoldings.length === 0 || result.data.me.usersTransactions.length === 0
-  ) {
-    dispatch(noPurchases());
-    return (
-      <div style={{ background: "white" }}>
-        <div style={{ width: "0px", height: "0px" }}>
-          <AnimateKeyframes
-            play
-            iterationCount="infinite"
-            keyframes={["opacity: 0", "opacity: 1"]}
-            duration={3}
-          >
-            <Arrow90degUp
-              size={50}
-              style={{ paddingTop: 60, paddingLeft: 7 }}
-            />
-            <Typography style={{ width: 200, paddingLeft: 7 }}>
-              Open the sidebar!
-            </Typography>
-          </AnimateKeyframes>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-            paddingLeft: "2vh",
-            paddingRight: "2vh",
-          }}
-        >
-          <Typography>
-            You have bought no stocks. Follow the instructions and glinting
-            objects in order to buy one.
-          </Typography>
-        </div>
-      </div>
-    );
+  const handleClick = async () => {
+    try {
+      await follow()
+      notification("Success", `You followed ${id.id}.`, "success")
+    } catch {
+      notification("Error.", result[0].error?.graphQLErrors[0].message as string || "An error occured.", "danger")
+    }
   }
-
-  const analysisData = switchMode.mode
-    ? data.data.currentPortfolioValue[0]
-    : res.data.currentPortfolioValue[0];
-
-
-  const transactions = result.data.me.usersTransactions;
-
-  const totalOriginalValue = result.data.me.usersHoldings.reduce(
-    (acc: number, curr: Positions) => {
-      return acc + curr.usersTotalOriginalPriceValue;
-    },
-    0
-  );
 
   return (
     <div
@@ -182,7 +52,7 @@ const MyProfile = ({
             avatar={
               <Avatar
                 size={100}
-                name={result.data.me.usersUsername}
+                name={response?.data.searchUser[0]?.usersUsername}
                 variant="marble"
                 colors={["#808080", "#FFFFFF", "#000000"]}
               />
@@ -196,20 +66,25 @@ const MyProfile = ({
                   flexWrap: "wrap",
                 }}
               >
-                <Typography style={{ fontSize: 30, flex: 1 }}>
-                  {result.data.me.usersUsername}
-                </Typography>
-                <div style={{ flex: 1}}>
+                <div style={{ flex: 2 }}>
+                  <Typography style={{ fontSize: 30, flex: 1 }}>
+                    {response?.data.searchUser[0]?.usersUsername}
+                  </Typography>
+                  <Typography style={{ fontSize: 20, flex: 1 }}>
+                    <Button style={{background: "black", color: "white"}} onClick={handleClick}>Follow</Button>
+                  </Typography>
+                </div>
+                <div style={{ flex: 1, paddingTop: 15 }}>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
-                    {result.data.me.followerCount || 0}
+                    {response.data?.searchUser[0].followerCount || 0}
                   </Typography>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
                     Followers
                   </Typography>
                 </div>
-                <div style={{ flex: 1}}>
+                <div style={{ flex: 1, paddingTop: 15}}>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
-                    {result.data.me.followingCount || 0}
+                    {response.data?.searchUser[0].followingCount || 0}
                   </Typography>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
                     Following
@@ -234,19 +109,50 @@ const MyProfile = ({
                     textAlign: "center",
                   }}
                 >
-                  {Math.round(res.data.currentPortfolioValue[0].wholeValue)}
+                  fksdajfkjdsaf
                 </Typography>
                 <Typography style={{ textAlign: "center" }}>
-                  Current value
+                  Followingfdfadf
                 </Typography>
               </div>
-              <div>
+              <div style={{ justifyContent: "center" }}>
+                <Typography
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 30,
+                    textAlign: "center",
+                  }}
+                >
+                  fasjdfk
+                </Typography>
+                <Typography style={{ textAlign: "center" }}>
+                  Fols9da8
+                </Typography>
+              </div>
+              <div style={{ justifyContent: "center" }}>
+                <Typography
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 30,
+                    textAlign: "center",
+                  }}
+                >
+                  {(response.data?.searchUser[0].moneyMade || 0).toFixed(2)}
+                </Typography>
+                <Typography style={{ textAlign: "center" }}>
+                  Profit
+                </Typography>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      {/* <div>
                 {parseFloat(
                   (
                     100 *
                     (-1 +
-                      res.data.currentPortfolioValue[0].wholeValue /
-                        totalOriginalValue)
+                      0.
                   ).toFixed(2)
                 ) >= 0 ? (
                     <Typography
@@ -378,10 +284,11 @@ const MyProfile = ({
           }}
         >
           <TransactionList transactions={transactions} />
-        </div>
-      )}
+        </div> */}
+      {/* )}
+    </div> */}
     </div>
-  );
-};
+  )
+}
 
-export default MyProfile;
+export default SpecificExplore

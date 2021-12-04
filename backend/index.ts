@@ -21,7 +21,6 @@ const startServer = async () => {
     : process.env.MONGODB_URI || ""
 
     void mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-
     const app = express()
     app.use(cors())
     

@@ -94,7 +94,7 @@ const OldData = ({
             message: `Are you sure you want to sell ${
               input.amount
             } x ${datas.metadata.symbol.toUpperCase()} (${
-              lastPrice * parseInt(input.amount)
+              (lastPrice * parseInt(input.amount)).toFixed(2)
             }$)?`,
             buttons: [
               {

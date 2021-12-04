@@ -6,9 +6,26 @@ import {hash, compare} from "bcrypt"
 require("dotenv").config()
 import jwt from "jsonwebtoken";
 import Transaction from "./models/transaction";
-import { CandlesType, TransactionType, UserType, PopulatedUserType, UserInformation, HoldingType, PopulatedHoldingType, ReadyAlphaVantageValues, CurrentPortfolioType, AnalysisValue, Mode} from "./types"
+import { 
+    CandlesType, 
+    TransactionType, 
+    UserType, 
+    PopulatedUserType,
+    UserInformation, 
+    HoldingType, 
+    PopulatedHoldingType, 
+    ReadyAlphaVantageValues, 
+    CurrentPortfolioType, 
+    AnalysisValue, 
+    Mode
+} from "./types"
 import { AuthenticationError, UserInputError} from "apollo-server-express"
-import {getIndividualStockInformation, getAlphaVantage, createDate, getTransactionToReturn } from "./helpFunctions"
+import {
+    getIndividualStockInformation, 
+    getAlphaVantage, 
+    createDate, 
+    getTransactionToReturn 
+} from "./helpFunctions"
 import { parseCompany, parseUserInformation, parseAmount } from "./typeGuards"
 import { PubSub } from "graphql-subscriptions"
 
@@ -30,13 +47,18 @@ const resolvers = {
         me: (_root: undefined, _args: void, context: {currentUser: PopulatedUserType}): PopulatedUserType => {
             return context.currentUser 
         },
-        searchUser: async (_root: undefined, args: {username: string}): Promise<PopulatedUserType[] | [{}]> => {
-            const users = await User.find({usersUsername: {$regex: `^${args.username}`}})
+        searchUser: async (_root: undefined, args: {username: string}, context: {currentUser: PopulatedUserType}): Promise<PopulatedUserType[] | [{}]> => {
+            if (!context.currentUser) {
+                return [{}]
+            }
+            // We search for users whose username starts with args.username from the server and populate them.
+            const users = await User.find({usersUsername: {$regex: `^(?i)${args.username}`}})
                 .populate({path: "usersFollowers", populate: {path: "user"}})
                 .populate({path: "usersFollowing", populate: {path: "user"}})
                 .populate({path: "usersHoldings", populate: {path: "usersStockName"}})
                 .populate({path: "usersTransactions", populate: {path: "transactionStock"}}) as unknown as PopulatedUserType[]
-            return users
+            // We return the users that were found and remove the current user from the list.
+            return users?.filter((user: PopulatedUserType) => user.usersUsername !== context.currentUser.usersUsername)
         },
         individualStock: async (_root: undefined, args: {company: string}): Promise<CandlesType[]> => {
             const parsedCompany = parseCompany(args.company)
@@ -47,16 +69,20 @@ const resolvers = {
             return candles
             
         },
-        currentPortfolioValue: async (_root: undefined, args: {mode: Mode}, context: {currentUser: PopulatedUserType}): Promise<CurrentPortfolioType[]> => {
+        currentPortfolioValue: async (_root: undefined,
+                args: {mode: Mode}, 
+                context: {currentUser: PopulatedUserType}
+            ): Promise<CurrentPortfolioType[]> => {
             let summa = 0
             let values: AnalysisValue[] = []
-            if (context.currentUser && context.currentUser.usersTransactions?.length > 0) {
+            if (context.currentUser && context.currentUser?.usersTransactions?.length > 0) {
                 const firstBuyDate = context.currentUser.usersTransactions[0].transactionDate
                 for (const item of context.currentUser.usersHoldings) {
                     const a = await Stock.find({stockSymbol: item.usersStockName.stockSymbol})
                     let value: CandlesType[]
+                    const value1 = await getIndividualStockInformation(a[0].stockSymbol, setDate(-96), "5")
+
                     if (args.mode === "hours") {
-                        const value1 = await getIndividualStockInformation(a[0].stockSymbol, setDate(-96), "5")
                         new Date(firstBuyDate) > setDate(-96)
                         ? value = value1.filter((item: CandlesType) => {return new Date(item.date) > new Date(firstBuyDate)})
                         : value = value1
@@ -67,10 +93,15 @@ const resolvers = {
                         
                     } else  {
                         value = await getIndividualStockInformation(a[0].stockSymbol, new Date(firstBuyDate), "D")
+                        if (value.length === 0) {
+                            value = value.concat(value1[value1.length - 1])
+                        }
                     }
                     values = values.concat({name: a[0].stockSymbol, sticks: value})
                     summa += value[value.length - 1].close * item.usersTotalAmount
                 }
+            } else if (context.currentUser?.usersTransactions?.length === 0) {
+                throw new Error("This user has no transactions.")
             }
             return [{wholeValue: summa, analysisValues: values}]
         }
@@ -82,11 +113,14 @@ const resolvers = {
             if (!user) {
                 throw new AuthenticationError("User doesn't exist.")
             }
-            if (context.currentUser.usersFollowing.find((item: {user: PopulatedUserType, date: string}) => item.user.usersUsername === args.username)) {
+            else if (context.currentUser.usersFollowing.find((item: {user: PopulatedUserType, date: string}) => item.user.usersUsername === args.username)) {
                 throw new AuthenticationError("You are already following this user.")
             }
-            await User.updateOne({_id: context.currentUser._id}, {$push: {usersFollowing: {user: user._id, date: new Date().toString()}}, $set: {followingCount: context.currentUser.followingCount + 1}})
-            await User.updateOne({_id: user._id}, {$push: {usersFollowers: {user: context.currentUser._id, date: new Date().toString()}}, $set: {followerCount: user.followerCount + 1}})
+            else if (context.currentUser.usersUsername === args.username) {
+                throw new UserInputError("You can't follow yourself.")
+            }
+            await User.updateOne({_id: context.currentUser._id}, {$push: {usersFollowing: {user: user._id, date: new Date().toString()}}, $set: {followingCount: (context.currentUser.followingCount || 0) + 1}})
+            await User.updateOne({_id: user._id}, {$push: {usersFollowers: {user: context.currentUser._id, date: new Date().toString()}}, $set: {followerCount: (user.followerCount || 0) + 1}})
             return {result: true}
         },
         addUser: async (_root: undefined, args: UserInformation): Promise<UserType | string> => {
@@ -218,11 +252,17 @@ const resolvers = {
                 
             }
         },
-        sellStock: async (_root: undefined, args: {stockName: string, amount: number, price: number}, context: {currentUser: PopulatedUserType}): Promise<TransactionType | null> => {
+        sellStock: async (
+                _root: undefined, 
+                args: {stockName: string, amount: number, price: number}, 
+                context: {currentUser: PopulatedUserType}
+            ): Promise<TransactionType | null> => {
             const parsedCompany = parseCompany(args.stockName)
             const parsedAmount = parseAmount(args.amount)
             const parsedPrice = parseAmount(args.price)
-            const holding = context.currentUser.usersHoldings.filter((obj: PopulatedHoldingType): boolean => {return obj.usersStockName.stockSymbol === parsedCompany})[0]
+            const holding = context.currentUser.usersHoldings.filter((obj: PopulatedHoldingType): boolean => {
+                return obj.usersStockName.stockSymbol === parsedCompany
+            })[0]
             if (holding) {
                 if (holding.usersTotalAmount < parsedAmount) {
                     throw new UserInputError("You don't have enough stocks to sell.")

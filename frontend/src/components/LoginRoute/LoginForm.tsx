@@ -26,11 +26,12 @@ const LoginForm = (): JSX.Element => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(result.data)
     try {
-      dispatch(logUserIn(result.data.login.value));
-      history.push("/");
+      dispatch(logUserIn(result.data.login.value))
+      history.push("/")
     } catch (e) {
-      console.log("ei ole olemassa käyttäjää");
+      console.log("ei ole olemassa käyttäjää")
     }
   }, [result.data]);
 

@@ -1,79 +1,65 @@
 import { TextField } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
-import { useLazyQuery } from "@apollo/client";
-import { SEARCH_USER } from "../../graphql/queries";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { SEARCH_USER, SEARCH_USER_FINAL } from "../../graphql/queries";
 import { withStyles } from "@material-ui/styles";
 import { InputAdornment } from "@material-ui/core";
-import { CircularProgress } from "@material-ui/core";
 import { useDebounce } from "use-debounce";
 import { Search } from "@material-ui/icons";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete, { AutocompleteRenderInputParams } from "@material-ui/lab/Autocomplete";
+import { useHistory } from "react-router-dom";
 
-const CssTextField = withStyles({
-  root: {
-    "& label.Mui-focused": {
-      color: "grey",
-    },
-    "& .MuiInput-underline:after": {
-      borderBottomColor: "black",
-    },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "grey",
-        borderRadius: 20,
-      },
-      "&:hover fieldset": {
-        borderColor: "grey",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "black",
-        borderWidth: 3,
-      },
-    },
-  },
-})(TextField);
 
 const UserSearch = ({
   username,
   handleChange,
   handleBlur,
+  setFinalUser,
 }: {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   username: string;
   handleBlur: (e: React.FocusEvent<unknown>) => void;
+  setFinalUser: (s: string) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) => {
 
   const [searchUser, { ...result }] = useLazyQuery(SEARCH_USER);
   const [debounceName] = useDebounce(username, 1500);
+  const [options, setOptions] = useState<string[]>(result?.data?.searchUser === undefined ? [] : result?.data?.searchUser.map((user: {usersUsername: string, __typename: string}) => user.usersUsername));
+  const [open, setOpen] = useState(false);
+  const loading = open && options.length !== 0;
 
-  const [open, setOpen] = React.useState(false);
-  const [options, setOptions] = React.useState<string[] | []>([]);
-  const loading = open && options.length === 0;
-  const topFilms = result?.data?.searchUser === undefined ? [] : result?.data?.searchUser.map((user: {username: string, __typename: string}) => user.username);
-  
-  
   useEffect(() => {
     if (debounceName !== "") {
       searchUser({ variables: { username: debounceName } });
+      setOptions(result.data?.searchUser === undefined ? [] : result?.data?.searchUser.map((user: {usersUsername: string, __typename: string}) => user.usersUsername))
     }
   }, [debounceName]);
-  
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange(event);
-  };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (result.data?.searchUser !== undefined) {
+      setOptions(result.data?.searchUser.map((user: {usersUsername: string, __typename: string}) => user.usersUsername))
+    } else {
+      setOptions([])
+    }
+  }, [result.data]);
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange(event)
+  }
+
+  useEffect(() => {
     let active = true;
 
     if (!loading) {
       return undefined;
     }
 
-    (async () => {
+    (() => {
 
       if (active) {
-        setOptions([...topFilms]);
+        setOptions([...options]);
       }
     })();
 
@@ -82,101 +68,79 @@ const UserSearch = ({
     };
   }, [loading]);
 
-  React.useEffect(() => {
-    if (!open) {
-      setOptions([]);
-    }
-  }, [open]);
-
   return (
     <Autocomplete
-      id="asynchronous-demo"
-      style={{width: 300}}
+      id="username"
+      style={{width: "60vw", paddingRight: "1vw", justifyContent: "center", alignItems: "center", display: "flex"}}
       open={open}
       onOpen={() => {
         setOpen(true);
       }}
       onClose={() => {
-        setOpen(false);
+        setOpen(false)
+        setOptions([]);
       }}
       getOptionLabel={(option) => option}
       options={options}
+      popupIcon={<div></div>}
       loading={loading}
-      renderInput={(params) => (
+      autoHighlight
+      onChange={(event, newValue) => {setFinalUser(newValue as string)}}
+      autoSelect
+      noOptionsText="No users found"
+      renderInput={(params: AutocompleteRenderInputParams) => (
         <TextField
           {...params}
+          id="username"
+          name="username"
+          onBlur={handleBlur}
           onChange={onChange}
+          style={{border: "2px solid black", borderRadius: 7, padding: 20}}
           value={username}
           InputProps={{
             ...params.InputProps,
-            
-            endAdornment: (
-              <React.Fragment>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                {params.InputProps.endAdornment}
-              </React.Fragment>
-            ),
             startAdornment: (
               <InputAdornment position="start">
                 <Search />
               </InputAdornment>
             ),
+            disableUnderline: true
           }}
         />
       )}
     />
   );
 
-  // useEffect(() => {
-  //   if (debounceName !== "") {
-  //     searchUser({ variables: { username: debounceName } });
-  //   }
-  // }, [debounceName]);
-
-  // const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   handleChange(event);
-  // };
-
-  // return (
-  //   <Autocomplete
-  //     id="autocomplete-username"
-  // options={options}
-  // open={open}
-  // onOpen={() => setOpen(true)}
-  // onClose={() => setOpen(false)}
-  // loading={loading}
-  // getOptionLabel={(option) => option}
-  // renderInput={(params) => (
-  // <CssTextField
-  //   id="username"
-  //   autoComplete="off"
-  //   type="username"
-  //   onBlur={handleBlur}
-  //   variant="outlined"
-  //   name="username"
-  //   onChange={onChange}
-  //   value={username}
-  //   InputProps={{
-  //     startAdornment: (
-  //       <InputAdornment position="start">
-  //         <Search />
-  //       </InputAdornment>
-  //     ),
-  //   }}
-  // />
-  // )}
-  // />
-  // );
 };
 
 const ExplorePage = () => {
+  const [finalUser, setFinalUser] = useState("");
+  const {refetch} = useQuery(SEARCH_USER_FINAL, {variables: {username: finalUser}});
+  const history = useHistory();
+  
+  const handleFinalSearch = async () => {
+    const response = await refetch();
+    return response
+  }
+
+  useEffect(() => {
+    if (finalUser !== "") {
+      handleFinalSearch()
+        .then((response: any) => {
+          if (response.data.searchUser.length === 1) {
+            history.push(`/explore/${response.data.searchUser[0].usersUsername}`)
+          } else {
+            console.log("Specify / no user found")
+          }
+        })
+    }
+  }, [finalUser]);
+
   return (
     <div
       style={{
         backgroundColor: "white",
         textAlign: "center",
-        paddingTop: "20vh",
-        paddingBottom: "20vh",
         margin: 5,
       }}
     >
@@ -192,7 +156,7 @@ const ExplorePage = () => {
         <Formik
           initialValues={{ username: "" }}
           onSubmit={(value: { username: string }) => {
-            console.log(value);
+            setFinalUser(value.username)
           }}
         >
           {({ values, handleChange, handleBlur, handleSubmit }) => (
@@ -201,6 +165,8 @@ const ExplorePage = () => {
                 handleChange={handleChange}
                 handleBlur={handleBlur}
                 username={values.username}
+                handleSubmit={handleSubmit}
+                setFinalUser={setFinalUser}
               />
             </form>
           )}
