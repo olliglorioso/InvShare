@@ -4,6 +4,7 @@ import { DocumentNode } from "graphql";
 export const typeDefs: DocumentNode = gql`
     type Token {
         value: String!
+        username: String!
     }
 
     type IndividualStock {
@@ -95,14 +96,15 @@ export const typeDefs: DocumentNode = gql`
         currentPortfolioValue (mode: String!): [AnalysisType]
     }
 
-    
-
     type Mutation {
         addUser (
             username: String!
             password: String!
         ): User
         followUser (
+            username: String!
+        ): Result
+        unfollowUser (
             username: String!
         ): Result
         login (
@@ -120,8 +122,27 @@ export const typeDefs: DocumentNode = gql`
         ): Transaction!
     }
 
+    type followEvent {
+        followType: String!
+        auteur: String!
+        object: String!
+        date: String!
+    }
+
+    type FollowType {
+        date: String!
+        user: User
+    }
+
+    type StockTransactionType {
+        transaction: Transaction!
+        me: String!
+        myFollowers: [FollowType]
+    }
+
     type Subscription {
-        stockPurchased: Transaction!
+        stockPurchased(username: String): StockTransactionType
+        followEvent: followEvent!
     }
 `;
 

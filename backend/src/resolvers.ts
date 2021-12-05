@@ -27,7 +27,7 @@ import {
     getTransactionToReturn 
 } from "./helpFunctions"
 import { parseCompany, parseUserInformation, parseAmount } from "./typeGuards"
-import { PubSub } from "graphql-subscriptions"
+import { PubSub, withFilter } from "graphql-subscriptions"
 
 const pubsub = new PubSub()
 
@@ -121,6 +121,20 @@ const resolvers = {
             }
             await User.updateOne({_id: context.currentUser._id}, {$push: {usersFollowing: {user: user._id, date: new Date().toString()}}, $set: {followingCount: (context.currentUser.followingCount || 0) + 1}})
             await User.updateOne({_id: user._id}, {$push: {usersFollowers: {user: context.currentUser._id, date: new Date().toString()}}, $set: {followerCount: (user.followerCount || 0) + 1}})
+            pubsub.publish("FOLLOWEVENT", {followEvent: {followType: "follow", auteur: context.currentUser.usersUsername, object: user.usersUsername, date: new Date()}})
+            return {result: true}
+        },
+        unfollowUser: async (_root: undefined, args: {username: string}, context: {currentUser: PopulatedUserType}): Promise<{result: boolean}> => {
+            const user = await User.findOne({usersUsername: args.username})
+            if (!user) {
+                throw new AuthenticationError("User doesn't exist.")
+            }
+            else if (!context.currentUser.usersFollowing.find((item: {user: PopulatedUserType, date: string}) => item.user.usersUsername === args.username)) {
+                throw new AuthenticationError("You are not following this user.")
+            }
+            await User.updateOne({_id: context.currentUser._id}, {$pull: {usersFollowing: {user: user._id}}, $set: {followingCount: (context.currentUser.followingCount || 0) - 1}})
+            await User.updateOne({_id: user._id}, {$pull: {usersFollowers: {user: context.currentUser._id}}, $set: {followerCount: (user.followerCount || 0) - 1}})
+            pubsub.publish("FOLLOWEVENT", {followEvent: {followType: "unfollow", auteur: context.currentUser.usersUsername, object: user.usersUsername, date: new Date()}})
             return {result: true}
         },
         addUser: async (_root: undefined, args: UserInformation): Promise<UserType | string> => {
@@ -144,7 +158,7 @@ const resolvers = {
             });
             return await user.save();
         },
-        login: async (_root: undefined, args: UserInformation): Promise<void | {value: string}> => {
+        login: async (_root: undefined, args: UserInformation): Promise<void | {value: string, username: string}> => {
             const parsedUserInformation = parseUserInformation(args)
             const user = await User.findOne({usersUsername: parsedUserInformation.username})
             const passwordCorrect = user === null
@@ -161,7 +175,7 @@ const resolvers = {
             }
 
             const token = jwt.sign(userForToken, process.env.SECRETFORTOKEN as string);
-            return {value: token};
+            return {value: token, username: args.username};
         },
         buyStock: async (_root: undefined, args: {stockName: string, amount: number}, context: {currentUser: PopulatedUserType}): Promise<TransactionType | null> => {
             const parsedCompany = parseCompany(args.stockName)
@@ -193,7 +207,7 @@ const resolvers = {
                 }
                 await User.updateOne({usersUsername: loggedUser.usersUsername}, {$set: newHolding})
                 await newTransaction.save()
-                pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
+                pubsub.publish("STOCK_PURCHASED", {stockPurchased: {transaction: getTransactionToReturn(newTransaction._id), me: context.currentUser.usersUsername, myFollowers: context.currentUser.usersFollowers}})
                 return await getTransactionToReturn(newTransaction._id)
             } else {
                 const newTransaction = new Transaction({
@@ -227,7 +241,7 @@ const resolvers = {
                         }
                     )
                     await newTransaction.save()
-                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: {transaction: getTransactionToReturn(newTransaction._id), me: context.currentUser.usersUsername, myFollowers: context.currentUser.usersFollowers}})
                     return await getTransactionToReturn(newTransaction._id)
                 } else {
                     await Stock.updateOne({_id: (firstBuyEver._id as mongoose.Types.ObjectId)},
@@ -246,7 +260,7 @@ const resolvers = {
                         }}
                     )
                     await newTransaction.save()
-                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: {transaction: getTransactionToReturn(newTransaction._id), me: context.currentUser.usersUsername, myFollowers: context.currentUser.usersFollowers}})
                     return await getTransactionToReturn(newTransaction._id)
                 }
                 
@@ -311,7 +325,7 @@ const resolvers = {
                         }})
                     }
                     await newTransaction.save()
-                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: getTransactionToReturn(newTransaction._id)})
+                    pubsub.publish("STOCK_PURCHASED", {stockPurchased: {transaction: getTransactionToReturn(newTransaction._id), me: context.currentUser.usersUsername, myFollowers: context.currentUser.usersFollowers}})
                     return await getTransactionToReturn(newTransaction._id)
                 }
                 
@@ -323,7 +337,20 @@ const resolvers = {
     },
     Subscription: {
         stockPurchased: {
-            subscribe: () => pubsub.asyncIterator(["STOCK_PURCHASED"])
+            subscribe: withFilter(
+                () => pubsub.asyncIterator(["STOCK_PURCHASED"]),
+                async (payload, variables) => {
+                    const payloadReady = await payload.stockPurchased
+                    if (payloadReady.myFollowers.map((o: {id: string, user: PopulatedUserType}) => o.user.usersUsername).includes(variables.username) || variables.username === payloadReady.me) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            )
+        },
+        followEvent: {
+            subscribe: () => pubsub.asyncIterator(["FOLLOWEVENT"])
         },
     }
 }

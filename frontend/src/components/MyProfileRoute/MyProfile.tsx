@@ -19,11 +19,11 @@ import { AnimateKeyframes } from "react-simple-animate";
 import { noPurchases } from "../../reducers/firstBuyReducer";
 import { useDispatch } from "react-redux";
 import { Arrow90degUp } from "react-bootstrap-icons";
+import notification from "../Other/Notification";
 
-const MyProfile = ({
-  subscriptionData,
-}: {
-  subscriptionData: string;
+const MyProfile = ({subscriptionData, followSubscriptions}: {
+  subscriptionData: string,
+  followSubscriptions: string
 }): JSX.Element => {
   const result = useQuery(ME);
   const dispatch = useDispatch();
@@ -39,16 +39,16 @@ const MyProfile = ({
   )
 
   useEffect(() => {
-    if (subscriptionData) {
+    if (subscriptionData || followSubscriptions) {
       try {
         result.refetch();
         data.refetch();
         res.refetch();
       } catch (e: unknown) {
-        console.log(e)
+        notification("An error occured.", "Error while downloading updates and new information.", "danger")
       }
     }
-  }, [subscriptionData]);
+  }, [subscriptionData, followSubscriptions]);
 
   if (
     data.error?.message === "This user has no transactions." || res.error?.message === "This user has no transactions."
@@ -92,7 +92,7 @@ const MyProfile = ({
     );
   }
 
-  if (!data || !result.data || !result.data.me || res.error || !res.data || result.error) {
+  if (!result.data || !result.data.me || res.error || !res.data || result.error) {
     return (
       <div
         style={{
@@ -150,6 +150,7 @@ const MyProfile = ({
       </div>
     );
   }
+
 
   const analysisData = switchMode.mode
     ? data.data.currentPortfolioValue[0]
@@ -363,6 +364,7 @@ const MyProfile = ({
                     totalOriginalValue={totalOriginalValue}
                     analysisData={analysisData.analysisValues}
                     positions={result.data.me.usersHoldings}
+                    isTogglable={!data.data}
                   />
                 </div>
               </div>

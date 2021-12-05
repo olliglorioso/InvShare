@@ -26,6 +26,11 @@ export const SEARCH_USER_FINAL = gql`
   query searchUser($username: String!) {
     searchUser(username: $username) {
       usersUsername
+      usersFollowers {
+        user {
+          usersUsername
+        }
+      }
       usersHoldings {
         usersStockName {
           stockTotalAmount
@@ -60,6 +65,14 @@ export const FOLLOW = gql`
   }
 `
 
+export const UNFOLLOW = gql`
+  mutation unfollowUser($username: String!) {
+    unfollowUser(username: $username) {
+      result
+    }
+  }
+`
+
 export const SEARCH_USER = gql`
   query searchUser($username: String!) {
     searchUser(username: $username) {
@@ -85,13 +98,27 @@ export const GET_PREDICTION = gql`
 `;
 
 export const STOCK_PURCHASED = gql`
-  subscription StockPurchased {
-    stockPurchased {
-      ...TransactionDetails
+  subscription StockPurchased ($username: String) {
+    stockPurchased (username: $username){
+      transaction {
+        ...TransactionDetails
+      }
+      me
     }
   }
   ${TRANSACTIONDETAILS}
 `;
+
+export const FOLLOWEVENT = gql`
+  subscription followEvent {
+    followEvent {
+      auteur
+      object
+      followType
+      date
+    }
+  }
+`
 
 const ADD_USER = gql`
   mutation addUser($username: String!, $password: String!) {
@@ -177,6 +204,7 @@ export const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
     login(username: $username, password: $password) {
       value
+      username
     }
   }
 `;

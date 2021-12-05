@@ -34,7 +34,7 @@ const startServer = async () => {
 
     const schema = makeExecutableSchema({ 
         typeDefs, 
-        resolvers
+        resolvers,
     })
 
     const server = new ApolloServer({
@@ -47,7 +47,7 @@ const startServer = async () => {
                     .populate({path: "usersHoldings", populate: {path: "usersStockName"}})
                     .populate({path: "usersTransactions", populate: {path: "transactionStock"}})
                     .populate({path: "usersFollowing", populate: {path: "user"}})
-                    .populate({path: "usersFollower", populate: {path: "user"}}) as unknown as PopulatedUserType
+                    .populate({path: "usersFollowers", populate: {path: "user"}}) as unknown as PopulatedUserType
                 return {currentUser};
             }
             return null;

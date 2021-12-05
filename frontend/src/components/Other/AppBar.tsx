@@ -14,6 +14,8 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import { RootState } from "../..";
 import { useApolloClient } from "@apollo/client";
 import { logUserOut } from "../../reducers/userLoggedReducer";
+import { buyFirstStock } from "../../reducers/firstBuyReducer";
+import notification from "./Notification";
 
 const MenuBar = (): JSX.Element => {
   const styles = useStyles();
@@ -25,11 +27,12 @@ const MenuBar = (): JSX.Element => {
   const logOut = () => {
     try {
       localStorage.clear();
-      client.clearStore();
-      dispatch(logUserOut());
-      history.push("/");
+      client.clearStore()
+      dispatch(logUserOut())
+      dispatch(buyFirstStock())
+      history.push("/")
     } catch (e) {
-      console.log(e);
+      notification("An error occured.", "Error while logging out.", "danger")
     }
   };
 

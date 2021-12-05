@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { SEARCH_USER, SEARCH_USER_FINAL } from "../../graphql/queries";
-import { withStyles } from "@material-ui/styles";
 import { InputAdornment } from "@material-ui/core";
 import { useDebounce } from "use-debounce";
 import { Search } from "@material-ui/icons";
 import Autocomplete, { AutocompleteRenderInputParams } from "@material-ui/lab/Autocomplete";
 import { useHistory } from "react-router-dom";
+import notification from "../Other/Notification";
 
 
 const UserSearch = ({
@@ -130,7 +130,7 @@ const ExplorePage = () => {
           if (response.data.searchUser.length === 1) {
             history.push(`/explore/${response.data.searchUser[0].usersUsername}`)
           } else {
-            console.log("Specify / no user found")
+            notification("Something went wrong.", "Your search was not precise enough or no user was found.", "info")
           }
         })
     }

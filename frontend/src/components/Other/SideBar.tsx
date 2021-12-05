@@ -50,12 +50,10 @@ const SideBar = (): JSX.Element => {
             <Divider classes={{ root: styles.divider }} />
             <ListItem
               button
-              onClick={() => {
-                return;
-              }}
+              onClick={() => {history.push("/actions")}}
             >
               <NotificationsNone />
-              <ListItemText inset={true} primary={"Notifications"} />
+              <ListItemText inset={true} primary={"Actions"} />
             </ListItem>
             <Divider classes={{ root: styles.divider }} />
             <ListItem button onClick={() => history.push("/mystocks")}>

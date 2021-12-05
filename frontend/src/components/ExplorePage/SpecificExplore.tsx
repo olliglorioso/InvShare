@@ -1,17 +1,31 @@
 import { useMutation, useQuery } from "@apollo/client"
-import React from "react"
+import React, {useEffect} from "react"
 import { useParams } from "react-router-dom"
-import { FOLLOW, SEARCH_USER_FINAL } from "../../graphql/queries"
+import { FOLLOW, SEARCH_USER_FINAL, UNFOLLOW } from "../../graphql/queries"
 import { Card, CardHeader, Typography, CardContent, Button } from "@material-ui/core"
 import Avatar from "boring-avatars"
 import LoadingAnimation from "../Other/LoadingAnimation"
 import notification from "../Other/Notification"
+import TransactionList from "../MyProfileRoute/TransactionList"
 
-const SpecificExplore = () => {
+const SpecificExplore = ({followSubscriptions}: {followSubscriptions: string}) => {
   const id: {id: string} = useParams()
   const response = useQuery(SEARCH_USER_FINAL, {variables: {username: id.id}})
   const [follow, ...result] = useMutation(FOLLOW, {variables: {username: id.id}})
-  if (response.loading) {
+  const loggedUser = localStorage.getItem("loggedUser");
+  const [unfollow, ...result2] = useMutation(UNFOLLOW, {variables: {username: id.id}})
+
+  useEffect(() => {
+    if (followSubscriptions) {
+      try {
+        response.refetch()
+      } catch {
+        console.log("an error")
+      }    
+    }
+  }, [followSubscriptions])
+
+  if (response.loading || !response.data || !response.data.searchUser[0]) {
     return (
       <div
         style={{
@@ -35,6 +49,15 @@ const SpecificExplore = () => {
     }
   }
 
+  const handleClickUnfollow = async () => {
+    try {
+      await unfollow()
+      notification("Success", `You unfollowed ${id.id}.`, "success")
+    } catch {
+      notification("Error.", result2[0].error?.graphQLErrors[0].message as string || "An error occured.", "danger")
+    }
+  }
+
   return (
     <div
       style={{
@@ -52,7 +75,7 @@ const SpecificExplore = () => {
             avatar={
               <Avatar
                 size={100}
-                name={response?.data.searchUser[0]?.usersUsername}
+                name={response.data.searchUser[0]?.usersUsername}
                 variant="marble"
                 colors={["#808080", "#FFFFFF", "#000000"]}
               />
@@ -68,15 +91,18 @@ const SpecificExplore = () => {
               >
                 <div style={{ flex: 2 }}>
                   <Typography style={{ fontSize: 30, flex: 1 }}>
-                    {response?.data.searchUser[0]?.usersUsername}
+                    {response.data?.searchUser[0]?.usersUsername}
                   </Typography>
                   <Typography style={{ fontSize: 20, flex: 1 }}>
-                    <Button style={{background: "black", color: "white"}} onClick={handleClick}>Follow</Button>
+                    {response.data?.searchUser[0].usersFollowers.filter((followType: {user: {usersUsername: string, __typename: string}, __typename: string}) => followType.user.usersUsername === loggedUser).length > 0 
+                      ? <Button style={{background: "black", color: "white"}} onClick={handleClickUnfollow}>Unfollow</Button>
+                      : <Button style={{background: "black", color: "white"}} onClick={handleClick}>Follow</Button>
+                    }
                   </Typography>
                 </div>
                 <div style={{ flex: 1, paddingTop: 15 }}>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
-                    {response.data?.searchUser[0].followerCount || 0}
+                    {response.data.searchUser[0].followerCount || 0}
                   </Typography>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
                     Followers
@@ -84,7 +110,7 @@ const SpecificExplore = () => {
                 </div>
                 <div style={{ flex: 1, paddingTop: 15}}>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
-                    {response.data?.searchUser[0].followingCount || 0}
+                    {response.data.searchUser[0].followingCount || 0}
                   </Typography>
                   <Typography style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
                     Following
@@ -98,37 +124,9 @@ const SpecificExplore = () => {
               style={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-between",
+                justifyContent: "space-around",
               }}
             >
-              <div style={{ justifyContent: "center" }}>
-                <Typography
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 30,
-                    textAlign: "center",
-                  }}
-                >
-                  fksdajfkjdsaf
-                </Typography>
-                <Typography style={{ textAlign: "center" }}>
-                  Followingfdfadf
-                </Typography>
-              </div>
-              <div style={{ justifyContent: "center" }}>
-                <Typography
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 30,
-                    textAlign: "center",
-                  }}
-                >
-                  fasjdfk
-                </Typography>
-                <Typography style={{ textAlign: "center" }}>
-                  Fols9da8
-                </Typography>
-              </div>
               <div style={{ justifyContent: "center" }}>
                 <Typography
                   style={{
@@ -140,153 +138,22 @@ const SpecificExplore = () => {
                   {(response.data?.searchUser[0].moneyMade || 0).toFixed(2)}
                 </Typography>
                 <Typography style={{ textAlign: "center" }}>
-                  Profit
+                  Money made
                 </Typography>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-      {/* <div>
-                {parseFloat(
-                  (
-                    100 *
-                    (-1 +
-                      0.
-                  ).toFixed(2)
-                ) >= 0 ? (
-                    <Typography
-                      style={{
-                        color: "green",
-                        fontWeight: "bold",
-                        fontSize: 30,
-                        textAlign: "center",
-                      }}
-                    >
-                      {(
-                        100 *
-                      (-1 +
-                        res.data.currentPortfolioValue[0].wholeValue /
-                          totalOriginalValue)
-                      ).toFixed(2)}
-                    %
-                    </Typography>
-                  ) : (
-                    <Typography
-                      style={{
-                        color: "red",
-                        fontWeight: "bold",
-                        fontSize: 30,
-                        textAlign: "center",
-                      }}
-                    >
-                      {(
-                        100 *
-                      (-1 +
-                        res.data.currentPortfolioValue[0].wholeValue /
-                          totalOriginalValue)
-                      ).toFixed(2)}
-                    %
-                    </Typography>
-                  )}
-
-                <Typography style={{ textAlign: "center" }}>
-                  Profit all time
-                </Typography>
-              </div>
-              <div>
-                <Typography
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 30,
-                    textAlign: "center",
-                  }}
-                >
-                  {Math.round(totalOriginalValue)}
-                </Typography>
-                <Typography style={{ textAlign: "center" }}>
-                  Original value
-                </Typography>
-              </div>
-              <div>
-                <Typography
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 30,
-                    textAlign: "center",
-                  }}
-                >
-                  {Math.round(result.data.me.moneyMade)}
-                </Typography>
-                <Typography style={{ textAlign: "center" }}>Profit</Typography>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <TransactionList transactions={response.data?.searchUser[0].usersTransactions || 0} />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <div style={{ paddingBottom: "1vh", textAlign: "center" }}>
-          <Button
-            variant="contained"
-            type="submit"
-            onClick={() => setMode("Analysis")}
-            style={{ background: "black", color: "white" }}
-          >
-            Analysis
-          </Button>
-        </div>
-        <div style={{ paddingBottom: "1vh", textAlign: "center" }}>
-          <Button
-            variant="contained"
-            type="submit"
-            onClick={() => setMode("Transactions")}
-            style={{ background: "black", color: "white" }}
-          >
-            Transactions
-          </Button>
-        </div>
-      </div>
-      {mode === "Analysis" ? (
-        <div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <div
-              style={{ width: "100%", paddingLeft: "5vh", paddingRight: "5vh" }}
-            >
-              <h1
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 25,
-                  color: "black",
-                  textAlign: "center",
-                  fontFamily: "Arial",
-                }}
-              >
-                Analysis
-              </h1>
-              <div>
-                <div style={{ width: "100%", justifyContent: "center" }}>
-                  <AnalysisChart
-                    totalOriginalValue={totalOriginalValue}
-                    analysisData={analysisData.analysisValues}
-                    positions={result.data.me.usersHoldings}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <TransactionList transactions={transactions} />
-        </div> */}
-      {/* )}
-    </div> */}
     </div>
   )
 }

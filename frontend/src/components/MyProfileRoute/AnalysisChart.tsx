@@ -16,11 +16,14 @@ const AnalysisChart = ({
   analysisData,
   positions,
   totalOriginalValue,
+  isTogglable
 }: {
   analysisData: AnalysisData[];
   positions: Positions[];
   totalOriginalValue: number;
+  isTogglable: boolean
 }) => {
+
   let stickcount = 0;
   if (analysisData.length < 1) {
     return (
@@ -142,7 +145,8 @@ const AnalysisChart = ({
           color={"default"}
           checked={switchMode.mode}
           onChange={() => dispatch(changeMode())}
-        ></Switch>
+          disabled={isTogglable}
+        ></Switch> 
         <Typography>Daily since first transaction</Typography>
       </div>
       <Chart options={options2} series={series} type="line" height={300} />

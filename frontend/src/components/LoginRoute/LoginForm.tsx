@@ -26,9 +26,8 @@ const LoginForm = (): JSX.Element => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(result.data)
     try {
-      dispatch(logUserIn(result.data.login.value))
+      dispatch(logUserIn(result.data.login.value, result.data.login.username))
       history.push("/")
     } catch (e) {
       console.log("ei ole olemassa käyttäjää")
