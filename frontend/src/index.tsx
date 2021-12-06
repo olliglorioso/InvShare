@@ -33,7 +33,7 @@ const httpLink = new HttpLink({ uri: "https://fso2021practicework.herokuapp.com/
 
 //change below link when pushing
 const wsLink = new WebSocketLink({
-  uri: "wss://fso2021practicework.herokuapp.com/graphql",
+  uri: "wss://fso2021practicework.herokuapp.com/subscriptions",
   options: {
     reconnect: true,
   },
