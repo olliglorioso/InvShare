@@ -5,7 +5,7 @@ import { TransactionType } from "../../types"
 import TransactionList from "../MyProfileRoute/TransactionList"
 import { Typography } from "@material-ui/core"
 
-const ActionsPage = ({stockSubscription}: {stockSubscription: string}) => {
+const ActionsPage = () => {
   const actionsResult = useQuery(GET_ACTIONS)
 
   if (actionsResult.loading) {

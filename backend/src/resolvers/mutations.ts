@@ -11,6 +11,7 @@ import { createDate, setDate } from "../utils/dateOperators"
 import { getTransactionToReturn } from "../utils/randomFunctions"
 import Transaction from "../models/transaction"
 import Stock from "../models/stock"
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 require("dotenv").config()
 
 // This field includes the mutations that are available for the client.
@@ -38,6 +39,8 @@ const mutations = {
         else if (currentUser.usersUsername === username) {
             throw new UserInputError("You can't follow yourself.", {errorCode: 400})
         }
+        // Now that user exists, let's define it as UserType.
+        const parsedUser: UserType = user as UserType
         // Checking if the user is logged in.
         if (!currentUser) {
             throw new UserInputError("You are not logged in.", {errorCode: 400})
@@ -45,19 +48,19 @@ const mutations = {
         // If there are no errors, the user is followed by updating both
         // the current user and the user that is being followed.
         await User.updateOne({_id: currentUser._id}, {
-            $push: {usersFollowing: {user: user._id, date: new Date().toString()}}, 
+            $push: {usersFollowing: {user: parsedUser._id, date: new Date().toString()}}, 
             $set: {followingCount: (currentUser.followingCount || 0) + 1}
         })
-        await User.updateOne({_id: user._id}, {
+        await User.updateOne({_id: parsedUser._id}, {
             $push: {usersFollowers: {user: currentUser._id, date: new Date().toString()}}, 
-            $set: {followerCount: (user.followerCount || 0) + 1}
+            $set: {followerCount: (parsedUser.followerCount || 0) + 1}
         })
         // Information about the event is published with PubSub-object in order to 
         // update all the relevant clients.
         pubsub.publish("FOLLOWEVENT", {followEvent: {
             followType: "follow", 
             auteur: currentUser.usersUsername, 
-            object: user.usersUsername, 
+            object: parsedUser.usersUsername, 
             date: new Date()},
             myFollowers: currentUser.usersFollowers
         })
@@ -81,22 +84,24 @@ const mutations = {
         else if (!currentUser.usersFollowing.find((item: {user: PopulatedUserType, date: string}) => item.user.usersUsername === parsedUsername)) {
             throw new AuthenticationError("You are not following this user.", {errorCode: 401})
         }
+        // Now that user exists, let's define it as UserType.
+        const parsedUser: UserType = user as UserType
         // If there are no errors, the user is unfollowed by updating both
         // the current user and the user that is being unfollowed.
         await User.updateOne({_id: currentUser._id}, {
-            $pull: {usersFollowing: {user: user._id}}, 
+            $pull: {usersFollowing: {user: parsedUser._id}}, 
             $set: {followingCount: (currentUser.followingCount || 0) - 1}
         })
-        await User.updateOne({_id: user._id}, {
+        await User.updateOne({_id: parsedUser._id}, {
             $pull: {usersFollowers: {user: currentUser._id}}, 
-            $set: {followerCount: (user.followerCount || 0) - 1}
+            $set: {followerCount: (parsedUser.followerCount || 0) - 1}
         })
         // Information about the event is published with PubSub-object in order to 
         // update all the relevant clients.
         pubsub.publish("FOLLOWEVENT", {followEvent: {
             followType: "unfollow", 
             auteur: currentUser.usersUsername, 
-            object: user.usersUsername, 
+            object: parsedUser.usersUsername, 
             date: new Date()},
             myFollowers: currentUser.usersFollowers
         })
@@ -245,7 +250,7 @@ const mutations = {
                 // holdingToBeChanged is searched from the user's holdings and then updated.
                 // UsersTotalAmount is increased with this purchase's amount, and the total-
                 // OriginalPriceValue is increased with the price of this purchase * amount.
-                const holdingsArray = (user as UserType).usersHoldings
+                const holdingsArray = user.usersHoldings
                 holdingsArray[holdingsArray.indexOf(holdingToBeChanged)] = {
                     ...holdingToBeChanged,
                     usersTotalAmount: (holdingToBeChanged.usersTotalAmount + parsedAmount), 

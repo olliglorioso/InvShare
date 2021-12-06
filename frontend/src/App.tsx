@@ -30,7 +30,7 @@ function App(): JSX.Element {
             <div>
               <SideBar />
               <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
-              <ActionsPage stockSubscription={resultti.data?.stockEvent?.transaction.transactionDate} />
+              <ActionsPage />
             </div>
           </Route>
           <Route path="/login" exact>

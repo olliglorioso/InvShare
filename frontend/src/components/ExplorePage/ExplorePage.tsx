@@ -126,7 +126,7 @@ const ExplorePage = () => {
   useEffect(() => {
     if (finalUser !== "") {
       handleFinalSearch()
-        .then((response: any) => {
+        .then((response) => {
           if (response.data.searchUser.length === 1) {
             history.push(`/explore/${response.data.searchUser[0].usersUsername}`)
           } else {

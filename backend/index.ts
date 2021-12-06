@@ -13,7 +13,7 @@ import { createServer } from "http"
 import { SubscriptionServer } from "subscriptions-transport-ws"
 import { execute, subscribe } from "graphql"
 import { makeExecutableSchema } from "@graphql-tools/schema";
-// import history from "connect-history-api-fallback"
+import history from "connect-history-api-fallback"
 
 const startServer = async () => {
     const MONGODB_URI: string = process.env.NODE_ENV === "test"
@@ -24,7 +24,7 @@ const startServer = async () => {
     const app = express()
     app.use(cors())
     
-    // app.use(history())
+    app.use(history())
     app.use(express.static("build"))
     app.get("/healthcheck", (_req, res) => {
         res.send("toimii")

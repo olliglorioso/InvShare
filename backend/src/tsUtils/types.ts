@@ -2,6 +2,24 @@ import mongoose from "mongoose"
 
 // This file includes all the types that are used in the backend.
 
+export interface PayloadType {
+    stockEvent: {
+        me: string,
+        myFollowers: {id: string, user: PopulatedUserType}[],
+        transaction: Promise<TransactionType>
+    }
+}
+
+export interface PayloadType2 {
+    followEvent: {
+        followType: "follow" | "unfollow",
+        auteur: string,
+        object: string,
+        date: Date
+    },
+    myFollowers: {_id: string, user: PopulatedUserType, date: string}[],
+}
+
 export interface CandlesType {
     close: number,
     date: string,

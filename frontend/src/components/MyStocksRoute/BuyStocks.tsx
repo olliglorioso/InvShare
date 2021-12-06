@@ -64,7 +64,7 @@ const PricePerStock = ({
   handleChange,
 }: {
   price: number;
-  handleChange: any;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
   let cPrice = price;
   useEffect(() => {

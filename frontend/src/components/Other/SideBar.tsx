@@ -12,7 +12,6 @@ import { RootState } from "../..";
 import {
   AccountCircle,
   Explore,
-  NotificationsActive,
   NotificationsNone,
   ShowChart,
 } from "@material-ui/icons";

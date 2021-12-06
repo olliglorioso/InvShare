@@ -28,7 +28,7 @@ const queries = {
         _root: undefined, 
         {username}: {username: unknown}, 
         {currentUser}: {currentUser: PopulatedUserType}
-    ): Promise<PopulatedUserType[] | [{}]> => {
+    ): Promise<PopulatedUserType[]> => {
         // Parsing the username to make sure it is valid.
         const parsedUsername = parseCompany(username)
         // Checking if the user is logged in.
@@ -138,7 +138,7 @@ const queries = {
                 transactionOwner: item.usersUsername}
             })
         // Initializing the final list of transactions and their owners.
-        let transactionList: {transaction: TransactionType, transactionOwner: string}[] = []
+        const transactionList: {transaction: TransactionType, transactionOwner: string}[] = []
         // This double-for-loop goes through the above array and puts every transaction
         // in a single list with the owner in the same object.
         for (const item of followersTransactions) {
