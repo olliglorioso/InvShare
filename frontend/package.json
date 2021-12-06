@@ -24,6 +24,7 @@
     "confirm-dialog": "^0.1.2",
     "cors": "^2.8.5",
     "dates-between": "^1.1.0",
+    "dotenv": "^10.0.0",
     "finnhub": "^1.2.6",
     "formik": "^2.2.9",
     "graphql": "^15.5.1",

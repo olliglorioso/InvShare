@@ -1,0 +1,78 @@
+"filename", "language", "JSON", "JavaScript", "TypeScript", "TypeScript React", "HTML", "Markdown", "YAML", "comment", "blank", "total"
+"c:\Users\munbo\0001ft\fso2021-practice-work\.github\workflows\pipeline.yml", "YAML", 0, 0, 0, 0, 0, 0, 38, 11, 3, 52
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\babel.config.js", "JavaScript", 0, 6, 0, 0, 0, 0, 0, 1, 0, 7
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\index.ts", "TypeScript", 0, 0, 73, 0, 0, 0, 0, 4, 12, 89
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\package-lock.json", "JSON", 11294, 0, 0, 0, 0, 0, 0, 0, 1, 11295
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\package.json", "JSON", 72, 0, 0, 0, 0, 0, 0, 0, 1, 73
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\helpFunctions.ts", "TypeScript", 0, 0, 54, 0, 0, 0, 0, 1, 11, 66
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\models\stock.ts", "TypeScript", 0, 0, 15, 0, 0, 0, 0, 3, 4, 22
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\models\transaction.ts", "TypeScript", 0, 0, 27, 0, 0, 0, 0, 6, 5, 38
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\models\user.ts", "TypeScript", 0, 0, 76, 0, 0, 0, 0, 13, 4, 93
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\resolvers\mutations.ts", "TypeScript", 0, 0, 283, 0, 0, 0, 0, 121, 4, 408
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\resolvers\queries.ts", "TypeScript", 0, 0, 35, 0, 0, 0, 0, 17, 3, 55
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\resolvers\resolvers.ts", "TypeScript", 0, 0, 11, 0, 0, 0, 0, 0, 2, 13
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\resolvers\subscriptions.ts", "TypeScript", 0, 0, 30, 0, 0, 0, 0, 1, 3, 34
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\typeDefs.ts", "TypeScript", 0, 0, 131, 0, 0, 0, 0, 0, 24, 155
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\typeGuards.ts", "TypeScript", 0, 0, 33, 0, 0, 0, 0, 0, 6, 39
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\src\types.ts", "TypeScript", 0, 0, 124, 0, 0, 0, 0, 0, 20, 144
+"c:\Users\munbo\0001ft\fso2021-practice-work\backend\tsconfig.json", "JSON", 14, 0, 0, 0, 0, 0, 0, 0, 0, 14
+"c:\Users\munbo\0001ft\fso2021-practice-work\build\asset-manifest.json", "JSON", 17, 0, 0, 0, 0, 0, 0, 0, 0, 17
+"c:\Users\munbo\0001ft\fso2021-practice-work\build\index.html", "HTML", 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"c:\Users\munbo\0001ft\fso2021-practice-work\build\manifest.json", "JSON", 25, 0, 0, 0, 0, 0, 0, 0, 1, 26
+"c:\Users\munbo\0001ft\fso2021-practice-work\build\static\js\2.4714cfb4.chunk.js", "JavaScript", 0, 1, 0, 0, 0, 0, 0, 2, 0, 3
+"c:\Users\munbo\0001ft\fso2021-practice-work\build\static\js\main.c350b6f4.chunk.js", "JavaScript", 0, 1, 0, 0, 0, 0, 0, 1, 0, 2
+"c:\Users\munbo\0001ft\fso2021-practice-work\build\static\js\runtime-main.8233b8b5.js", "JavaScript", 0, 1, 0, 0, 0, 0, 0, 1, 0, 2
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\README.md", "Markdown", 0, 0, 0, 0, 0, 26, 0, 0, 21, 47
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\cypress.json", "JSON", 1, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\cypress\fixtures\example.json", "JSON", 5, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\cypress\integration\maintests.spec.js", "JavaScript", 0, 13, 0, 0, 0, 0, 0, 0, 0, 13
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\cypress\plugins\index.js", "JavaScript", 0, 2, 0, 0, 0, 0, 0, 18, 3, 23
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\cypress\support\commands.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 25, 1, 26
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\cypress\support\index.js", "JavaScript", 0, 1, 0, 0, 0, 0, 0, 17, 3, 21
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\package-lock.json", "JSON", 18892, 0, 0, 0, 0, 0, 0, 0, 1, 18893
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\package.json", "JSON", 86, 0, 0, 0, 0, 0, 0, 0, 1, 87
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\public\index.html", "HTML", 0, 0, 0, 0, 20, 0, 0, 23, 1, 44
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\public\manifest.json", "JSON", 25, 0, 0, 0, 0, 0, 0, 0, 1, 26
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\App.tsx", "TypeScript React", 0, 0, 0, 101, 0, 0, 0, 0, 4, 105
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\ActionsPage\ActionsPage.tsx", "TypeScript React", 0, 0, 0, 44, 0, 0, 0, 0, 3, 47
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\ExplorePage\ExplorePage.tsx", "TypeScript React", 0, 0, 0, 162, 0, 0, 0, 0, 19, 181
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\ExplorePage\SpecificExplore.tsx", "TypeScript React", 0, 0, 0, 155, 0, 0, 0, 0, 6, 161
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\LoginRoute\LoginForm.tsx", "TypeScript React", 0, 0, 0, 116, 0, 0, 0, 0, 7, 123
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\LoginRoute\LoginPage.tsx", "TypeScript React", 0, 0, 0, 41, 0, 0, 0, 0, 3, 44
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\LoginRoute\SignUpForm.tsx", "TypeScript React", 0, 0, 0, 168, 0, 0, 0, 0, 4, 172
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyProfileRoute\AnalysisChart.tsx", "TypeScript React", 0, 0, 0, 173, 0, 0, 0, 0, 8, 181
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyProfileRoute\AnalysisTable.tsx", "TypeScript React", 0, 0, 0, 106, 0, 0, 0, 0, 3, 109
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyProfileRoute\MyProfile.tsx", "TypeScript React", 0, 0, 0, 375, 0, 0, 0, 0, 15, 390
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyProfileRoute\OldData.tsx", "TypeScript React", 0, 0, 0, 175, 0, 0, 0, 0, 10, 185
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyProfileRoute\TransactionList.tsx", "TypeScript React", 0, 0, 0, 138, 0, 0, 0, 0, 7, 145
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyStocksRoute\BuyStocks.tsx", "TypeScript React", 0, 0, 0, 309, 0, 0, 0, 2, 13, 324
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyStocksRoute\MainChart.tsx", "TypeScript React", 0, 0, 0, 94, 0, 0, 0, 0, 7, 101
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\MyStocksRoute\StockPage.tsx", "TypeScript React", 0, 0, 0, 68, 0, 0, 0, 0, 4, 72
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\Other\AppBar.tsx", "TypeScript React", 0, 0, 0, 106, 0, 0, 0, 0, 8, 114
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\Other\DefaultPage.tsx", "TypeScript React", 0, 0, 0, 29, 0, 0, 0, 0, 3, 32
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\Other\LoadingAnimation.tsx", "TypeScript React", 0, 0, 0, 19, 0, 0, 0, 0, 3, 22
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\Other\Notification.tsx", "TypeScript React", 0, 0, 0, 22, 0, 0, 0, 0, 3, 25
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\Other\SideBar.tsx", "TypeScript React", 0, 0, 0, 95, 0, 0, 0, 0, 4, 99
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\components\Other\helpers.ts", "TypeScript", 0, 0, 88, 0, 0, 0, 0, 0, 9, 97
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\graphql\queries.ts", "TypeScript", 0, 0, 202, 0, 0, 0, 0, 0, 19, 221
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\index.tsx", "TypeScript React", 0, 0, 0, 70, 0, 0, 0, 0, 9, 79
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\react-app-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 1, 1, 2
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\reducers\actionNotificationReducer.ts", "TypeScript", 0, 0, 17, 0, 0, 0, 0, 0, 2, 19
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\reducers\buyingStockReducer.ts", "TypeScript", 0, 0, 32, 0, 0, 0, 0, 0, 4, 36
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\reducers\firstBuyReducer.ts", "TypeScript", 0, 0, 21, 0, 0, 0, 0, 0, 4, 25
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\reducers\modeSwitchReducer.ts", "TypeScript", 0, 0, 17, 0, 0, 0, 0, 0, 3, 20
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\reducers\sidebarReducer.tsx", "TypeScript React", 0, 0, 0, 18, 0, 0, 0, 0, 3, 21
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\reducers\userLoggedReducer.ts", "TypeScript", 0, 0, 30, 0, 0, 0, 0, 0, 4, 34
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\styles\styles.tsx", "TypeScript React", 0, 0, 0, 11, 0, 0, 0, 0, 3, 14
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\src\types.ts", "TypeScript", 0, 0, 58, 0, 0, 0, 0, 0, 9, 67
+"c:\Users\munbo\0001ft\fso2021-practice-work\frontend\tsconfig.json", "JSON", 30, 0, 0, 0, 0, 0, 0, 0, 1, 31
+"c:\Users\munbo\0001ft\fso2021-practice-work\index.js", "JavaScript", 0, 70, 0, 0, 0, 0, 0, 1, 1, 72
+"c:\Users\munbo\0001ft\fso2021-practice-work\package-lock.json", "JSON", 8127, 0, 0, 0, 0, 0, 0, 0, 1, 8128
+"c:\Users\munbo\0001ft\fso2021-practice-work\package.json", "JSON", 85, 0, 0, 0, 0, 0, 0, 0, 1, 86
+"c:\Users\munbo\0001ft\fso2021-practice-work\src\models\stock.js", "JavaScript", 0, 19, 0, 0, 0, 0, 0, 0, 1, 20
+"c:\Users\munbo\0001ft\fso2021-practice-work\src\models\transaction.js", "JavaScript", 0, 31, 0, 0, 0, 0, 0, 0, 1, 32
+"c:\Users\munbo\0001ft\fso2021-practice-work\src\models\user.js", "JavaScript", 0, 46, 0, 0, 0, 0, 0, 0, 1, 47
+"c:\Users\munbo\0001ft\fso2021-practice-work\src\resolvers.js", "JavaScript", 0, 117, 0, 0, 0, 0, 0, 2, 1, 120
+"c:\Users\munbo\0001ft\fso2021-practice-work\src\typeDefs.js", "JavaScript", 0, 54, 0, 0, 0, 0, 0, 0, 7, 61
+"c:\Users\munbo\0001ft\fso2021-practice-work\src\types.js", "JavaScript", 0, 7, 0, 0, 0, 0, 0, 0, 1, 8
+"Total", "-", 38673, 369, 1357, 2595, 21, 26, 38, 271, 358, 43708

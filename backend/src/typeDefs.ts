@@ -4,6 +4,7 @@ import { DocumentNode } from "graphql";
 export const typeDefs: DocumentNode = gql`
     type Token {
         value: String!
+        username: String!
     }
 
     type IndividualStock {
@@ -22,7 +23,7 @@ export const typeDefs: DocumentNode = gql`
     }
 
     type Holding {
-        usersStockName: Stock!
+        usersStock: Stock!
         usersTotalAmount: Int!
         usersTotalOriginalPriceValue: Float!
     }
@@ -36,13 +37,22 @@ export const typeDefs: DocumentNode = gql`
         _id: ID!
     }
 
+    type FollowType {
+        date: String
+        user: User
+    }
+
     type User {
         usersUsername: String!
         usersPasswordHash: String!
         usersTransactions: [Transaction]!
         usersHoldings: [Holding]!
         moneyMade: Float!
-        id: ID!
+        followerCount: Int
+        followingCount: Int
+        usersFollowers: [FollowType]
+        usersFollowing: [FollowType]
+        id: ID
     }
 
     
@@ -73,11 +83,22 @@ export const typeDefs: DocumentNode = gql`
         time_series: [Tsvalue]
     }
 
+    type Result {
+        result: Boolean
+    }
+
+    type ActionsType {
+        transaction: Transaction!
+        transactionOwner: String!
+    }
+
     type Query {
-        stockPrediction (symbol: String!): Prediction
+        stockHistory (symbol: String!): Prediction
         me: User
+        searchUser (username: String!): [User]!
         individualStock (company: String!): [IndividualStock]!
         currentPortfolioValue (mode: String!): [AnalysisType]
+        getActions: [ActionsType]
     }
 
     type Mutation {
@@ -85,6 +106,12 @@ export const typeDefs: DocumentNode = gql`
             username: String!
             password: String!
         ): User
+        followUser (
+            username: String!
+        ): Result
+        unfollowUser (
+            username: String!
+        ): Result
         login (
             username: String!
             password: String!
@@ -100,8 +127,28 @@ export const typeDefs: DocumentNode = gql`
         ): Transaction!
     }
 
+    type FollowEvent {
+        followType: String!
+        auteur: String!
+        object: String!
+        date: String!
+        myFollowers: [FollowType]
+    }
+
+    type FollowType {
+        date: String!
+        user: User
+    }
+
+    type StockTransactionType {
+        transaction: Transaction!
+        me: String!
+        myFollowers: [FollowType]
+    }
+
     type Subscription {
-        stockPurchased: Transaction!
+        stockEvent(username: String): StockTransactionType
+        followEvent(username: String): FollowEvent!
     }
 `;
 

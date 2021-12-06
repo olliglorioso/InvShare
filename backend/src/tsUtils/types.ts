@@ -1,5 +1,25 @@
 import mongoose from "mongoose"
 
+// This file includes all the types that are used in the backend.
+
+export interface PayloadType {
+    stockEvent: {
+        me: string,
+        myFollowers: {id: string, user: PopulatedUserType}[],
+        transaction: Promise<TransactionType>
+    }
+}
+
+export interface PayloadType2 {
+    followEvent: {
+        followType: "follow" | "unfollow",
+        auteur: string,
+        object: string,
+        date: Date
+    },
+    myFollowers: {_id: string, user: PopulatedUserType, date: string}[],
+}
+
 export interface CandlesType {
     close: number,
     date: string,
@@ -63,14 +83,14 @@ export interface UserInformation {
 }
 
 export interface PopulatedHoldingType {
-    usersStockName: StockType,
+    usersStock: StockType,
     usersTotalAmount: number,
     usersTotalOriginalPriceValue: number,
     _id?: mongoose.Types.ObjectId
 }
 
 export interface HoldingType {
-    usersStockName: mongoose.Types.ObjectId,
+    usersStock: mongoose.Types.ObjectId,
     usersTotalAmount: number,
     usersTotalOriginalPriceValue: number,
     _id?: mongoose.Types.ObjectId
@@ -84,14 +104,6 @@ export interface OldDataValues {
     },
     time_series: [string, number][]
 }
-
-
-
-
-
-
-
-
 
 enum BuyOrSell {
     Buy = "Buy",
@@ -107,13 +119,21 @@ export interface TransactionType {
     _id?: mongoose.Types.ObjectId
 }
 
+export interface FinalSearchResult extends PopulatedUserType {
+    currentUser: string
+}
+
 export interface UserType {
     usersUsername: string,
     usersPasswordHash: string, 
     usersTransactions: TransactionType[],
     usersHoldings: HoldingType[],
     _id?: mongoose.Types.ObjectId,
-    moneyMade: number
+    moneyMade: number,
+    usersFollowers: UserType[],
+    usersFollowing: UserType[],
+    followerCount: number,
+    followingCount: number
 }
 
 
@@ -125,7 +145,7 @@ export interface StockType {
 
 export interface HoldingWithStockType {
     _id?: StockType
-    usersStockName: mongoose.Types.ObjectId,
+    usersStock: mongoose.Types.ObjectId,
     usersTotalAmount: number,
     usersTotalOriginalPriceValue: number,
 }
@@ -136,5 +156,9 @@ export interface PopulatedUserType {
     usersTransactions: TransactionType[],
     usersHoldings: PopulatedHoldingType[],
     _id?: mongoose.Types.ObjectId,
-    moneyMade: number
+    moneyMade: number,
+    followerCount: number,
+    followingCount: number,
+    usersFollowers: {user: PopulatedUserType, date: string}[],
+    usersFollowing: {user: PopulatedUserType, date: string}[]
 }

@@ -4,13 +4,13 @@ import User from "./src/models/user"
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 require("dotenv").config()
 import jwt from "jsonwebtoken";
-import resolvers from "./src/resolvers";
-import { PopulatedUserType } from "./src/types";
-import {typeDefs} from "./src/typeDefs";
+import resolvers from "./src/resolvers/resolvers";
+import { PopulatedUserType } from "./src/tsUtils/types";
+import { typeDefs } from "./src/typeDefs";
 import express from "express"
 import cors from "cors"
-import {createServer} from "http"
-import {SubscriptionServer} from "subscriptions-transport-ws"
+import { createServer } from "http"
+import { SubscriptionServer } from "subscriptions-transport-ws"
 import { execute, subscribe } from "graphql"
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import history from "connect-history-api-fallback"
@@ -21,7 +21,6 @@ const startServer = async () => {
     : process.env.MONGODB_URI || ""
 
     void mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-
     const app = express()
     app.use(cors())
     
@@ -35,7 +34,7 @@ const startServer = async () => {
 
     const schema = makeExecutableSchema({ 
         typeDefs, 
-        resolvers
+        resolvers,
     })
 
     const server = new ApolloServer({
@@ -44,7 +43,11 @@ const startServer = async () => {
             const auth = req ? req.headers.authorization : null;
             if (auth && auth.toLowerCase().startsWith("bearer ")) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
-                const currentUser = await User.findById(decodedToken.id).populate({path: "usersHoldings", populate: {path: "usersStockName"}}).populate({path: "usersTransactions", populate: {path: "transactionStock"}}) as unknown as PopulatedUserType
+                const currentUser = await User.findById(decodedToken.id)
+                    .populate({path: "usersHoldings", populate: {path: "usersStock"}})
+                    .populate({path: "usersTransactions", populate: {path: "transactionStock"}})
+                    .populate({path: "usersFollowing", populate: {path: "user", populate: {path: "usersTransactions", populate: {path: "transactionStock"}}}})
+                    .populate({path: "usersFollowers", populate: {path: "user"}}) as unknown as PopulatedUserType
                 return {currentUser};
             }
             return null;
