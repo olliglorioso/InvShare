@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
 import useStyles from "../../styles/styles";
 import { actionEnableSidebar } from "../../reducers/sidebarReducer";
@@ -16,14 +16,31 @@ import { useApolloClient } from "@apollo/client";
 import { logUserOut } from "../../reducers/userLoggedReducer";
 import { buyFirstStock } from "../../reducers/firstBuyReducer";
 import notification from "./Notification";
+import { TransactionType } from "../../types";
+import { newNotification } from "../../reducers/actionNotificationReducer";
 
-const MenuBar = (): JSX.Element => {
+const MenuBar = ({stockSubscription}: {stockSubscription: {trans: TransactionType, me: string}}): JSX.Element => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const location = useLocation();
   const userState = useSelector<RootState, boolean>((state) => state.user);
+  const notificationState = useSelector<RootState, {notification: string}>((state) => state.notification);
   const client = useApolloClient();
   const history = useHistory();
+
+  useEffect(() => {
+    if (stockSubscription.trans && stockSubscription.me && notificationState.notification !== stockSubscription.trans.transactionDate) {
+      dispatch(newNotification(stockSubscription.trans.transactionDate))
+      const str = `${stockSubscription.me} purchased ${stockSubscription.trans.transactionStockAmount} x ${stockSubscription.trans.transactionStock.stockSymbol} for ${stockSubscription.trans.transactionStockPrice}`
+      const message = stockSubscription.trans.transactionType === "Buy"
+        ? str
+        : str.replace("purchased", "sold")
+      notification("Notification", message, "info");
+      
+    }
+  }, [stockSubscription]);
+
+
   const logOut = () => {
     try {
       localStorage.clear();

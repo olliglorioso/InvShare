@@ -65,7 +65,7 @@ const AnalysisChart = ({
           valueToAdd[0].close *
             positions.filter(
               (pos: Positions) =>
-                pos.usersStockName.stockSymbol === element2.name
+                pos.usersStock.stockSymbol === element2.name
             )[0]?.usersTotalAmount;
       } else {
         let biggestDiff = 99999;
@@ -84,7 +84,7 @@ const AnalysisChart = ({
           stickToSum.close *
             positions.filter(
               (pos: Positions) =>
-                pos.usersStockName.stockSymbol === element2.name
+                pos.usersStock.stockSymbol === element2.name
             )[0]?.usersTotalAmount;
       }
     });
@@ -168,7 +168,7 @@ const AnalysisChart = ({
           </div>
         ) : (
           <OldData
-            datas={res.data?.stockPrediction}
+            datas={res.data?.stockHistory}
             analysisData={analysisData}
           />
         )}

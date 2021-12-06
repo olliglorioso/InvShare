@@ -13,6 +13,7 @@ import leadingZeros from "../Other/helpers";
 
 const TransactionList = (props: {
   transactions: TransactionType[];
+  transactionsWithOwner?: {transactions: TransactionType[], transactionOwner: string}[];
 }): JSX.Element => {
   const transactionStates = props.transactions
     .map((trans: TransactionType): string => trans._id.toString())
@@ -45,7 +46,7 @@ const TransactionList = (props: {
             textAlign: "center",
           }}
         >
-          Transactions
+          {props.transactionsWithOwner ? "Actions" : "Transactions"}
         </h1>
       </div>
 
@@ -54,7 +55,7 @@ const TransactionList = (props: {
         component="nav"
         aria-labelledby="nested-list-subheader"
       >
-        {props.transactions.map((transaction: TransactionType) => {
+        {props.transactions.map((transaction: TransactionType, index: number) => {
           const date = new Date(transaction.transactionDate);
           const dateFormat =
             date.getDate() +
@@ -69,7 +70,7 @@ const TransactionList = (props: {
           return (
             <div
               key={transaction.transactionDate}
-              style={{ width: "33%", textAlign: "center" }}
+              style={{ width: "50%", textAlign: "center" }}
             >
               <Button onClick={() => handleClick(transaction._id.toString())}>
                 <ListItemIcon>
@@ -80,7 +81,8 @@ const TransactionList = (props: {
                   )}
                 </ListItemIcon>
                 <ListItemText
-                  primary={transaction.transactionStock.stockSymbol}
+                  
+                  primary={`${transaction.transactionStock.stockSymbol} ${props.transactionsWithOwner ? "(" + props.transactionsWithOwner[index].transactionOwner + ")" : ""}`}
                 />
                 {(open as Record<string, boolean>)[
                   transaction._id.toString()

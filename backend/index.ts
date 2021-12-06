@@ -4,8 +4,8 @@ import User from "./src/models/user"
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 require("dotenv").config()
 import jwt from "jsonwebtoken";
-import resolvers from "./src/resolvers";
-import { PopulatedUserType } from "./src/types";
+import resolvers from "./src/resolvers/resolvers";
+import { PopulatedUserType } from "./src/tsUtils/types";
 import { typeDefs } from "./src/typeDefs";
 import express from "express"
 import cors from "cors"
@@ -44,9 +44,9 @@ const startServer = async () => {
             if (auth && auth.toLowerCase().startsWith("bearer ")) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
                 const currentUser = await User.findById(decodedToken.id)
-                    .populate({path: "usersHoldings", populate: {path: "usersStockName"}})
+                    .populate({path: "usersHoldings", populate: {path: "usersStock"}})
                     .populate({path: "usersTransactions", populate: {path: "transactionStock"}})
-                    .populate({path: "usersFollowing", populate: {path: "user"}})
+                    .populate({path: "usersFollowing", populate: {path: "user", populate: {path: "usersTransactions", populate: {path: "transactionStock"}}}})
                     .populate({path: "usersFollowers", populate: {path: "user"}}) as unknown as PopulatedUserType
                 return {currentUser};
             }

@@ -151,11 +151,9 @@ const MyProfile = ({subscriptionData, followSubscriptions}: {
     );
   }
 
-
   const analysisData = switchMode.mode
     ? data.data.currentPortfolioValue[0]
     : res.data.currentPortfolioValue[0];
-
 
   const transactions = result.data.me.usersTransactions;
 

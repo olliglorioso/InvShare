@@ -23,7 +23,7 @@ export const typeDefs: DocumentNode = gql`
     }
 
     type Holding {
-        usersStockName: Stock!
+        usersStock: Stock!
         usersTotalAmount: Int!
         usersTotalOriginalPriceValue: Float!
     }
@@ -87,13 +87,18 @@ export const typeDefs: DocumentNode = gql`
         result: Boolean
     }
 
+    type ActionsType {
+        transaction: Transaction!
+        transactionOwner: String!
+    }
 
     type Query {
-        stockPrediction (symbol: String!): Prediction
+        stockHistory (symbol: String!): Prediction
         me: User
         searchUser (username: String!): [User]!
         individualStock (company: String!): [IndividualStock]!
         currentPortfolioValue (mode: String!): [AnalysisType]
+        getActions: [ActionsType]
     }
 
     type Mutation {
@@ -122,11 +127,12 @@ export const typeDefs: DocumentNode = gql`
         ): Transaction!
     }
 
-    type followEvent {
+    type FollowEvent {
         followType: String!
         auteur: String!
         object: String!
         date: String!
+        myFollowers: [FollowType]
     }
 
     type FollowType {
@@ -141,8 +147,8 @@ export const typeDefs: DocumentNode = gql`
     }
 
     type Subscription {
-        stockPurchased(username: String): StockTransactionType
-        followEvent: followEvent!
+        stockEvent(username: String): StockTransactionType
+        followEvent(username: String): FollowEvent!
     }
 `;
 

@@ -1,3 +1,4 @@
+import { Typography } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../..";
@@ -15,7 +16,14 @@ const DefaultPage = () => {
         flexDirection: "column",
       }}
     >
-      <h1>{userState ? "You are logged in " : "You are not logged in :/"} </h1>
+      <h1
+        style={{display: "flex", justifyContent: "center"}}
+      >
+        {userState ? "You are logged in." : "You are not logged in."} 
+      </h1>
+      <Typography style={{display: "flex", justifyContent: "center", paddingLeft: "20vw", paddingRight: "20vw"}}>
+        Welcome to InvShare.
+      </Typography>
     </div>
   );
 };

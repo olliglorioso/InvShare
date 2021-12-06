@@ -1,5 +1,7 @@
 import mongoose from "mongoose"
 
+// This file includes all the types that are used in the backend.
+
 export interface CandlesType {
     close: number,
     date: string,
@@ -63,14 +65,14 @@ export interface UserInformation {
 }
 
 export interface PopulatedHoldingType {
-    usersStockName: StockType,
+    usersStock: StockType,
     usersTotalAmount: number,
     usersTotalOriginalPriceValue: number,
     _id?: mongoose.Types.ObjectId
 }
 
 export interface HoldingType {
-    usersStockName: mongoose.Types.ObjectId,
+    usersStock: mongoose.Types.ObjectId,
     usersTotalAmount: number,
     usersTotalOriginalPriceValue: number,
     _id?: mongoose.Types.ObjectId
@@ -125,7 +127,7 @@ export interface StockType {
 
 export interface HoldingWithStockType {
     _id?: StockType
-    usersStockName: mongoose.Types.ObjectId,
+    usersStock: mongoose.Types.ObjectId,
     usersTotalAmount: number,
     usersTotalOriginalPriceValue: number,
 }

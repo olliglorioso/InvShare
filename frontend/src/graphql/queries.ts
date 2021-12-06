@@ -16,9 +16,12 @@ const TRANSACTIONDETAILS = gql`
     transactionDate
     transactionStock {
       stockSymbol
+      stockTotalAmount
     }
     transactionStockAmount
     transactionStockPrice
+    transactionType
+    _id
   }
 `;
 
@@ -32,7 +35,7 @@ export const SEARCH_USER_FINAL = gql`
         }
       }
       usersHoldings {
-        usersStockName {
+        usersStock {
           stockTotalAmount
           stockSymbol
         }
@@ -82,8 +85,8 @@ export const SEARCH_USER = gql`
 `;
 
 export const GET_PREDICTION = gql`
-  query stockPrediction($symbol: String!) {
-    stockPrediction(symbol: $symbol) {
+  query stockHistory($symbol: String!) {
+    stockHistory(symbol: $symbol) {
       time_series {
         date
         value
@@ -97,9 +100,21 @@ export const GET_PREDICTION = gql`
   }
 `;
 
-export const STOCK_PURCHASED = gql`
-  subscription StockPurchased ($username: String) {
-    stockPurchased (username: $username){
+export const GET_ACTIONS = gql`
+  query GetActions {
+    getActions {
+      transaction {
+        ...TransactionDetails
+      }
+      transactionOwner
+    }
+  }
+  ${TRANSACTIONDETAILS}
+`
+
+export const STOCKEVENT = gql`
+  subscription StockEvent ($username: String) {
+    stockEvent (username: $username){
       transaction {
         ...TransactionDetails
       }
@@ -110,8 +125,8 @@ export const STOCK_PURCHASED = gql`
 `;
 
 export const FOLLOWEVENT = gql`
-  subscription followEvent {
-    followEvent {
+  subscription followEvent ($username: String){
+    followEvent (username: $username) {
       auteur
       object
       followType
@@ -166,7 +181,7 @@ export const ME = gql`
     me {
       usersUsername
       usersHoldings {
-        usersStockName {
+        usersStock {
           stockTotalAmount
           stockSymbol
         }
@@ -174,21 +189,14 @@ export const ME = gql`
         usersTotalOriginalPriceValue
       }
       usersTransactions {
-        transactionDate
-        transactionStockAmount
-        transactionStockPrice
-        transactionType
-        transactionStock {
-          stockSymbol
-          stockTotalAmount
-        }
-        _id
+        ...TransactionDetails
       }
       moneyMade
       followerCount
       followingCount
     }
   }
+  ${TRANSACTIONDETAILS}
 `;
 
 export const INDIVIDUAL_STOCK = gql`

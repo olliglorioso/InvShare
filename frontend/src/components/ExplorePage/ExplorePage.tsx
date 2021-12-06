@@ -153,6 +153,7 @@ const ExplorePage = () => {
           height: "100vh",
         }}
       >
+        <h1>Explore</h1>
         <Formik
           initialValues={{ username: "" }}
           onSubmit={(value: { username: string }) => {

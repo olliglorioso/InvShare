@@ -8,7 +8,7 @@ import MyProfile from "./components/MyProfileRoute/MyProfile"
 import ReactNotification from "react-notifications-component"
 import DefaultPage from "./components/Other/DefaultPage";
 import { useSubscription } from "@apollo/client";
-import { FOLLOWEVENT, STOCK_PURCHASED } from "./graphql/queries";
+import { FOLLOWEVENT, STOCKEVENT } from "./graphql/queries";
 import ExplorePage from "./components/ExplorePage/ExplorePage";
 import SpecificExplore from "./components/ExplorePage/SpecificExplore"
 import { useSelector } from "react-redux";
@@ -17,10 +17,10 @@ import ActionsPage from "./components/ActionsPage/ActionsPage";
 
 function App(): JSX.Element {
   const loggedUser = localStorage.getItem("loggedUser")
-  const resultti = useSubscription(STOCK_PURCHASED, {variables: {username: loggedUser}})
-  const followEvent = useSubscription(FOLLOWEVENT)
+  const resultti = useSubscription(STOCKEVENT, {variables: {username: loggedUser}})
+  const followEvent = useSubscription(FOLLOWEVENT, {variables: {username: loggedUser}})
   const userLogged = useSelector<RootState, boolean>((state) => state.user);
-  
+
   return (
     <div>
       <ReactNotification />
@@ -29,14 +29,14 @@ function App(): JSX.Element {
           <Route path="/actions" exact>
             <div>
               <SideBar />
-              <MenuBar />
-              <ActionsPage />
+              <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
+              <ActionsPage stockSubscription={resultti.data?.stockEvent?.transaction.transactionDate} />
             </div>
           </Route>
           <Route path="/login" exact>
             <div>
               <SideBar />
-              <MenuBar />
+              <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
               <LoginPage />
             </div>
           </Route>
@@ -45,8 +45,11 @@ function App(): JSX.Element {
               userLogged ?
                 <div>
                   <SideBar />
-                  <MenuBar />
-                  <MyProfile subscriptionData={resultti.data?.stockPurchased?.transaction.transactionDate} followSubscriptions={followEvent.data?.followEvent?.date}/>
+                  <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}}/>
+                  <MyProfile 
+                    subscriptionData={resultti.data?.stockEvent?.transaction.transactionDate} 
+                    followSubscriptions={followEvent.data?.followEvent?.date}
+                  />
                 </div>
                 : <Redirect to="/login" />
             }
@@ -56,7 +59,7 @@ function App(): JSX.Element {
               userLogged ?
                 <div>
                   <SideBar />
-                  <MenuBar />
+                  <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
                   <StockPage />
                 </div>
                 : <Redirect to="/login" />
@@ -65,28 +68,30 @@ function App(): JSX.Element {
           <Route path="/login" exact>
             <div>
               <SideBar />
-              <MenuBar />
+              <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
             </div>
             <LoginPage />
           </Route>
           <Route path="/explore" exact>
             <div>
               <SideBar />
-              <MenuBar />
+              <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
             </div>
             <ExplorePage />
           </Route>
           <Route path="/explore/:id" exact>
             <div>
               <SideBar />
-              <MenuBar />
-              <SpecificExplore followSubscriptions={followEvent.data?.followEvent?.date} />
+              <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
+              <SpecificExplore 
+                followSubscriptions={followEvent.data?.followEvent?.date} 
+              />
             </div>
           </Route>
           <Route path="/" exact>
             <div>
               <SideBar />
-              <MenuBar />
+              <MenuBar stockSubscription={{trans: resultti.data?.stockEvent?.transaction, me: resultti.data?.stockEvent.me}} />
               <DefaultPage />
             </div>
           </Route>

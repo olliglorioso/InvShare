@@ -18,6 +18,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/client/link/context";
 import firstBuyReducer from "./reducers/firstBuyReducer";
 import { WebSocketLink } from "@apollo/client/link/ws";
+import actionNotificationReducer from "./reducers/actionNotificationReducer";
 
 const reducer = combineReducers({
   user: userLoggedReducer,
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   stock: buyingStockReducer,
   mode: modeSwitchReducer,
   purchase: firstBuyReducer,
+  notification: actionNotificationReducer
 });
 
 const httpLink = new HttpLink({ uri: "http://localhost:3001/graphql" });

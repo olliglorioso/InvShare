@@ -43,7 +43,7 @@ const AnalysisTable = ({
         <TableBody>
           {analysisData.map((company: AnalysisData) => {
             const correspondingPosition = positions.filter((x: Positions) => {
-              return x.usersStockName.stockSymbol === company.name;
+              return x.usersStock.stockSymbol === company.name;
             })[0];
             let profitPercent = "696969";
             if (correspondingPosition) {

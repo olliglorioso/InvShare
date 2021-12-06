@@ -17,7 +17,7 @@ export interface Positions {
   usersTotalAmount: number;
   usersTotalOriginalPriceValue: number;
   __typename: string;
-  usersStockName: StockType;
+  usersStock: StockType;
 }
 
 type IndividTimeSeries = {
