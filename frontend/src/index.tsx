@@ -19,7 +19,6 @@ import { setContext } from "@apollo/client/link/context";
 import firstBuyReducer from "./reducers/firstBuyReducer";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import actionNotificationReducer from "./reducers/actionNotificationReducer";
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 
 // Here we  combine all our reducers into one store. This way we can easily access them in our components.
 // Generally combineReducer-allows us to create multiple reducers.
@@ -33,12 +32,11 @@ const reducer = combineReducers({
 });
 
 // Deciding which backend endpoint we want to use with the help of environment variables.
-
-const gqlUri = process.env.NODE_ENV === "development" ? process.env.REACT_APP_DEVELOPMENT_BACKEND : process.env.REACT_APP_PRODUCTION_BACKEND;
+const gqlUri = process.env.NODE_ENV === "development" ? "http://localhost:3001/graphql" : "https://fso2021practicework.herokuapp.com/graphql";
 const httpLink = new HttpLink({ uri: gqlUri });
 
 // Deciding which websocket endpoint we want to use with the help of environment variables.
-const wsUri = process.env.NODE_ENV === "development" ? process.env.REACT_APP_DEVELOPMENT_WEBSOCKET : process.env.REACT_APP_PRODUCTION_WEBSOCKET;
+const wsUri = process.env.NODE_ENV === "development" ? "ws://localhost:3001/subscriptions" : "wss://fso2021practicework.herokuapp.com/subscriptions";
 console.log(process.env);
 console.log(gqlUri);
 console.log(wsUri);
