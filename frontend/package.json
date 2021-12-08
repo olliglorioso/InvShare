@@ -24,7 +24,6 @@
     "confirm-dialog": "^0.1.2",
     "cors": "^2.8.5",
     "dates-between": "^1.1.0",
-    "dotenv": "^10.0.0",
     "finnhub": "^1.2.6",
     "formik": "^2.2.9",
     "graphql": "^15.5.1",
@@ -81,6 +80,7 @@
     "@types/react-notifications-component": "^3.1.1",
     "@types/react-router-dom": "^5.1.8",
     "cypress": "^8.3.1",
+    "dotenv": "^10.0.0",
     "eslint-plugin-cypress": "^2.11.3"
   }
 }

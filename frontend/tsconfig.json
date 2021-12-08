@@ -21,9 +21,7 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src", "index.tsx"  ],
   "noImplicitAny": true,
   "noImplicitThis": true,
   "strictNullCheks": true

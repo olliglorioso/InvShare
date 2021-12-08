@@ -1,29 +1,36 @@
 import mongoose from "mongoose";
 
+// This file contains all the Typescript-types used in the project.
+
+export interface HandleChangeType {
+  (event: React.ChangeEvent<HTMLInputElement>): void;
+}
+
+export interface HandleBlurType {
+  (e: React.FocusEvent<unknown>): void;
+}
+
+export interface HandleSubmitType {
+  (e: React.FormEvent<HTMLFormElement>): void;
+}
+
+export interface UserInformation {
+  username: string,
+  password: string
+}
+
 export interface AnalysisData {
   name: string;
   __typename: "AnalysisData";
   sticks: CandleStock[];
 }
 
-export interface NewAnalysisData {
-  name: string;
-  __typename: "AnalysisData";
-  analysisValues: AnalysisData[];
-  wholeValue: number;
-}
-
-export interface Positions {
+export interface Holdings {
   usersTotalAmount: number;
   usersTotalOriginalPriceValue: number;
   __typename: string;
   usersStock: StockType;
 }
-
-type IndividTimeSeries = {
-  date: string;
-  value: number;
-};
 
 export interface OldDataType {
   metadata: {
@@ -31,7 +38,7 @@ export interface OldDataType {
     symbol: string;
     lastRefresh: string;
   };
-  time_series: IndividTimeSeries[];
+  time_series: {date: string, value: number}[];
 }
 
 export type CandleStock = {
@@ -44,7 +51,7 @@ export type CandleStock = {
   __typename: string;
 };
 
-export interface MyFormValues {
+export interface BuyStockValuesType {
   company: string;
   amount: string;
   price_per_stock: string;

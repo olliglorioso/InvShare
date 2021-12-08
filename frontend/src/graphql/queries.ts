@@ -1,5 +1,8 @@
 import { gql } from "@apollo/client";
 
+// This is the file that handles all of the queries' schemas for the frontend.
+
+// First of all, a couple fragments to avoid repetition.
 const STOCKDETAILS = gql`
   fragment StockDetails on IndividualStock {
     close
@@ -43,30 +46,41 @@ export const SEARCH_USER_FINAL = gql`
         usersTotalOriginalPriceValue
       }
       usersTransactions {
-        transactionDate
-        transactionStockAmount
-        transactionStockPrice
-        transactionType
-        transactionStock {
-          stockSymbol
-          stockTotalAmount
-        }
-        _id
+        ...TransactionDetails
       }
       moneyMade
       followerCount
       followingCount
     }
   }
+  ${TRANSACTIONDETAILS}
 `;
 
+// Mutations: 
 export const FOLLOW = gql`
   mutation follow($username: String!) {
     followUser(username: $username) {
       result
     }
   }
-`
+`;
+
+const ADD_USER = gql`
+  mutation addUser($username: String!, $password: String!) {
+    addUser(username: $username, password: $password) {
+      usersUsername
+    }
+  }
+`;
+
+export const SELL_STOCK = gql`
+  mutation sellStock($stockName: String!, $amount: Int!, $price: Float!) {
+    sellStock(stockName: $stockName, amount: $amount, price: $price) {
+      ...TransactionDetails
+    }
+  }
+  ${TRANSACTIONDETAILS}
+`;
 
 export const UNFOLLOW = gql`
   mutation unfollowUser($username: String!) {
@@ -74,8 +88,26 @@ export const UNFOLLOW = gql`
       result
     }
   }
-`
+`;
 
+export const BUY_STOCK = gql`
+  mutation buyStock($stockName: String!, $amount: Int!) {
+    buyStock(stockName: $stockName, amount: $amount) {
+      ...TransactionDetails
+    }
+  }
+  ${TRANSACTIONDETAILS}
+`;
+export const LOGIN = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      value
+      username
+    }
+  }
+`;
+
+// Queries: 
 export const SEARCH_USER = gql`
   query searchUser($username: String!) {
     searchUser(username: $username) {
@@ -84,7 +116,7 @@ export const SEARCH_USER = gql`
   }
 `;
 
-export const GET_PREDICTION = gql`
+export const GET_OLD_DATA = gql`
   query stockHistory($symbol: String!) {
     stockHistory(symbol: $symbol) {
       time_series {
@@ -110,46 +142,6 @@ export const GET_ACTIONS = gql`
     }
   }
   ${TRANSACTIONDETAILS}
-`
-
-export const STOCKEVENT = gql`
-  subscription StockEvent ($username: String) {
-    stockEvent (username: $username){
-      transaction {
-        ...TransactionDetails
-      }
-      me
-    }
-  }
-  ${TRANSACTIONDETAILS}
-`;
-
-export const FOLLOWEVENT = gql`
-  subscription followEvent ($username: String){
-    followEvent (username: $username) {
-      auteur
-      object
-      followType
-      date
-    }
-  }
-`
-
-const ADD_USER = gql`
-  mutation addUser($username: String!, $password: String!) {
-    addUser(username: $username, password: $password) {
-      usersUsername
-    }
-  }
-`;
-
-export const SELL_STOCK = gql`
-  mutation sellStock($stockName: String!, $amount: Int!, $price: Float!) {
-    sellStock(stockName: $stockName, amount: $amount, price: $price) {
-      ...TransactionDetails
-    }
-  }
-  ${TRANSACTIONDETAILS}
 `;
 
 export const CURRENT_PORTFOLIO_VALUE = gql`
@@ -165,15 +157,6 @@ export const CURRENT_PORTFOLIO_VALUE = gql`
     }
   }
   ${STOCKDETAILS}
-`;
-
-export const BUY_STOCK = gql`
-  mutation buyStock($stockName: String!, $amount: Int!) {
-    buyStock(stockName: $stockName, amount: $amount) {
-      ...TransactionDetails
-    }
-  }
-  ${TRANSACTIONDETAILS}
 `;
 
 export const ME = gql`
@@ -208,13 +191,29 @@ export const INDIVIDUAL_STOCK = gql`
   ${STOCKDETAILS}
 `;
 
-export const LOGIN = gql`
-  mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      value
-      username
+// Subscriptions: 
+export const STOCKEVENT = gql`
+  subscription StockEvent ($username: String) {
+    stockEvent (username: $username){
+      transaction {
+        ...TransactionDetails
+      }
+      me
+    }
+  }
+  ${TRANSACTIONDETAILS}
+`;
+
+export const FOLLOWEVENT = gql`
+  subscription followEvent ($username: String){
+    followEvent (username: $username) {
+      auteur
+      object
+      followType
+      date
     }
   }
 `;
+
 
 export default ADD_USER;

@@ -122,6 +122,7 @@ const mutations = {
         const passwordHash = await hash(parsedUserInformation.password, 10)
         // The user-object is created. We store the hashed password
         // to the database instead of the plain password.
+        // FirstPurchaseDate is set to x, because no stocks have been bought yet.
         const user = new User({
             usersUsername: parsedUserInformation.username,
             usersPasswordHash: passwordHash,
@@ -131,7 +132,8 @@ const mutations = {
             usersFollowers: [],
             usersFollowing: [],
             followerCount: 0,
-            followingCount: 0
+            followingCount: 0,
+            usersFirstPurchaseDate: "x"
         })
         // The new object is saved to the database.
         return await user.save();
@@ -171,8 +173,22 @@ const mutations = {
         const parsedAmount = parseAmount(amount)
         // Using self-made function to get the sticks from last 96 hours with the price of every 5 minutes.
         const sticks = await getIndividualStockInformation(parsedCompany, setDate(-96), "5")
+        // Second check that the stock exist.
+        if (sticks.length === 0) {
+            throw new UserInputError("Stock doesn't exist.", {errorCode: 401})
+        }
         // Checking if the company has been bought by this or any other user.
         const firstBuyEver = await Stock.findOne({stockSymbol: parsedCompany.toUpperCase()})
+        // Next if-statement happens only if the user has an empty portfolio
+        // --> either the user is brand new or has sold all their stocks.
+        if (currentUser.usersHoldings.length === 0) {
+            // We set the first purchase date to the current date so that
+            // currentPortfolioValue-query knows that the portfolio
+            // was empty just before this purchase.
+            await User.updateOne({_id: currentUser._id}, {
+                $set: {usersFirstPurchaseDate: new Date().toString()}
+            })
+        }
         if(!firstBuyEver) {
             // Code below is executed if the company has not been bought by any user.
             // A new Stock-object is created and its total amount is the amount of this particular purchase.
@@ -397,11 +413,23 @@ const mutations = {
                         // Moneymade is updated in the same way as before.
                         moneyMade: currentUser.moneyMade + ((-1) * (holding.usersTotalOriginalPriceValue / holding.usersTotalAmount) * parsedAmount + parsedAmount * parsedPrice)
                     }})
+                    // This next step happens only if there is a possibility 
+                    // that user might remain with no positions at all.
+                    const updatedUser = await User.findOne({_id: currentUser._id}) as UserType
+                    if (updatedUser.usersHoldings.length === 0) {
+                        // If the user has no more holdings, the code below is executed.
+                        // We set the usersFirstPurchaseDate to x, because the user has no more holdings.
+                        // And so we have to update the date in the next purchase.
+                        await User.updateOne({_id: currentUser._id}, {$set: {
+                            usersFirstPurchaseDate: "x"
+                        }})
+                    }
                 }
                 // The newTransaction-object is saved to the database.
                 await newTransaction.save()
                 // Information about the event is published with PubSub-object in order to
-                // update all the relevant clients.
+                // update all the relevant clients. The type of the event can be found
+                // from the returned transaction.
                 pubsub.publish("STOCKEVENT", {stockEvent: {
                     transaction: getTransactionToReturn(newTransaction._id), 
                     me: currentUser.usersUsername, myFollowers: currentUser.usersFollowers}
