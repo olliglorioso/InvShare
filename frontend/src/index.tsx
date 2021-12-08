@@ -23,7 +23,7 @@ import actionNotificationReducer from "./reducers/actionNotificationReducer";
 require("dotenv").config();
 
 
-// Here we combine all our reducers into one store. This way we can easily access them in our components.
+// Here we  combine all our reducers into one store. This way we can easily access them in our components.
 // Generally combineReducer-allows us to create multiple reducers.
 const reducer = combineReducers({
     user: userLoggedReducer,
