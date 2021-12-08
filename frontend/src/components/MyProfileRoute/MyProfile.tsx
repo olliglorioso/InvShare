@@ -66,12 +66,15 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
         dispatch(noPurchases());
         return <TutorialAnimation />;
     }
+    // Checking if the data has been fetched.
+    if (!meResult.data || !daysData.data || !hoursData.data ||!meResult.data.me || !daysData.data.currentPortfolioValue || !hoursData.data.currentPortfolioValue) {
+        return <div className={styles.myProfileLoadingAnimation}><LoadingAnimation type={"spin"} color={"black"} /></div>;
+    }
     // Checking errors.
     if (meResult.error || daysData.error || hoursData.error) {
         const errorMessage = meResult.error?.message || daysData.error?.message || hoursData.error?.message;
         notification("An error occured.", errorMessage as string, "danger");
         return <div className={styles.myProfileLoadingAnimation}><LoadingAnimation type={"spin"} color={"black"} /></div>;
-        
     }
     // If relevant data is not yet fetched, show the loading animation. We don't include daysData here
     // because we want to show the loading animation onlye while the hoursData is still loading. If we have to 
@@ -159,7 +162,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
                                     :   <Typography className={styles.myProfileCardContentNumberRed}>{currentProfitPercentage}%</Typography>}
 
                                 <Typography style={{ textAlign: "center" }}>
-                                    Profit all time
+                                    Profit percentage
                                 </Typography>
                             </div>
                             <div>

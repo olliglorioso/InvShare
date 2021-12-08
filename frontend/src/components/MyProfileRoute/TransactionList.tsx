@@ -90,15 +90,15 @@ const TransactionList = (props: {
                                 <List
                                     component="div"
                                     disablePadding
-                                    className={styles.transactionListCollapsedItem}                                    
+                                    className={styles.transactionListCollapsedItem}                              
                                 >
-                                    <Button disabled={true} className={styles.black}>
+                                    <Button disabled={true} style={{color: "black"}}>
                                         <ListItemIcon>
                                             <KeyboardArrowRight />
                                         </ListItemIcon>
                                         <ListItemText primary={`Date: ${dateFormat}`} />
                                     </Button>
-                                    <Button disabled={true} className={styles.black}>
+                                    <Button disabled={true} style={{color: "black"}}>
                                         <ListItemIcon>
                                             <KeyboardArrowRight />
                                         </ListItemIcon>
@@ -106,7 +106,7 @@ const TransactionList = (props: {
                                             primary={`Price per share: ${transaction.transactionStockPrice.toFixed(2)}`}
                                         />
                                     </Button>
-                                    <Button disabled={true} className={styles.black}>
+                                    <Button disabled={true} style={{color: "black"}}>
                                         <ListItemIcon>
                                             <KeyboardArrowRight />
                                         </ListItemIcon>

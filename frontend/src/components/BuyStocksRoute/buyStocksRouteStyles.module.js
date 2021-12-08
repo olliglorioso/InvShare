@@ -16,7 +16,7 @@ const useStyles = makeStyles({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "50vh"
+        height: 300
     },
     chartError: {
         display: "flex",
@@ -55,9 +55,9 @@ const useStyles = makeStyles({
         display: "flex",
         flexDirection: "row",
         justifyContent: "end",
-        paddingRIght: "2"
+        paddingRight: "2"
     },
-    mainChartWidth: {width: "100%"},
+    mainChartWidth: {width: "96%"},
     mainChartDiv: {display: "flex", flexDirection: "row"},
     buyStocksHigherDiv: {
         paddingTop: 40,
