@@ -63,16 +63,16 @@ export const parseResolution = (resolution: unknown): Resolution => {
 
 // Checks if the parameter has valid Alpha Vantage data.
 const isAlphaVantageValues = (alphaVantageValues: unknown): alphaVantageValues is AlphaVantageValues => {
-    return alphaVantageValues instanceof Object && alphaVantageValues.hasOwnProperty("Meta Data") &&
-        alphaVantageValues.hasOwnProperty("Weekly Time Series")
+    return alphaVantageValues instanceof Object && Object.prototype.hasOwnProperty.call(alphaVantageValues,"Meta Data") &&
+        Object.prototype.hasOwnProperty.call(alphaVantageValues, "Weekly Time Series")
 }
 
 // Check if a single candle is valid.
 const isCandlesType = (candles: unknown): candles is CandlesType => {
-    return candles instanceof Object && candles.hasOwnProperty("close") &&
-        candles.hasOwnProperty("date") && candles.hasOwnProperty("high") &&
-        candles.hasOwnProperty("low") && candles.hasOwnProperty("open") &&
-        candles.hasOwnProperty("volume")
+    return candles instanceof Object && Object.prototype.hasOwnProperty.call(candles, "close") &&
+        Object.prototype.hasOwnProperty.call(candles, "date") && Object.prototype.hasOwnProperty.call(candles, "high") &&
+        Object.prototype.hasOwnProperty.call(candles, "low") && Object.prototype.hasOwnProperty.call(candles, "open") &&
+        Object.prototype.hasOwnProperty.call(candles, "volume")
 }
 
 // Check if a market data item is valid.
