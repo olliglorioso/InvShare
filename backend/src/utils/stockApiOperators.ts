@@ -1,9 +1,10 @@
 import FinnhubAPI, { MarketDataItem } from "@stoqey/finnhub"
 import { Resolution } from "@stoqey/finnhub"
-import { CandlesTypeWithDate, AlphaVantageStick, CandlesType, AlphaVantageValues, ReadyAlphaVantageValues } from "../tsUtils/types"
+import { CandlesWithDateType, AlphaVantageStickType, CandlesType, AlphaVantageValues, ReadyAlphaVantageValuesType } from "../tsUtils/types"
 import alpha from "alphavantage"
 import { ForbiddenError } from "apollo-server-express"
 import { turnToDate } from "./dateOperators"
+import { parseAlphaVantange, parseCompany, parseDate, parseFinnhubResponse, parseResolution } from "../tsUtils/typeGuards"
 
 // This file contains functions, that help to get information (sticks) from stock APIs.
 
@@ -16,6 +17,10 @@ export const getIndividualStockInformation = async (
     startDate?: Date, 
     resolution?: Resolution
 ): Promise<CandlesType[]> => {
+    // Parsing parameters.
+    const parsedSymbol = parseCompany(symbol)
+    const parsedStartDate = parseDate(startDate)
+    const parsedResolution = parseResolution(resolution)
     // Creating a new FinnhubAPI-object. This object gets the data 
     // and uses @stoqey/finnhub-library to do this. 
     // Our private FINNHUB_API_KEY is inserted into the object.
@@ -24,34 +29,40 @@ export const getIndividualStockInformation = async (
     // Start date is either the startDate-parameter or 1st December 2020. End date
     // is current date and resolution is either the resolution-parameter or daily.
     const getCandles = async (): Promise<MarketDataItem[] | ForbiddenError> => {
-        const candles = await finnhubAPI.getCandles(symbol, startDate || new Date(2020,12,1), new Date(), resolution || "D")
-        return candles
+        const candles = await finnhubAPI.getCandles(parsedSymbol, parsedStartDate || new Date(2020,12,1), new Date(), parsedResolution || "D")
+        // Parsing candles to CandlesType-type.
+        const parsedCandles = parseFinnhubResponse(candles)
+        return parsedCandles
     }
     // Executing the above function.
     const candles = await getCandles()
     // Mapping through the candles-array and creating a new array of objects,
     // where each object has original values except date-objects are turned into strings. 
     // eslint-disable-next-line 
-    const returnCandles: CandlesType[] = candles.map((a: CandlesTypeWithDate): CandlesType => {return {...a, date: a.date.toString()}})
+    const returnCandles: CandlesType[] = candles.map((a: CandlesWithDateType): CandlesType => {return {...a, date: a.date.toString()}})
     return returnCandles
 }
 
 // GetAlphaVantage-function max. 20 years old data (as old as possible) and is used
 // when client wants some more information about a specific stock. API for this is Alpha Vantage.
-export const getAlphaVantage = async (symbol: string): Promise<ReadyAlphaVantageValues> => {
+export const getAlphaVantage = async (symbol: string): Promise<ReadyAlphaVantageValuesType> => {
+    // Parsing symbol.
+    const parsedSymbol = parseCompany(symbol)
     // This time we use alphavantage-library to fetch the dat. We, again, insert
     // our private API-key to the object we create. The sticks are weekly.
     const alphavantage = alpha({key: process.env.ALPHAVANTAGE_API_KEY as string})
     // We fetch sticks from the API with the object that was created above.
-    const originalSticks: AlphaVantageValues = await alphavantage.data.weekly(symbol, "full", "json")
+    const originalSticks: AlphaVantageValues = await alphavantage.data.weekly(parsedSymbol, "full", "json")
+    // Parsing the data we got from the API.
+    const parsedOriginalSticks = parseAlphaVantange(originalSticks)
     // We create a new object, where we turn the data into a more usable format.
     const usableSticks = {
         metadata: {
-            information: originalSticks["Meta Data"]["1. Information"],
-            symbol: originalSticks["Meta Data"]["2. Symbol"],
-            lastRefresh: originalSticks["Meta Data"]["3. Last Refreshed"]
+            information: parsedOriginalSticks["Meta Data"]["1. Information"],
+            symbol: parsedOriginalSticks["Meta Data"]["2. Symbol"],
+            lastRefresh: parsedOriginalSticks["Meta Data"]["3. Last Refreshed"]
         },
-        time_series: originalSticks["Weekly Time Series"]
+        time_series: parsedOriginalSticks["Weekly Time Series"]
     }
     // We turn the usableSticks-object into a usable format, again.
     const finalSticks = {
@@ -60,7 +71,7 @@ export const getAlphaVantage = async (symbol: string): Promise<ReadyAlphaVantage
             .reverse()
             .map((one: string): [string, number] => {
                 return (
-                    [turnToDate(one), parseFloat((usableSticks.time_series[one] as unknown as AlphaVantageStick)["4. close"])]
+                    [turnToDate(one), parseFloat((usableSticks.time_series[one] as unknown as AlphaVantageStickType)["4. close"])]
                 )
             })
     }

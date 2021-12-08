@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-core";
 import { DocumentNode } from "graphql";
 
+// This is a file that includes the GraphQL-schema for the application.
+
 export const typeDefs: DocumentNode = gql`
     type Token {
         value: String!
@@ -52,10 +54,8 @@ export const typeDefs: DocumentNode = gql`
         followingCount: Int
         usersFollowers: [FollowType]
         usersFollowing: [FollowType]
-        id: ID
+        _id: ID
     }
-
-    
 
     type AnalysisData {
         name: String
@@ -92,6 +92,25 @@ export const typeDefs: DocumentNode = gql`
         transactionOwner: String!
     }
 
+    type FollowEvent {
+        followType: String!
+        auteur: String!
+        object: String!
+        date: String!
+        myFollowers: [FollowType]!
+    }
+
+    type FollowType {
+        date: String!
+        user: User
+    }
+
+    type StockTransactionType {
+        transaction: Transaction!
+        me: String!
+        myFollowers: [FollowType]
+    }
+
     type Query {
         stockHistory (symbol: String!): Prediction
         me: User
@@ -125,25 +144,6 @@ export const typeDefs: DocumentNode = gql`
             amount: Int!
             price: Float!
         ): Transaction!
-    }
-
-    type FollowEvent {
-        followType: String!
-        auteur: String!
-        object: String!
-        date: String!
-        myFollowers: [FollowType]
-    }
-
-    type FollowType {
-        date: String!
-        user: User
-    }
-
-    type StockTransactionType {
-        transaction: Transaction!
-        me: String!
-        myFollowers: [FollowType]
     }
 
     type Subscription {

@@ -2,7 +2,7 @@ import {parseCompany, parseMode} from "../tsUtils/typeGuards"
 import { getAlphaVantage, getIndividualStockInformation } from "../utils/stockApiOperators"
 import { setDate } from "../utils/dateOperators"
 import User from "../models/user"
-import {PopulatedUserType, ReadyAlphaVantageValues, CandlesType, TransactionType, CurrentPortfolioType, AnalysisValue, } from "../tsUtils/types"
+import {PopulatedUserType, ReadyAlphaVantageValuesType, CandlesType, TransactionType, CurrentPortfolioType, AnalysisValueType, } from "../tsUtils/types"
 import {UserInputError} from "apollo-server-express"
 import Stock from "../models/stock"
 
@@ -11,7 +11,7 @@ import Stock from "../models/stock"
 const queries = {
     // This query "stockHistory" uses Alpha Vantage's Stock API to get up to 20 year historical data for a given stock.
     // The prices are of the last prices of each week.
-    stockHistory: async (_root: undefined, args: {symbol: unknown}): Promise<ReadyAlphaVantageValues> => {
+    stockHistory: async (_root: undefined, args: {symbol: unknown}): Promise<ReadyAlphaVantageValuesType> => {
         // Parsing the symbol to make sure it is valid.
         const parsedSymbol = parseCompany(args.symbol)
         // Using self-made function to get the sticks.
@@ -52,6 +52,7 @@ const queries = {
         const parsedCompany = parseCompany(company)
         // Using self-made function to get the sticks.
         const sticks = await getIndividualStockInformation(parsedCompany, setDate(-96), "5")
+        // Parsing sticks.
         // If there are no sticks, an error is thrown.
         if (sticks.length === 0) {
             throw new UserInputError("The symbol doesn't exist.", {errorCode: 400})
@@ -71,12 +72,12 @@ const queries = {
         // Initializing the sum of the portfolio's whole value.
         let sum = 0
         // Initializing the array of analysis values.
-        let values: AnalysisValue[] = []
+        let values: AnalysisValueType[] = []
         if (currentUser && currentUser.usersTransactions.length > 0) {
             // The code below is executed if the user is logged in and has at least 
             // one transaction.
-            // Store the first transaction's date to a variable.
-            const firstBuyDate = currentUser.usersTransactions[0].transactionDate
+            // Store the first purchase's date to a variable.
+            const firstBuyDate = currentUser.usersFirstPurchaseDate
             // Looping through the holdings of the current user.
             for (const item of currentUser.usersHoldings) {
                 // Getting the stock's name since it isn't directly stored in the Holding-object.

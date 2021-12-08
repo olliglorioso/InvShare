@@ -12,6 +12,11 @@ const schema = new mongoose.Schema<UserType>({
     minglength: 4,
     maxlength: 15
   },
+  // This helps currentPortfolioValue-query in the case
+  // that user has sold all their stocks and buys a new first one.
+  usersFirstPurchaseDate: {
+    type: String
+  },
   // The encrypted password of the user.
   usersPasswordHash: {
     type: String,
