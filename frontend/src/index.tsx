@@ -36,7 +36,7 @@ const gqlUri = process.env.NODE_ENV === "development" ? process.env.REACT_APP_DE
 const httpLink = new HttpLink({ uri: gqlUri });
 
 // Deciding which websocket endpoint we want to use with the help of environment variables.
-const wsUri = process.env.NODE_ENV === "development" ? process.env.REACT_APP_DEVELOPMENT_WEBSOCKET : process.env.REACT_APP_SPRODUCTION_WEBSOCKET;
+const wsUri = process.env.NODE_ENV === "development" ? process.env.REACT_APP_DEVELOPMENT_WEBSOCKET : process.env.REACT_APP_PRODUCTION_WEBSOCKET;
 
 // Creating a WebSocketLink-object, which will be used to connect to the websocket endpoint and it is a terminating lik.
 const wsLink = new WebSocketLink({
