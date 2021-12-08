@@ -20,8 +20,6 @@ import firstBuyReducer from "./reducers/firstBuyReducer";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import actionNotificationReducer from "./reducers/actionNotificationReducer";
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-require("dotenv").config();
-
 
 // Here we  combine all our reducers into one store. This way we can easily access them in our components.
 // Generally combineReducer-allows us to create multiple reducers.
@@ -35,6 +33,7 @@ const reducer = combineReducers({
 });
 
 // Deciding which backend endpoint we want to use with the help of environment variables.
+
 const gqlUri = process.env.NODE_ENV === "development" ? process.env.REACT_APP_DEVELOPMENT_BACKEND : process.env.REACT_APP_PRODUCTION_BACKEND;
 const httpLink = new HttpLink({ uri: gqlUri });
 
