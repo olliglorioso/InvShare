@@ -85,9 +85,6 @@ export const parseFinnhubResponse = (finnhubResponse: unknown): MarketDataItem[]
     if (!finnhubResponse || !Array.isArray(finnhubResponse)) {
         throw new InvalidApiResponseError("Finnhub's API-response is not a list / is undefined.")
     }
-    if (finnhubResponse.length === 0) {
-        throw new UserInputError("The stock does not exist.")
-    }
     if (isMarketDataItem(finnhubResponse)) {
         return finnhubResponse
     }
