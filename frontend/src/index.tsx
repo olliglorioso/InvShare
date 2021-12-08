@@ -19,6 +19,9 @@ import { setContext } from "@apollo/client/link/context";
 import firstBuyReducer from "./reducers/firstBuyReducer";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import actionNotificationReducer from "./reducers/actionNotificationReducer";
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
+require("dotenv").config();
+
 
 // Here we combine all our reducers into one store. This way we can easily access them in our components.
 // Generally combineReducer-allows us to create multiple reducers.
