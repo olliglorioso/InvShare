@@ -31,7 +31,7 @@ const reducer = combineReducers({
     notification: actionNotificationReducer
 });
 
-// Deciding which backend endpoint we want to use (with the help of environment variables).
+// Deciding which backend endpoint we want to use with the help of environment variables.
 const gqlUri = process.env.NODE_ENV === "development" ? process.env.REACT_APP_DEVELOPMENT_BACKEND : process.env.REACT_APP_PRODUCTION_BACKEND;
 const httpLink = new HttpLink({ uri: gqlUri });
 
