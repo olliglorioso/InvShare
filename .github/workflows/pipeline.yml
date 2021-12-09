@@ -31,7 +31,6 @@ jobs:
         start: npm run start
         working-directory: frontend
         wait-on: http://localhost:3000
-        wait-on-timeout: 120
     - name: build all
       run: npm run build:all
     - uses: akhileshns/heroku-deploy@v3.12.12
