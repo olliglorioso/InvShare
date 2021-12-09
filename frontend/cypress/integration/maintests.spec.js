@@ -1,14 +1,14 @@
 it("reseting database and signing up", () => {
-    cy.visit("http://localhost:3000/testreset");
+    cy.visit("http://localhost:3001/testreset");
     cy.contains("Reseted succesfully.");
-    cy.visit("http://localhost:3000/login");
+    cy.visit("http://localhost:3001/login");
     cy.get("#usernameSignUp").type("testi800");
     cy.get("#passwordSignUp").type("testi800");
     cy.get("#password_again").type("testi800");
     cy.get("#signUpButton").click();
     cy.contains("Yes").click();
     cy.contains("You created an account with the name testi800.");
-    cy.visit("http://localhost:3000/login");
+    cy.visit("http://localhost:3001/login");
     cy.get("#usernameSignUp").type("testi900");
     cy.get("#passwordSignUp").type("testi900");
     cy.get("#password_again").type("testi900");
@@ -19,7 +19,7 @@ it("reseting database and signing up", () => {
 
 describe("main functions", () => {
     beforeEach(() => {
-        cy.visit("http://localhost:3000/login");
+        cy.visit("http://localhost:3001/login");
         cy.contains("InvShare");
         cy.get("#username").type("testi800");
         cy.get("#password").type("testi800");
@@ -58,7 +58,7 @@ describe("main functions", () => {
         cy.contains("Explore");
         cy.get("#toExplore").type("{esc}", {force: true});
         cy.contains("Log out").click();
-        cy.visit("http://localhost:3000/login");
+        cy.visit("http://localhost:3001/login");
         cy.get("#username").type("testi900");
         cy.get("#password").type("testi900");
         cy.get("#tryToLoginButton").click();
@@ -71,7 +71,7 @@ describe("main functions", () => {
         cy.contains("testi800").click();
         cy.contains("Follow").click();
         cy.contains("You followed testi800.");
-        cy.visit("http://localhost:3000/actions");
+        cy.visit("http://localhost:3001/actions");
         cy.contains("testi800");
     });
     
