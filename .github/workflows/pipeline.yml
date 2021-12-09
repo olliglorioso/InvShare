@@ -29,7 +29,7 @@ jobs:
       with:
         command: npm run cypress:run
         build: npm run build:all
-        start: npm run start
+        start: npm run start:test
         wait-on: http://localhost:3000
     - name: build all
       run: npm run build:all

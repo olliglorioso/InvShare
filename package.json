@@ -12,6 +12,7 @@
     "build:backend": "rm -rf index.js && rm -rf src && cd backend && npm run tsc && cd .. && cp -r dist/src . && cp -r dist/index.js . && rm -rf dist",
     "test:endtoend": "cd frontend && npm run cypress:run",
     "start": "node index.js",
+    "start:test": "cross-env NODE_ENV=test node index.js",
     "start:testserver": "cd backend && npm run start:all",
     "build:all": "npm run build:backend && npm run build:frontend",
     "lint:all": "npm run lint:frontend && npm run lint:backend"
