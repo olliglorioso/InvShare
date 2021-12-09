@@ -23,8 +23,6 @@ const startServer = async () => {
     ? process.env.MONGODB_TEST_URI || ""
     : process.env.MONGODB_URI || ""
     // Connecting to the database.
-    console.log(process.env)
-    console.log(MONGODB_URI)
     void mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
     // Creating the express-server.
     const app = express()
