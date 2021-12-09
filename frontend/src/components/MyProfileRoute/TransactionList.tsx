@@ -67,7 +67,7 @@ const TransactionList = (props: {
                             key={transaction.transactionDate}
                             className={styles.transactionListItem}
                         >
-                            <Button onClick={() => handleClick(transaction._id.toString())}>
+                            <Button id="openTransaction" onClick={() => handleClick(transaction._id.toString())}>
                                 <ListItemIcon>
                                     {transaction.transactionType === "Buy" // Which icon to display.
                                         ? <ShoppingCart />

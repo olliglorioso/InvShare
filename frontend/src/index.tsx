@@ -34,7 +34,6 @@ const reducer = combineReducers({
 // Deciding which backend endpoint we want to use with the help of environment variables.
 const gqlUri = process.env.NODE_ENV === "development" ? "http://localhost:3001/graphql" : "https://fso2021practicework.herokuapp.com/graphql";
 const httpLink = new HttpLink({ uri: gqlUri });
-
 // Deciding which websocket endpoint we want to use with the help of environment variables.
 const wsUri = process.env.NODE_ENV === "development" ? "ws://localhost:3001/subscriptions" : "wss://fso2021practicework.herokuapp.com/subscriptions";
 

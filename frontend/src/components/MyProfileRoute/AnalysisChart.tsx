@@ -72,7 +72,7 @@ const AnalysisChart = ({
             });
             // If the stick exists, we add it to sum. Before that, we multiply it with the stock's weight in portfolio.
             if (valueToAdd.length > 0) {
-                sum = sum + valueToAdd[0].close * holdings.filter((pos: Holdings) => pos.usersStock.stockSymbol === oneStock.name)[0].usersTotalAmount;
+                sum = sum + valueToAdd[0].close * holdings.filter((pos: Holdings) => pos.usersStock.stockSymbol === oneStock.name)[0]?.usersTotalAmount;
             } else {
                 // If the stick doesn't exist, we add the stick with the closest date to the date we are looking for.
                 // This variable will be used to find the closest date.
@@ -130,7 +130,7 @@ const AnalysisChart = ({
         // Y-axis values.
         {
             name: "Portfolio value (%)",
-            data: prices
+            data: prices.map((x: number) => isNaN(x) ? 0 : x), // If the prices haven't been correctly loaded and calculated, we set them to 0 for a moment.
         },
     ];
 
@@ -171,13 +171,7 @@ const AnalysisChart = ({
             />
             <div style={{ width: "100%" }}>
                 {res.loading ? (
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            paddingTop: "15px",
-                        }}
-                    >
+                    <div className={styles.chartLoadingAnimation}>
                         <LoadingAnimation type={"spin"} color={"black"} />
                     </div>
                 ) : (

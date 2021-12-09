@@ -10,8 +10,6 @@
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/styles": "^4.11.4",
     "@stoqey/finnhub": "^0.3.4",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@types/apollo-upload-client": "^14.1.0",
     "@types/jest": "^26.0.24",
@@ -77,6 +75,8 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^11.2.7",
     "@types/react-notifications-component": "^3.1.1",
     "@types/react-router-dom": "^5.1.8",
     "cypress": "^8.3.1",

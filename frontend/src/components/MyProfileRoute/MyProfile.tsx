@@ -22,8 +22,8 @@ import TutorialAnimation from "./TutorialAnimation";
 import useStyles from "./myProfileRouteStyles.module";
 
 const MyProfile = ({stockSubscription, followSubscriptions}: {
-  stockSubscription: string,
-  followSubscriptions: string
+  stockSubscription: string | undefined,
+  followSubscriptions: string | undefined
 }): JSX.Element => {
     // Importing styles.
     const styles = useStyles();
@@ -52,8 +52,8 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
         if (stockSubscription || followSubscriptions) {
             try {
                 meResult.refetch();
-                daysData.refetch();
                 hoursData.refetch();
+                daysData.refetch();
             } catch (e: unknown) {
                 notification("An error occured.", "Error while downloading updates and new information.", "danger");
             }
@@ -67,7 +67,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
         return <TutorialAnimation />;
     }
     // Checking if the data has been fetched.
-    if (!meResult.data || !daysData.data || !hoursData.data ||!meResult.data.me || !daysData.data.currentPortfolioValue || !hoursData.data.currentPortfolioValue) {
+    if (!meResult.data || !hoursData.data ||!meResult.data.me || !hoursData.data.currentPortfolioValue) {
         return <div className={styles.myProfileLoadingAnimation}><LoadingAnimation type={"spin"} color={"black"} /></div>;
     }
     // Checking errors.
@@ -107,7 +107,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
         0
     );
     // Current profit percentage.
-    const currentProfitPercentage = parseFloat((100 * (-1 + hoursData.data.currentPortfolioValue[0].wholeValue / totalOriginalValue)).toFixed(2));
+    const currentProfitPercentage = (parseFloat((100 * (-1 + hoursData.data.currentPortfolioValue[0].wholeValue / totalOriginalValue)).toString())).toFixed(2);
     // Rendering MyProfile.
     return (
         <div className={styles.myProfileMainDiv}>
@@ -157,7 +157,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
                                 </Typography>
                             </div>
                             <div>
-                                {currentProfitPercentage >= 0  // The color of the text is based on the sign of the profit.
+                                {parseFloat(currentProfitPercentage) >= 0  // The color of the text is based on the sign of the profit.
                                     ?   <Typography className={styles.myProfileCardContentNumberGreen}>{currentProfitPercentage}%</Typography> 
                                     :   <Typography className={styles.myProfileCardContentNumberRed}>{currentProfitPercentage}%</Typography>}
 
@@ -197,6 +197,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
                 <div style={{ paddingBottom: "1vh", textAlign: "center" }}>
                     <Button
                         variant="contained"
+                        id="toTransactions"
                         type="submit"
                         onClick={() => setMode("Transactions")}
                         className={styles.myProfileButton}

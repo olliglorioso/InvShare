@@ -7,13 +7,15 @@ import SideBar from "./components/Other/SideBar";
 import MyProfile from "./components/MyProfileRoute/MyProfile";
 import ReactNotification from "react-notifications-component";
 import DefaultPage from "./components/Other/DefaultPage";
-import { useSubscription } from "@apollo/client";
 import { FOLLOWEVENT, STOCKEVENT } from "./graphql/queries";
 import ExplorePage from "./components/ExploreRoute/ExplorePage";
 import SpecificExplore from "./components/ExploreRoute/SpecificExplore";
 import { useSelector } from "react-redux";
+import { useSubscription } from "@apollo/client";
 import { RootState } from ".";
 import ActionsPage from "./components/ActionsRoute/ActionsPage";
+import Reset from "./components/Other/Reset";
+import HealthCheck from "./components/Other/HealthCheck";
 
 // This is the highest component in hierarchy. Displays the whole app.
 function App(): JSX.Element {
@@ -100,6 +102,12 @@ function App(): JSX.Element {
                             <AppBar stockSubscription={stockSubscription} />
                             <DefaultPage />
                         </div>
+                    </Route>
+                    <Route path="/testreset" exact>
+                        <Reset />
+                    </Route>
+                    <Route path="/healthcheck" exact> 
+                        <HealthCheck />
                     </Route>
                     <Route path="/">
                         <Redirect to="/" />

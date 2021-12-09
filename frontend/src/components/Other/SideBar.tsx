@@ -49,7 +49,7 @@ const SideBar = (): JSX.Element => {
             >
                 <div>
                     <List>
-                        <ListItem button onClick={() => history.push("/myprofile")}>
+                        <ListItem id="toMyProfile" button onClick={() => history.push("/myprofile")}>
                             <AccountCircle />
                             <ListItemText inset={true} primary={"My profile"} />
                         </ListItem>
@@ -62,7 +62,7 @@ const SideBar = (): JSX.Element => {
                             <ListItemText inset={true} primary={"Actions"} />
                         </ListItem>
                         <Divider classes={{ root: styles.divider }} />
-                        <ListItem button onClick={() => history.push("/buystocks")}>
+                        <ListItem id="toBuyStocks" button onClick={() => history.push("/buystocks")}>
                             {!purchaseState ? (
                                 <>
                                     <AnimateKeyframes
@@ -90,7 +90,7 @@ const SideBar = (): JSX.Element => {
                             )}
                         </ListItem>
                         <Divider classes={{ root: styles.divider }} />
-                        <ListItem button onClick={() => history.push("/explore")}>
+                        <ListItem id="toExplore" button onClick={() => history.push("/explore")}>
                             <Explore />
                             <ListItemText inset={true} primary={"Explore"} />
                         </ListItem>

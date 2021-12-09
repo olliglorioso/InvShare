@@ -17,6 +17,17 @@ require("dotenv").config()
 // This field includes the mutations that are available for the client.
 
 const mutations = { 
+    // This is for clearing the test database.
+    resetDatabase: async (): Promise<{result: boolean}> => {
+        if (process.env.NODE_ENV === "test") {
+            await User.deleteMany({})
+            await Stock.deleteMany({})
+            await Transaction.deleteMany({})
+            return {result: true}
+        } else {
+            return {result: false}
+        }
+    },
     // This mutation "followUser" is used to follow a user.
     followUser: async (
         _root: undefined,

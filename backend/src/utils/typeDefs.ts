@@ -121,6 +121,7 @@ export const typeDefs: DocumentNode = gql`
     }
 
     type Mutation {
+        resetDatabase: Result
         addUser (
             username: String!
             password: String!

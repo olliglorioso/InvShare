@@ -32,11 +32,7 @@ const startServer = async () => {
     app.use(history())
     // Adding the express.static-middleware.
     app.use(express.static("build"))
-    // Creating endpoint for healthcheck.
-    app.get("/healthcheck", (_req, res) => {
-        res.send("toimii")
-    })
-    
+
     const httpServer = createServer(app)
 
     const schema = makeExecutableSchema({ 

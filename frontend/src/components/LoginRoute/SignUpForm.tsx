@@ -109,7 +109,7 @@ const SignUpForm = (): JSX.Element => {
             }): JSX.Element => (
                 <form onSubmit={handleSubmit}>
                     <CssTextField
-                        id="username2"
+                        id="usernameSignUp"
                         label="Username"
                         name="username"
                         type="text"
@@ -134,7 +134,7 @@ const SignUpForm = (): JSX.Element => {
                         : null}
                     <p></p>
                     <CssTextField
-                        id="password2"
+                        id="passwordSignUp"
                         label="Password"
                         name="password"
                         type="password"
@@ -176,10 +176,7 @@ const SignUpForm = (): JSX.Element => {
                         }}
                     />
                     {errors.password_again && touched.password_again
-                        ? 
-                        (
-                            <div className={styles.errorColor}>{errors.password_again}</div>
-                        ) 
+                        ? <div className={styles.errorColor}>{errors.password_again}</div>
                         : null
                     }
                     <p></p>
@@ -188,6 +185,7 @@ const SignUpForm = (): JSX.Element => {
                         variant="contained"
                         color="primary"
                         className={styles.loginButton}
+                        id="signUpButton"
                     >
                         Sign up
                     </Button>

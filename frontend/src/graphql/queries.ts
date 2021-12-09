@@ -191,6 +191,15 @@ export const INDIVIDUAL_STOCK = gql`
   ${STOCKDETAILS}
 `;
 
+// Reset test database:
+export const RESET_DATABASE = gql`
+  mutation resetDatabase {
+    resetDatabase {
+      result
+    }
+  }
+`;
+
 // Subscriptions: 
 export const STOCKEVENT = gql`
   subscription StockEvent ($username: String) {

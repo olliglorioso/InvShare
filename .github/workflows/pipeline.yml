@@ -20,26 +20,26 @@ jobs:
       run: cd frontend && npm install && cd ../backend && npm install
     - name: lint all
       run: npm run lint:all
-    # - name: test frontend with cypress
-    #   uses: cypress-io/github-action@v2
-    #   env: 
-    #     MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
-    #     SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
-    #     PORT: ${{ secrets.PORT }}
-    #   with:
-    #     command: npm run test:frontend
-    #     start: npm run start:testserver
-    #     wait-on: http://localhost:3000
+    - name: test end-to-end with cypress
+      uses: cypress-io/github-action@v2
+      env: 
+        MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+        SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
+        PORT: ${{ secrets.PORT }}
+      with:
+        command: npm run test:endtoend
+        start: npm run start:testserver
+        wait-on: http://localhost:3000
     - name: build all
       run: npm run build:all
     - uses: akhileshns/heroku-deploy@v3.12.12
-      # if: ${{ github.event_name == 'push' }}
+      if: ${{ github.event_name == 'push' }}
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "fso2021practicework"
         heroku_email: "olli.glorioso@gmail.com"
         healthcheck: "https://fso2021practicework.herokuapp.com/healthcheck"  
-        checkstring: "toimii"
+        checkstring: "Up."
         rollbackonhealthcheckfailed: true
     - uses: actions/checkout@v2
     - uses: 8398a7/action-slack@v3

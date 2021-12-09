@@ -135,7 +135,7 @@ const useStyles = makeStyles({
     tutorialTypography: {
         width: 200,
         paddingLeft: 7
-    }
+    },
 });
 
 export default useStyles;

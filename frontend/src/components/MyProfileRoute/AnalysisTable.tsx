@@ -42,56 +42,67 @@ const AnalysisTable = ({analysisData, holdings, getOldData}:
                 <TableBody>
                     {analysisData.map((company: AnalysisData) => {
                         // Here we map through analysisData, also sticks for every company.
-                        // First of all, we search for the company in holdings. It is to be found.
+                        // First of all, we search for the company in holdings.
                         const correspondingPosition = holdings.filter((x: Holdings) => {
                             return x.usersStock.stockSymbol === company.name;
                         })[0];
+                        let profitPercent = "696969";
+
+                        if (correspondingPosition) {
                         // Here we calculate the profit percent of this particular company by taking its last value and dividing it by the original average value.
-                        const profitPercent = ((-1 + company.sticks[company.sticks.length - 1].close / (correspondingPosition.usersTotalOriginalPriceValue / correspondingPosition.usersTotalAmount)) * 100)
-                            .toFixed(2);
-                        return (
-                            <StyledTableRow key={`${company.name}`}>
-                                <TableCell component="th" scope="row">
-                                    <Button
-                                        className={styles.analysisTableButton}
-                                        onClick={() => {
-                                            try {
-                                                getOldData(company.name);
-                                                return;
-                                            } catch (e: unknown) {
-                                                notification("Error.", (e as Error).message, "danger");
-                                            }
-                                        }}
-                                    >
-                                        {company.name}
-                                    </Button>
-                                </TableCell>
-                                {parseFloat(profitPercent) >= 0 ? (
-                                    <TableCell
-                                        style={{ color: "green" }}
-                                        align="right"
-                                    >{`${parseFloat(profitPercent).toFixed(2)}%`}</TableCell>
-                                ) : (
-                                    <TableCell
-                                        align="right"
-                                        style={{ color: "red" }}
-                                    >{`${parseFloat(profitPercent).toFixed(2)}%`}</TableCell>
-                                )}
-                                <TableCell align="right">
-                                    {(
-                                        correspondingPosition.usersTotalOriginalPriceValue / correspondingPosition.usersTotalAmount
-                                    ).toFixed(2)}
-                                </TableCell>
-                                <TableCell align="right">
-                                    {company.sticks[company.sticks.length - 1].close.toFixed(2)}
-                                </TableCell>
-                                <TableCell align="right">
-                                    {correspondingPosition.usersTotalAmount}
-                                </TableCell>
-                            </StyledTableRow>
-                        );
-                    } 
-                    )}
+                        // This only if the corresponding positions exists (subscriptions cause exceptions).
+                            profitPercent = 
+                                ((-1 + company.sticks[company.sticks.length - 1].close / (correspondingPosition.usersTotalOriginalPriceValue / correspondingPosition.usersTotalAmount)) * 100).toFixed(2);
+                        }
+                        // Rendering is executed only if everything is all right. Subscriptions cause exceptions.
+                        if (company.name && correspondingPosition && profitPercent !== "696969") {
+                            return (
+                                <StyledTableRow key={`${company.name}`}>
+                                    <TableCell component="th" scope="row">
+                                        <Button
+                                            id="openOldData"
+                                            className={styles.analysisTableButton}
+                                            onClick={() => {
+                                                try {
+                                                    getOldData(company.name);
+                                                    return;
+                                                } catch (e: unknown) {
+                                                    notification("Error.", (e as Error).message, "danger");
+                                                }
+                                            }}
+                                        >
+                                            {company.name}
+                                        </Button>
+                                    </TableCell>
+                                    {parseFloat(profitPercent) >= 0 ? (
+                                        <TableCell
+                                            style={{ color: "green" }}
+                                            align="right"
+                                        >{`${parseFloat(profitPercent).toFixed(2)}%`}</TableCell>
+                                    ) : (
+                                        <TableCell
+                                            align="right"
+                                            style={{ color: "red" }}
+                                        >{`${parseFloat(profitPercent).toFixed(2)}%`}</TableCell>
+                                    )}
+                                    <TableCell align="right">
+                                        {(
+                                            correspondingPosition.usersTotalOriginalPriceValue / correspondingPosition.usersTotalAmount
+                                        ).toFixed(2)}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {company.sticks[company.sticks.length - 1].close.toFixed(2)}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {correspondingPosition.usersTotalAmount}
+                                    </TableCell>
+                                </StyledTableRow>
+                            );
+                        } else {
+                            // We return empty table row is something has gone wrong.
+                            return <StyledTableRow key={company.name}></StyledTableRow>;
+                        }
+                    })}
                 </TableBody>
             </Table>
         </TableContainer>

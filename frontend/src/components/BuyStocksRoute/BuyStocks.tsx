@@ -306,6 +306,7 @@ const BuyStocks = (): JSX.Element => {
                         ) : (
                             <Button
                                 disabled={isDisabled}
+                                id="buyStockButton"
                                 variant="contained"
                                 type="submit"
                                 className={styles.buyStockFormButton}
