@@ -34,6 +34,7 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     const MONGODB_URI = process.env.NODE_ENV === "test"
         ? process.env.MONGODB_TEST_URI || ""
         : process.env.MONGODB_URI || "";
+    console.log(process.env);
     // Connecting to the database.
     void mongoose_1.default.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
     // Creating the express-server.
