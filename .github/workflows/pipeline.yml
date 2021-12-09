@@ -27,8 +27,8 @@ jobs:
         SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
         PORT: ${{ secrets.PORT }}
       with:
-        command: npm run test:endtoend
-        start: npm run start:test
+        command: npm run cypress:run
+        start: npm run start
         working-directory: frontend
         wait-on: http://localhost:3000
     - name: build all
