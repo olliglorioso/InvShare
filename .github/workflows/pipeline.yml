@@ -29,6 +29,7 @@ jobs:
       with:
         command: npm run test:endtoend
         start: npm run start:test
+        working-directory: frontend
         wait-on: http://localhost:3000
     - name: build all
       run: npm run build:all
