@@ -56,8 +56,7 @@
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
     "eject": "react-scripts eject",
     "cypress:run": "cypress run --config video=false",
-    "start:testserver": "cd ../backend && npm run start:test",
-    "start:all": "concurrently \"npm run start\" \"npm run start:testserver\""
+    "start:testserver": "cd ../backend && npm run start:test"
   },
   "eslintConfig": {
     "extends": [
