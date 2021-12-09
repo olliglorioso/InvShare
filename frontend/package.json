@@ -19,6 +19,7 @@
     "apexcharts": "^3.27.3",
     "apollo-link-context": "^1.0.20",
     "boring-avatars": "^1.5.8",
+    "concurrently": "^6.4.0",
     "confirm-dialog": "^0.1.2",
     "cors": "^2.8.5",
     "dates-between": "^1.1.0",
@@ -54,7 +55,9 @@
     "test": "react-scripts test",
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
     "eject": "react-scripts eject",
-    "cypress:run": "cypress run --config video=false"
+    "cypress:run": "cypress run --config video=false",
+    "start:testserver": "cd ../backend && npm run start:test",
+    "start:all": "concurrently \"npm run start\" \"npm run start:testserver\""
   },
   "eslintConfig": {
     "extends": [
