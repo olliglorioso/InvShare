@@ -27,6 +27,18 @@ const stock_1 = __importDefault(require("../models/stock"));
 require("dotenv").config();
 // This field includes the mutations that are available for the client.
 const mutations = {
+    // This is for clearing the test database.
+    resetDatabase: () => __awaiter(void 0, void 0, void 0, function* () {
+        if (process.env.NODE_ENV === "test") {
+            yield user_1.default.deleteMany({});
+            yield stock_1.default.deleteMany({});
+            yield transaction_1.default.deleteMany({});
+            return { result: true };
+        }
+        else {
+            return { result: false };
+        }
+    }),
     // This mutation "followUser" is used to follow a user.
     followUser: (_root, { username }, { currentUser }) => __awaiter(void 0, void 0, void 0, function* () {
         // Parsing the username to check if it is valid.

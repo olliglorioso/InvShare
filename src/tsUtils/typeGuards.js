@@ -80,9 +80,6 @@ const parseFinnhubResponse = (finnhubResponse) => {
     if (!finnhubResponse || !Array.isArray(finnhubResponse)) {
         throw new customMadeErrors_1.InvalidApiResponseError("Finnhub's API-response is not a list / is undefined.");
     }
-    if (finnhubResponse.length === 0) {
-        throw new apollo_server_express_1.UserInputError("The stock does not exist.");
-    }
     if (isMarketDataItem(finnhubResponse)) {
         return finnhubResponse;
     }

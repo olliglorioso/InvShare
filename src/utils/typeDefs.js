@@ -121,6 +121,7 @@ exports.typeDefs = apollo_server_core_1.gql `
     }
 
     type Mutation {
+        resetDatabase: Result
         addUser (
             username: String!
             password: String!

@@ -44,10 +44,6 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     app.use(connect_history_api_fallback_1.default());
     // Adding the express.static-middleware.
     app.use(express_1.default.static("build"));
-    // Creating endpoint for healthcheck.
-    app.get("/healthcheck", (_req, res) => {
-        res.send("toimii");
-    });
     const httpServer = http_1.createServer(app);
     const schema = schema_1.makeExecutableSchema({
         typeDefs: typeDefs_1.typeDefs,

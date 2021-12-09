@@ -20,8 +20,6 @@ jobs:
       run: cd frontend && npm install && cd ../backend && npm install
     - name: lint all
       run: npm run lint:all
-    - name: build all
-      run: npm run build:all
     - name: test end-to-end with cypress
       uses: cypress-io/github-action@v2
       env: 
@@ -31,7 +29,9 @@ jobs:
       with:
         command: npm run test:endtoend
         start: npm run start:test
-        wait-on: http://localhost:3001/graphql
+        wait-on: http://localhost:3000
+    - name: build all
+      run: npm run build:all
     - uses: akhileshns/heroku-deploy@v3.12.12
       if: ${{ github.event_name == 'push' }}
       with:
