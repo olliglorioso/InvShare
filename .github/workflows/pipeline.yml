@@ -28,7 +28,7 @@ jobs:
         PORT: ${{ secrets.PORT }}
       with:
         command: npm run cypress:run
-        start: npm start
+        start: npm run start:all
         working-directory: frontend
         wait-on: http://localhost:3000
     - name: build all
