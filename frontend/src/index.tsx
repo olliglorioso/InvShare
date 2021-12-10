@@ -31,6 +31,7 @@ const reducer = combineReducers({
     notification: actionNotificationReducer
 });
 
+console.log("FRONTEND PYSTYSSSSSSSSSSSSSSSÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ");
 // Deciding which backend endpoint we want to use with the help of environment variables.
 const gqlUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
     ? "http://localhost:3001/graphql" 
@@ -87,7 +88,7 @@ const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: splitLink,
 });
-
+console.log("FRONTEND PYSTYSSSSSSSSSSSSSSSÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ 22222222222");
 // Rendering the website with ReactDOM-object. We also provide the Redux-store and Apollo-client to the app.
 ReactDOM.render(
     <Provider store={store}>
