@@ -24,7 +24,7 @@ jobs:
       run: npm run build:all
     - name: test end-to-end with cypress
       uses: cypress-io/github-action@v2
-      if: ${{ github.event_name == 'push' && contains(join(toJson(github.event.commits.*.message)), 'e2e')}}
+      if: ${{ github.event_name == 'push' && contains(join(toJson(github.event.commits.*.message)), '#e2e')}}
       env: 
         MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
         SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
