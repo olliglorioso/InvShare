@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "dev": "cross-env NODE_ENV=develompent ts-node-dev index.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev index.ts",
     "start:test": "cross-env NODE_ENV=test ts-node index.ts",
     "lint": "eslint --ext .ts .",
     "start:client": "cd ../frontend && npm start",

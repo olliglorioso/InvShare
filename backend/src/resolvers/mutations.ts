@@ -19,7 +19,7 @@ require("dotenv").config()
 const mutations = { 
     // This is for clearing the test database.
     resetDatabase: async (): Promise<{result: boolean}> => {
-        if (process.env.NODE_ENV === "test") {
+        if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") {
             await User.deleteMany({})
             await Stock.deleteMany({})
             await Transaction.deleteMany({})

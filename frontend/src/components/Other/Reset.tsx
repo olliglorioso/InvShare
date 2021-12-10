@@ -9,10 +9,13 @@ const Reset = () => {
         await reset();
     };
     resetDb();
+    console.log(result);
     if (!result.data) {
         return <div>Resetting...</div>;
-    } else {
+    } else if (result.data.resetDatabase.result) {
         return <div>Reseted succesfully.</div>;
+    } else {
+        return <div>Reset failed.</div>;
     }
 };
 
