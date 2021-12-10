@@ -13,7 +13,7 @@
     "start": "node index.js",
     "build:all": "npm run build:backend && npm run build:frontend",
     "lint:all": "npm run lint:frontend && npm run lint:backend",
-    "test:endtoend": "cd frontend && npm run cypress:run"
+    "install:all": "cd frontend & npm install & cd ../backend & npm install"
   },
   "repository": {
     "type": "git",
