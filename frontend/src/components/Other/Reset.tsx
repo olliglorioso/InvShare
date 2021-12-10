@@ -9,7 +9,6 @@ const Reset = () => {
         await reset();
     };
     resetDb();
-    console.log(result);
     if (!result.data) {
         return <div>Resetting...</div>;
     } else if (result.data.resetDatabase.result) {

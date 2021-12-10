@@ -31,16 +31,11 @@ const reducer = combineReducers({
     notification: actionNotificationReducer
 });
 
-console.log("FRONTEND PYSTYSSSSSSSSSSSSSSSÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ");
 // Deciding which backend endpoint we want to use with the help of environment variables.
-const gqlUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
-    ? "http://localhost:3001/graphql" 
-    : "https://fso2021practicework.herokuapp.com/graphql";
+const gqlUri = "http://localhost:3001/graphql" || "https://fso2021practicework.herokuapp.com/graphql";
 const httpLink = new HttpLink({ uri: gqlUri });
 // Deciding which websocket endpoint we want to use with the help of environment variables.
-const wsUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
-    ? "ws://localhost:3001/subscriptions" 
-    : "wss://fso2021practicework.herokuapp.com/subscriptions";
+const wsUri = "ws://localhost:3001/subscriptions" || "wss://fso2021practicework.herokuapp.com/subscriptions";
 // Creating a WebSocketLink-object, which will be used to connect to the websocket endpoint and it is a terminating lik.
 const wsLink = new WebSocketLink({
     uri: wsUri as string,
@@ -88,7 +83,7 @@ const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: splitLink,
 });
-console.log("FRONTEND PYSTYSSSSSSSSSSSSSSSÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ 22222222222");
+
 // Rendering the website with ReactDOM-object. We also provide the Redux-store and Apollo-client to the app.
 ReactDOM.render(
     <Provider store={store}>

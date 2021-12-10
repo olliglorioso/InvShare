@@ -29,7 +29,7 @@ require("dotenv").config();
 const mutations = {
     // This is for clearing the test database.
     resetDatabase: () => __awaiter(void 0, void 0, void 0, function* () {
-        if (process.env.NODE_ENV === "test") {
+        if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") {
             yield user_1.default.deleteMany({});
             yield stock_1.default.deleteMany({});
             yield transaction_1.default.deleteMany({});
