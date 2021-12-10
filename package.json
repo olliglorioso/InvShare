@@ -10,11 +10,10 @@
     "lint:frontend": "cd frontend && npm run lint",
     "build:frontend": "rm -rf build && cd frontend && rm -rf build && npm run build && cp -r build ..",
     "build:backend": "rm -rf index.js && rm -rf src && cd backend && npm run tsc && cd .. && cp -r dist/src . && cp -r dist/index.js . && rm -rf dist",
-    "test:endtoend": "cd frontend && npm run cypress:run",
     "start": "node index.js",
-    "start:test": "cd frontend && npm install && npm start",
     "build:all": "npm run build:backend && npm run build:frontend",
-    "lint:all": "npm run lint:frontend && npm run lint:backend"
+    "lint:all": "npm run lint:frontend && npm run lint:backend",
+    "test:endtoend": "cd frontend && npm run cypress:run"
   },
   "repository": {
     "type": "git",
