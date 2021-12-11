@@ -14,7 +14,6 @@ import { SubscriptionServer } from "subscriptions-transport-ws"
 import { execute, subscribe } from "graphql"
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import history from "connect-history-api-fallback"
-
 // In this index.ts-file are all the configurations and the server will be started here.
 
 const startServer = async () => {
@@ -28,6 +27,10 @@ const startServer = async () => {
     const app = express()
     // Adding cors-middleware.
     app.use(cors())
+    // Health check route.
+    app.get("/healthcheck", (_request, response) => {
+        response.send("Up.")
+    });
     // Adding the history-api-fallback-middleware.
     app.use(history())
     // Adding the express.static-middleware.

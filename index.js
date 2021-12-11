@@ -40,6 +40,10 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     const app = express_1.default();
     // Adding cors-middleware.
     app.use(cors_1.default());
+    // Health check route.
+    app.get("/healthcheck", (_request, response) => {
+        response.send("Up.");
+    });
     // Adding the history-api-fallback-middleware.
     app.use(connect_history_api_fallback_1.default());
     // Adding the express.static-middleware.

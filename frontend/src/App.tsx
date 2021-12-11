@@ -103,7 +103,7 @@ function App(): JSX.Element {
                             <DefaultPage />
                         </div>
                     </Route>
-                    <Route path="/testreset" exact>
+                    <Route path="/resetdatabase" exact>
                         <Reset />
                     </Route>
                     <Route path="/healthcheck" exact> 

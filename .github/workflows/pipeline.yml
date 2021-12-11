@@ -41,6 +41,9 @@ jobs:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "fso2021practicework"
         heroku_email: "olli.glorioso@gmail.com"
+        # healthcheck: "https://fso2021practicework.herokuapp.com/healthcheck"
+        # checkstring: "Up."
+        # rollbackonhealthcheckfailed: true
     - uses: actions/checkout@v2
     - uses: 8398a7/action-slack@v3
       with:

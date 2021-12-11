@@ -1,5 +1,5 @@
 it("reseting database and signing up", () => {
-    cy.visit("http://localhost:3001/testreset");
+    cy.visit("http://localhost:3001/resetdatabase");
     cy.contains("Reseted succesfully.");
     cy.visit("http://localhost:3001/login");
     cy.get("#usernameSignUp").type("testi800");
