@@ -31,7 +31,7 @@ const connect_history_api_fallback_1 = __importDefault(require("connect-history-
 // In this index.ts-file are all the configurations and the server will be started here.
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     // Choosing the endpoint for the database with enviroment variables.
-    const MONGODB_URI = process.env.NODE_ENV === "test"
+    const MONGODB_URI = process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development"
         ? process.env.MONGODB_TEST_URI || ""
         : process.env.MONGODB_URI || "";
     // Connecting to the database.

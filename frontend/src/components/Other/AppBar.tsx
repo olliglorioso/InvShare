@@ -112,7 +112,7 @@ const AppBar = ({stockSubscription}: {stockSubscription: {trans: TransactionType
                                         to="/login"
                                         className={styles.loginLink}
                                     >
-                                        Log in / sign up
+                                        Log in
                                     </Link>
                                 </Button>)}
                     {userState 

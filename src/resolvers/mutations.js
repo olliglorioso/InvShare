@@ -27,21 +27,6 @@ const stock_1 = __importDefault(require("../models/stock"));
 require("dotenv").config();
 // This field includes the mutations that are available for the client.
 const mutations = {
-    // This is for resetting the database after cypress tests.
-    resetDatabase: () => __awaiter(void 0, void 0, void 0, function* () {
-        const ifUserExists = yield user_1.default.find({ usersUsername: "testi800" }).populate("usersHoldings").populate("usersTransactions");
-        if (ifUserExists.length > 0) {
-            yield user_1.default.deleteMany({ usersUsername: "testi800" });
-            yield user_1.default.deleteMany({ usersUsername: "testi900" });
-            const stock = yield stock_1.default.findOne({ stockSymbol: "AAPL" });
-            yield stock_1.default.findOneAndUpdate({ symbol: "AAPL" }, { $set: { stockTotalAmount: stock.stockTotalAmount - 110 } });
-            yield transaction_1.default.deleteMany({ _id: ifUserExists[0].usersTransactions[0]._id });
-            return { result: true };
-        }
-        else {
-            return { result: false };
-        }
-    }),
     // This mutation "followUser" is used to follow a user.
     followUser: (_root, { username }, { currentUser }) => __awaiter(void 0, void 0, void 0, function* () {
         // Parsing the username to check if it is valid.
@@ -448,6 +433,21 @@ const mutations = {
             // This error is thrown if the user doesn't have the stock he wants to sell.
             throw new apollo_server_express_1.UserInputError("You don't own this stock.");
         }
-    })
+    }),
+    // This is for resetting the database after cypress tests.
+    resetDatabase: () => __awaiter(void 0, void 0, void 0, function* () {
+        const ifUserExists = yield user_1.default.find({ usersUsername: "testi800" }).populate("usersHoldings").populate("usersTransactions");
+        if (ifUserExists.length > 0) {
+            yield user_1.default.deleteMany({ usersUsername: "testi800" });
+            yield user_1.default.deleteMany({ usersUsername: "testi900" });
+            const stock = yield stock_1.default.findOne({ stockSymbol: "AAPL" });
+            yield stock_1.default.findOneAndUpdate({ symbol: "AAPL" }, { $set: { stockTotalAmount: stock.stockTotalAmount - 110 } });
+            yield transaction_1.default.deleteMany({ _id: ifUserExists[0].usersTransactions[0]._id });
+            return { result: true };
+        }
+        else {
+            return { result: true };
+        }
+    }),
 };
 exports.default = mutations;

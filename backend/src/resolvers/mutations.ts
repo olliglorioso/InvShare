@@ -442,7 +442,7 @@ const mutations = {
             throw new UserInputError("You don't own this stock.")
         }
     },
-    // This is for resetting the database after cypress tests.
+    // This is for resetting the database after cypress tests. Only one user changes its values when resetting.
     resetDatabase: async (): Promise<{result: boolean}> => {
         const ifUserExists = await User.find({usersUsername: "testi800"}).populate("usersHoldings").populate("usersTransactions") as unknown as PopulatedUserType[]
         if (ifUserExists.length > 0) {
