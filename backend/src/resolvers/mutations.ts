@@ -453,7 +453,7 @@ const mutations = {
             await Transaction.deleteMany({_id: ifUserExists[0].usersTransactions[0]._id})
             return {result: true}
         } else {
-            return {result: false}
+            return {result: true}
         }
     },
 }

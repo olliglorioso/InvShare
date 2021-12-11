@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "startti": "serve --listen ${PORT:-8080}",
     "run:backend": "cd backend && npm run dev",
     "run:frontend": "cd frontend && npm start",
     "lint:backend": "cd backend && npm run lint",
@@ -15,7 +16,7 @@
     "lint:all": "npm run lint:frontend && npm run lint:backend",
     "install:all": "cd frontend && npm install && cd ../backend && npm install",
     "test:e2e": "cd frontend && npm run cypress:run",
-    "start:testserver": "cross-env NODE_ENV=test ts-node-dev index.js"  
+    "start:testserver": "cross-env NODE_ENV=test ts-node-dev index.js"
   },
   "repository": {
     "type": "git",
@@ -52,6 +53,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.7",
     "mongoose-unique-validator": "^2.0.3",
+    "serve": "^13.0.2",
     "typescript": "^4.3.5",
     "uuid": "^8.3.2"
   },

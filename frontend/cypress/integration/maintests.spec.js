@@ -1,7 +1,4 @@
 it("reseting database and signing up", () => {
-    cy.intercept("POST", "https://fso2021practicework.herokuapp.com/graphql", (req) => {
-        req.redirect("http://localhost:3001/graphql");
-    });
     cy.visit("http://localhost:3001/resetdatabase");
     cy.contains("Success!");
     cy.visit("http://localhost:3001/login");
