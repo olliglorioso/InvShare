@@ -3,8 +3,13 @@ import axios from "axios";
 
 // This is for resetting test database.
 const Reset = (): JSX.Element => {
+    const gqlUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
+        ? "http://localhost:3001/graphql" 
+        : "https://fso2021practicework.herokuapp.com/graphql";
+    
     const [success, setSuccess] = React.useState<string>("loading");
-    axios.post("http://localhost:3001/graphql", {
+
+    axios.post(gqlUri, {
         query: `
         mutation resetDatabase {
         resetDatabase {

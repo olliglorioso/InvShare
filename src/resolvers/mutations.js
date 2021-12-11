@@ -27,12 +27,15 @@ const stock_1 = __importDefault(require("../models/stock"));
 require("dotenv").config();
 // This field includes the mutations that are available for the client.
 const mutations = {
-    // This is for clearing the test database.
+    // This is for resetting the database after cypress tests.
     resetDatabase: () => __awaiter(void 0, void 0, void 0, function* () {
-        if (process.env.NODE_ENV === "test") {
-            yield user_1.default.deleteMany({});
-            yield stock_1.default.deleteMany({});
-            yield transaction_1.default.deleteMany({});
+        const ifUserExists = yield user_1.default.find({ usersUsername: "testi800" }).populate("usersHoldings").populate("usersTransactions");
+        if (ifUserExists.length > 0) {
+            yield user_1.default.deleteMany({ usersUsername: "testi800" });
+            yield user_1.default.deleteMany({ usersUsername: "testi900" });
+            const stock = yield stock_1.default.findOne({ stockSymbol: "AAPL" });
+            yield stock_1.default.findOneAndUpdate({ symbol: "AAPL" }, { $set: { stockTotalAmount: stock.stockTotalAmount - 110 } });
+            yield transaction_1.default.deleteMany({ _id: ifUserExists[0].usersTransactions[0]._id });
             return { result: true };
         }
         else {

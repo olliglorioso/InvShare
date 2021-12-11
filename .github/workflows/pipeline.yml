@@ -22,19 +22,19 @@ jobs:
       run: npm run lint:all
     - name: build all
       run: npm run build:all
-    - name: test end-to-end with cypress
-      uses: cypress-io/github-action@v2
-      if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#e2e')}}
-      env: 
-        MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
-        SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
-        PORT: ${{ secrets.PORT }}
-        FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
-        ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
-      with:
-        command: npm run test:e2e
-        start: npm run start:testserver
-        wait-on: http://localhost:3001
+    # - name: test end-to-end with cypress
+    #   uses: cypress-io/github-action@v2
+    #   if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#e2e')}}
+    #   env: 
+    #     MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+    #     SECRETFORTOKEN: ${{ secrets.SECRETFORTOKEN }}
+    #     PORT: ${{ secrets.PORT }}
+    #     FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+    #     ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+    #   with:
+    #     command: npm run test:e2e
+    #     start: npm run start:testserver
+    #     wait-on: http://localhost:3001
     - uses: akhileshns/heroku-deploy@v3.12.12
       if: ${{ github.event_name == 'push' }}
       with:

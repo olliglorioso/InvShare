@@ -1,6 +1,6 @@
 import { AuthenticationError, UserInputError } from "apollo-server-express"
 import User from "../models/user"
-import { PopulatedUserType, UserInformation, UserType, HoldingType, TransactionType, PopulatedHoldingType } from "../tsUtils/types"
+import { PopulatedUserType, UserInformation, UserType, HoldingType, TransactionType, PopulatedHoldingType, StockType } from "../tsUtils/types"
 import mongoose from "mongoose"
 import { pubsub } from "./resolvers"
 import { parseUserInformation, parseCompany, parseAmount } from "../tsUtils/typeGuards"
@@ -17,18 +17,6 @@ require("dotenv").config()
 // This field includes the mutations that are available for the client.
 
 const mutations = { 
-    // This is for clearing the test database.
-    resetDatabase: async (): Promise<{result: boolean}> => {
-        console.log("moi")
-        if (process.env.NODE_ENV === "test") {
-            await User.deleteMany({})
-            await Stock.deleteMany({})
-            await Transaction.deleteMany({})
-            return {result: true}
-        } else {
-            return {result: false}
-        }
-    },
     // This mutation "followUser" is used to follow a user.
     followUser: async (
         _root: undefined,
@@ -453,7 +441,21 @@ const mutations = {
             // This error is thrown if the user doesn't have the stock he wants to sell.
             throw new UserInputError("You don't own this stock.")
         }
-    }
+    },
+    // This is for resetting the database after cypress tests.
+    resetDatabase: async (): Promise<{result: boolean}> => {
+        const ifUserExists = await User.find({usersUsername: "testi800"}).populate("usersHoldings").populate("usersTransactions") as unknown as PopulatedUserType[]
+        if (ifUserExists.length > 0) {
+            await User.deleteMany({usersUsername: "testi800"})
+            await User.deleteMany({usersUsername: "testi900"})
+            const stock = await Stock.findOne({stockSymbol: "AAPL"}) as StockType;
+            await Stock.findOneAndUpdate({symbol: "AAPL"}, {$set: {stockTotalAmount: stock.stockTotalAmount - 110}})
+            await Transaction.deleteMany({_id: ifUserExists[0].usersTransactions[0]._id})
+            return {result: true}
+        } else {
+            return {result: false}
+        }
+    },
 }
 
 export default mutations
