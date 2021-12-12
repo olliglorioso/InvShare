@@ -27,6 +27,18 @@ const startServer = async (port?: number) => {
         schema,
         context: async ({ req }): Promise<{currentUser: (PopulatedUserType | null)} | null> => {
             const auth = req ? req.headers.authorization : null;
+            if (process.env.NODE_ENV === "test") {
+                const currentUser = await User.find({ usersUsername: "koirakoira" })
+                    .populate({path: "usersHoldings", populate: {path: "usersStock"}})
+                    .populate({path: "usersTransactions", populate: {path: "transactionStock"}})
+                    .populate({path: "usersFollowing", populate: {path: "user", populate: {path: "usersTransactions", populate: {path: "transactionStock"}}}})
+                    .populate({path: "usersFollowers", populate: {path: "user"}}) as unknown as PopulatedUserType[]
+                if (currentUser.length === 0) {
+                    return null
+                } else {
+                    return {currentUser: currentUser[0]}
+                }
+            }
             if (auth && auth.toLowerCase().startsWith("bearer ")) {
                 const decodedToken = <{id: string, iat: number}>jwt.verify(auth.substring(7), (process.env.SECRETFORTOKEN as string));
                 const currentUser = await User.findById(decodedToken.id)

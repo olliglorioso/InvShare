@@ -41,12 +41,11 @@ test("Sign up form renders", () => {
     const passwordInput = component.container.querySelector("input[name='password']");
     const passwordConfirmInput = component.container.querySelector("input[name='password_again']");
     const submitButton = component.container.querySelector("button[type='submit']");
-
-    fireEvent.change(usernameInput, { target: { value: "testimies" } });
-    expect(usernameInput.value).toBe("testimies");
-    fireEvent.change(passwordInput, { target: { value: "testimies" } });
-    fireEvent.change(passwordConfirmInput, { target: { value: "testimies" } });
     act(() => {
+        fireEvent.change(usernameInput, { target: { value: "testimies" } });
+        expect(usernameInput.value).toBe("testimies");
+        fireEvent.change(passwordInput, { target: { value: "testimies" } });
+        fireEvent.change(passwordConfirmInput, { target: { value: "testimies" } });
         fireEvent.click(submitButton);
     });
     

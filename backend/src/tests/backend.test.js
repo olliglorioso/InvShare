@@ -40,18 +40,20 @@ const server = new ApolloServer({
     schema
 });
 
-it("Adduser works", async () => {
+it("AddUser works", async () => {
     const query = `mutation AddUser($username: String!, $password: String!) {addUser(username: $username, password: $password) {usersUsername}}`
     const res = await server.executeOperation({query, variables: {username: "koirakoira", password: "koirakoira"}})
     expect(res.data.addUser.usersUsername).toBe("koirakoira");
 })
 
+it("IndividualStock works", async () => {
+    const query = `query IndividualStock($company: String!) {individualStock(company: $company) {close}}`
+    const res = await server.executeOperation({query, variables: {company: "AAPL"}})
+    expect(res.data.individualStock[0].close).toEqual(expect.any(Number));
+})
+
 afterAll(() => {
     mongoose.disconnect()
-        .then(() => console.log("Disconnected from the database"))
-        .catch(err => console.log(err));
     mongoose.connection.close()  
-        .then(() => console.log("Connection closed"))
-        .catch(err => console.log(err));
     server.stop()
 }, 100000)
