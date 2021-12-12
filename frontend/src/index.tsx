@@ -33,13 +33,13 @@ const reducer = combineReducers({
 
 // Deciding which backend endpoint we want to use with the help of environment variables.
 const gqlUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
-    ? "http://localhost:3001/graphql" 
-    : "https://fso2021practicework.herokuapp.com/graphql";
+    ? process.env.REACT_APP_BACKEND
+    : process.env.REACT_APP_BACKEND_HEROKU;
 const httpLink = new HttpLink({ uri: gqlUri });
 // Deciding which websocket endpoint we want to use with the help of environment variables.
 const wsUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
-    ? "ws://localhost:3001/subscriptions" 
-    : "wss://fso2021practicework.herokuapp.com/subscriptions";
+    ? process.env.REACT_APP_WEBSOCKET
+    : process.env.REACT_APP_WEBSOCKET_HEROKU;
 // Creating a WebSocketLink-object, which will be used to connect to the websocket endpoint and it is a terminating lik.
 const wsLink = new WebSocketLink({
     uri: wsUri as string,

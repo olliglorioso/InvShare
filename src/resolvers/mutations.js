@@ -434,7 +434,7 @@ const mutations = {
             throw new apollo_server_express_1.UserInputError("You don't own this stock.");
         }
     }),
-    // This is for resetting the database after cypress tests.
+    // This is for resetting the database after cypress tests. Only one user changes its values when resetting.
     resetDatabase: () => __awaiter(void 0, void 0, void 0, function* () {
         const ifUserExists = yield user_1.default.find({ usersUsername: "testi800" }).populate("usersHoldings").populate("usersTransactions");
         if (ifUserExists.length > 0) {
