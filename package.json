@@ -16,7 +16,8 @@
     "lint:all": "npm run lint:frontend && npm run lint:backend",
     "install:all": "cd frontend && npm install && cd ../backend && npm install",
     "test:e2e": "cd frontend && npm run cypress:run",
-    "start:testserver": "cross-env NODE_ENV=test ts-node-dev index.js"
+    "start:testserver": "cross-env NODE_ENV=test ts-node-dev index.js",
+    "test:all": "cd frontend && npm test && cd ../backend && npm test"
   },
   "repository": {
     "type": "git",

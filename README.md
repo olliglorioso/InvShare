@@ -20,7 +20,7 @@ In order to start the app in development, run these commands in the root folder.
 InvShare is a website for sharing your stock portfolio. You can copy your real-life portfolio or just play with imaginary money and try to make as much profit as possible. Currently you can only use the app with the stock symbols of NYSE, such as TSLA, AAPL, NOK, MSFT, AMZN, A, or B. This because the best solutions for Stock APIs did not offer anything better for free and the budget for this project was not too overwhelming. 
 
 ## Technologies, (relevant) libraries and services used
-The whole app uses TypeScript as its primary programming language. The most important technologies in this project were React, TypeScript, Node.js, GraphQL and MongoDB. Since this was still quite small medium-sized software project, cloud-based Github Actions was an obvious choice for CI/CD. 
+The whole app uses TypeScript as its primary programming language, tests are written in JavaScript. The most important technologies in this project were React, TypeScript, Node.js, GraphQL and MongoDB. Since this was still quite small medium-sized software project, cloud-based Github Actions was an obvious choice for CI/CD. 
 
 **Frontend:**
 - Visual elements: [material-ui](https://www.npmjs.com/package/@material-ui/core) for design, [react-apexcharts](https://www.npmjs.com/package/react-apexcharts) for charts, [react-confirm-alert](https://www.npmjs.com/package/react-confirm-alert) for notifications, [react-simple-animate](https://www.npmjs.com/package/react-simple-animate) for animations

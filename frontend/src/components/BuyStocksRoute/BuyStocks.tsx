@@ -23,10 +23,8 @@ import { parsePrice, parseAmount, parseCompany } from "../../tsUtils/typeGuards"
 // This is a component that is used to organize the purchase of stocks
 // and the Buy Stocks -page.
 
-
-
 // This component is to format the string that shows the total price of the purchase.
-const FinalInformation = ({price, amount}: {price: number; amount: string;}): JSX.Element => {
+export const FinalInformation = ({price, amount}: {price: number; amount: string;}): JSX.Element => {
     // Parsing price and amount to numbers.
     const parsedPrice = parsePrice(price);
     const parsedAmount = parseAmount(amount);
