@@ -46,7 +46,7 @@ The whole app uses TypeScript as its primary programming language, tests are wri
 
 **Backend:**
 - Stock APIs: [Finnhub Stock API](https://finnhub.io), [Alpha vantage Stock API](https://www.alphavantage.co)
-- MongoDB object modeling: [mongoose](https://www.npmjs.com/package/mongoose), [mongoose-unique-validator](https://www.npmjs.com/package/mongoose-unique-validator) for validation
+- MongoDB: [mongoose](https://www.npmjs.com/package/mongoose), [mongoose-unique-validator](https://www.npmjs.com/package/mongoose-unique-validator) for validation
 - Interaction with the frontend: [apollo-server-express](https://www.npmjs.com/package/apollo-server-express), [express](https://www.npmjs.com/package/express)
 
 ## Introduction video to the app
