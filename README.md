@@ -23,11 +23,11 @@ In order to start the app in development, run these commands in the root folder.
 ALPHAVANTAGE_API_KEY is the key for Alpha Vantage Stock API.\
 FINNHUB_API_KEY is the key for Finnhub Stock API.\
 HEROKU_API_KEY is the key for Heroku.\
-MONGODB_TEST_URI is the endpoint for the test database.
-MONGODB_URI is the endpoint for the database.
-PORT is the port.
-SECRETFORTOKEN is a secret for the encryption of passwords.
-SLACK_WEBHOOK_URL is the url for the Slack-App (pipeline sends a notification to a Slack group when completed).
+MONGODB_TEST_URI is the endpoint for the test database.\
+MONGODB_URI is the endpoint for the database.\
+PORT is the port.\
+SECRETFORTOKEN is a secret for the encryption of passwords.\
+SLACK_WEBHOOK_URL is the url for the Slack-App (pipeline sends a notification to a Slack group when completed).\
 
 ## Description of the app
 InvShare is a website for sharing your stock portfolio. You can copy your real-life portfolio or just play with imaginary money and try to make as much profit as possible. Currently you can only use the app with the stock symbols of NYSE, such as TSLA, AAPL, NOK, MSFT, AMZN, A, or B. This because the best solutions for Stock APIs did not offer anything better for free and the budget for this project was not too overwhelming. 
