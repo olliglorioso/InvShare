@@ -50,8 +50,8 @@ The whole app uses TypeScript as its primary programming language, tests are wri
 - Interaction with the frontend: [apollo-server-express](https://www.npmjs.com/package/apollo-server-express), [express](https://www.npmjs.com/package/express)
 
 ## Introduction video to the app
-[https://streamable.com/542l7c](https://streamable.com/542l7c)
-There is an error in the video, where a date is the format NN:NN:NN. This is because the stocks related to the error were manually added to the backend and the developer made a humane error. There is no problem with the app itself.
+[https://streamable.com/542l7c](https://streamable.com/542l7c)\
+There is an error in the video: a date has the format NN:NN:NN. This is because the stocks related to the error were manually added to the backend and the developer made a humane error. There is no problem with the app itself.
 
 ## Explanation of code
 **ActionsRoute:**\
