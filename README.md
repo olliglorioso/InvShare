@@ -35,7 +35,7 @@ InvShare is a website for sharing your stock portfolio. You can copy your real-l
 ## Technologies, (relevant) libraries and services used
 The whole app uses TypeScript as its primary programming language, tests are written in JavaScript. The most important technologies in this project were React, TypeScript, Node.js, GraphQL and MongoDB. Since this was still quite small medium-sized software project, cloud-based Github Actions was an obvious choice for CI/CD. 
 
-**Frontend:**a
+**Frontend:**
 - Visual elements: [material-ui](https://www.npmjs.com/package/@material-ui/core) for design, [react-apexcharts](https://www.npmjs.com/package/react-apexcharts) for charts, [react-confirm-alert](https://www.npmjs.com/package/react-confirm-alert) for notifications, [react-simple-animate](https://www.npmjs.com/package/react-simple-animate) for animations
 - Forms: [formik](https://www.npmjs.com/package/formik), [yup](https://www.npmjs.com/package/yup) for validation
 - State handling: [redux](https://www.npmjs.com/package/redux)
