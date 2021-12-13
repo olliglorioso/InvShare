@@ -4,6 +4,9 @@ InvShare is the final part of Full Stack open 2021 by the University of Helsinki
 ## Heroku link
 [heroku](https://fso2021practicework.herokuapp.com/)
 
+## Working hours
+[working hours](https://github.com/olliglorioso/fso2021-practice-work/blob/master/WORKINGHOURS.md)
+
 ## Run locally
 
 In order to start the app in development, run these commands in the root folder...
