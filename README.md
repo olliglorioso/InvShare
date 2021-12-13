@@ -1,5 +1,6 @@
 # InvShare
-InvShare is the my final project for the Full Stack open 2021 by the University of Helsinki. 
+![image](https://user-images.githubusercontent.com/84347872/145859451-a2b92507-f51e-41d9-898a-ff750bc7a6e8.png)
+InvShare is my final project for the Full Stack open 2021 by the University of Helsinki. 
 
 ## Heroku link
 [heroku](https://fso2021practicework.herokuapp.com/)
