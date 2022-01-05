@@ -3,7 +3,10 @@
 InvShare is my final project for the Full Stack open 2021 by the University of Helsinki. 
 
 ## Heroku link
-[heroku](https://fso2021practicework.herokuapp.com/)
+[heroku](https://fso2021practicework.herokuapp.com/) \
+User with some older data (to see better how the My profile -page works): \
+username: testikarhu \
+password: testikarhu
 
 ## Working hours
 [working hours](https://github.com/olliglorioso/fso2021-practice-work/blob/master/WORKINGHOURS.md)
