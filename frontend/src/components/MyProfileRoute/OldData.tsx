@@ -14,7 +14,6 @@ import notification from "../../utils/notification";
 import { ApolloError } from "@apollo/client";
 import useStyles from "./myProfileRouteStyles.module";
 
-// This component is responsible for rendering the historical of a specific data when the user wants.
 
 const OldData = ({
     datas,
@@ -25,31 +24,23 @@ const OldData = ({
   analysisData: AnalysisData[];
   oldDataError: (ApolloError | undefined)
 }) => {
-    // Importing styles.
     const styles = useStyles();
-    // Initializing sell-mutation with useMutation-hook.
     const [sell] = useMutation(SELL_STOCK);
-    // This is a variable that helps to detect a specific oldDataError and displaying a custom error notification.
     const defaultAlphaError = "https://www.alphavantage.co/premium/";
     
     if (oldDataError) {
-        // If the error is Alpha Vantage's default error, we change it to a custom error for readability.
         notification("API error.", oldDataError.message.includes(defaultAlphaError) 
             ? "An error with Alpha Vantage's API: too frequent requests or bad API key." 
             : oldDataError.message, "danger");
         return <></>;
     } 
-    // If there is no data, we return an empty div.
     if (!datas) return <div></div>;
-    // This formats data for x-axis. 
     const dates = datas.time_series.map((o: { date: string; value: number }) => o.date);
-    // We use different options than usual.
     const oldDataDateOption = "datetime";
     const readyDateOption: "datetime" | "category" | "numeric" | undefined =
     oldDataDateOption as "datetime" | "category" | "numeric" | undefined;
 
     const options2 = {
-        // We use default and self-made options that is imported.
         ...options,
         xaxis: {
             categories: dates,
@@ -59,7 +50,6 @@ const OldData = ({
             },
         },
     };
-    // Y-values are collected from datas-prop.
     const series = [
         {
             name: "Value",
@@ -68,20 +58,14 @@ const OldData = ({
             ),
         },
     ];
-    // Validation schema for amount of stocks to sell.
     const ValidationSchema = Yup.object().shape({
-        // Is required and must be at least one.
         amount: Yup.number()
             .required("Required field.")
             .transform((value: string) => parseInt(value))
             .min(1, "Amount must be at least one."),
     });
-    // We search for the selected stock.
     const selectedStock = analysisData.filter((o: AnalysisData): boolean => o.name === datas.metadata.symbol)[0];
-    // Does it exist?
     if (!selectedStock) return <div></div>;
-    // Searching for the last price of the selected stock. This information is from analysisData so it is fresh information.
-    // We could make a new query to get the last price but it would be a waste of resources, although it would be more accurate.
     const lastPrice = selectedStock.sticks[selectedStock.sticks.length - 1].close;
     return (
         <div className={styles.oldDataDiv}>
@@ -92,13 +76,11 @@ const OldData = ({
                 <Chart options={options2} series={series} type="line" height={300} />
             </div>
             <Formik
-            // Formik that handles the sell-form.
                 initialValues={{
                     amount: "",
                 }}
                 onSubmit={(input: { amount: string }) => {
                     confirmAlert({
-                        // On submit we display a confirmation
                         title: "Confirmation",
                         message: `Are you sure you want to sell ${input.amount} x ${datas.metadata.symbol.toUpperCase()} 
                         (${(lastPrice * parseInt(input.amount)).toFixed(2)}$)?`,
@@ -106,7 +88,6 @@ const OldData = ({
                             {
                                 label: "Yes",
                                 onClick: async () => {
-                                    // On "Yes", we try to sell the stock by using mutation.
                                     try {
                                         await sell({
                                             variables: {

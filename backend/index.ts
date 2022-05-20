@@ -12,7 +12,6 @@ import { execute, subscribe } from "graphql"
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import app from "./src/utils/app";
 
-// In this index.ts-file are all the configurations and the server will be started here.
 
 const startServer = async (port?: number) => {
     const httpServer = createServer(app)
@@ -22,7 +21,6 @@ const startServer = async (port?: number) => {
         resolvers,
     })
 
-    // Configuring the ApolloServer.
     const server = new ApolloServer({
         schema,
         context: async ({ req }): Promise<{currentUser: (PopulatedUserType | null)} | null> => {

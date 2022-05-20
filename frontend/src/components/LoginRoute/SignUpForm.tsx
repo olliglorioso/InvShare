@@ -11,32 +11,24 @@ import * as Yup from "yup";
 import notification from "../../utils/notification";
 import useStyles from "./loginRouteStyles.module";
 
-// This component takes care of the sign up form.
 
-// Validation schema for it.
 const ValidationSchema = Yup.object().shape({
-    // Username required and length between 4 and 15 chars.
     username: Yup.string()
         .min(4, "Username must be at least 4 characters.")
         .max(15, "Username must be 15 characters or less.")
         .required("Username is required."),
-    // Password required and length between 8 and 15 chars.
     password: Yup.string()
         .min(8, "Password must be at least 8 characters.")
         .max(15, "Password must be 15 characters or less.")
         .required("Password is required."),
-    // Password and password_again must match.
     password_again: Yup.string()
         .oneOf([Yup.ref("password"), null], "Passwords must match.")
         .required("Password confirmation is required."),
 });
 
 const SignUpForm = (): JSX.Element => {
-    // Importing styles.
     const styles = useStyles();
-    // Mutation for adding a user.
     const [addUser] = useMutation(ADD_USER);
-    // Rendering the form.
     return (
         <Formik
             initialValues={{
@@ -46,7 +38,6 @@ const SignUpForm = (): JSX.Element => {
             }}
             validationSchema={ValidationSchema}
             onSubmit={(values) => {
-                // After submit there is a confirmation popup.
                 confirmAlert({
                     title: "Confirmation",
                     message: `Create an account with the name ${values.username}?`,
@@ -54,8 +45,6 @@ const SignUpForm = (): JSX.Element => {
                         {
                             label: "Yes",
                             onClick: async () => {
-                                // On "Yes" the user is added to the database or 
-                                // an error message is shown if error.
                                 try {
                                     await addUser({
                                         variables: {
@@ -74,8 +63,6 @@ const SignUpForm = (): JSX.Element => {
                                         (e as Error).message || "Something went wrong.",
                                         "danger"
                                     );
-                                    // If words password or username are in the error message,
-                                    // they will be set as empty strings again to speed up the sign up process.
                                     if ((e as Error).message.includes("password")) {
                                         values.password = "";
                                     } else if ((e as Error).message.includes("username")) {
@@ -87,7 +74,6 @@ const SignUpForm = (): JSX.Element => {
                         {
                             label: "No",
                             onClick: () => {
-                                // On "No" => notification.
                                 notification(
                                     "Canceled",
                                     "You didn't create a new account.",
@@ -126,7 +112,6 @@ const SignUpForm = (): JSX.Element => {
                         }}
                     />
                     {errors.username && touched.username 
-                    // An error text will be shown if the username is invalid and touched.
                         ? 
                         (
                             <div className={styles.errorColor}>{errors.username}</div>

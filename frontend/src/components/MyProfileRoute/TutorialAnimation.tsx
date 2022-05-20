@@ -4,12 +4,9 @@ import { Arrow90degUp } from "react-bootstrap-icons";
 import {Typography} from "@material-ui/core";
 import useStyles from "./myProfileRouteStyles.module";
 
-// This component is responsible for rendering the tutorial animation for first purchase in the MyProfile-page.
 
 const TutorialAnimation = () => {
-    // Importing styles.
     const styles = useStyles();
-    // Render the animation. Animation is created with AnimateKeyframes of react-simple-animate-library.
     return (
         <div style={{ background: "white" }}>
             <div className={styles.animationSizes}>

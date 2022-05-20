@@ -11,12 +11,10 @@ import { StyledTableRow } from "../../utils/helpers";
 import useStyles from "./myProfileRouteStyles.module";
 import notification from "../../utils/notification";
 
-// This component is responsible for rendering the analysis table under the chart.
 
 const AnalysisTable = ({analysisData, holdings, getOldData}: 
     {getOldData: (comp: string) => void, analysisData: AnalysisData[], holdings: Holdings[]}) => {
     const styles = useStyles();
-    // Immediatelly rendering.
     return (
         <TableContainer component={Paper}>
             <Table aria-label="customized table">
@@ -41,20 +39,15 @@ const AnalysisTable = ({analysisData, holdings, getOldData}:
                 </TableHead>
                 <TableBody>
                     {analysisData.map((company: AnalysisData) => {
-                        // Here we map through analysisData, also sticks for every company.
-                        // First of all, we search for the company in holdings.
                         const correspondingPosition = holdings.filter((x: Holdings) => {
                             return x.usersStock.stockSymbol === company.name;
                         })[0];
                         let profitPercent = "696969";
 
                         if (correspondingPosition) {
-                        // Here we calculate the profit percent of this particular company by taking its last value and dividing it by the original average value.
-                        // This only if the corresponding positions exists (subscriptions cause exceptions).
                             profitPercent = 
                                 ((-1 + company.sticks[company.sticks.length - 1].close / (correspondingPosition.usersTotalOriginalPriceValue / correspondingPosition.usersTotalAmount)) * 100).toFixed(2);
                         }
-                        // Rendering is executed only if everything is all right. Subscriptions cause exceptions.
                         if (company.name && correspondingPosition && profitPercent !== "696969") {
                             return (
                                 <StyledTableRow key={`${company.name}`}>
@@ -99,7 +92,6 @@ const AnalysisTable = ({analysisData, holdings, getOldData}:
                                 </StyledTableRow>
                             );
                         } else {
-                            // We return empty table row is something has gone wrong.
                             return <StyledTableRow key={company.name}></StyledTableRow>;
                         }
                     })}

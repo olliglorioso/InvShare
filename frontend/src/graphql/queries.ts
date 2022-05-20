@@ -1,8 +1,6 @@
 import { gql } from "@apollo/client";
 
-// This is the file that handles all of the queries' schemas for the frontend.
 
-// First of all, a couple fragments to avoid repetition.
 const STOCKDETAILS = gql`
   fragment StockDetails on IndividualStock {
     close
@@ -56,7 +54,6 @@ export const SEARCH_USER_FINAL = gql`
   ${TRANSACTIONDETAILS}
 `;
 
-// Mutations: 
 export const FOLLOW = gql`
   mutation follow($username: String!) {
     followUser(username: $username) {
@@ -107,7 +104,6 @@ export const LOGIN = gql`
   }
 `;
 
-// Queries: 
 export const SEARCH_USER = gql`
   query searchUser($username: String!) {
     searchUser(username: $username) {
@@ -191,7 +187,6 @@ export const INDIVIDUAL_STOCK = gql`
   ${STOCKDETAILS}
 `;
 
-// Reset test database:
 export const RESET_DATABASE = gql`
   mutation resetDatabase {
     resetDatabase {
@@ -200,7 +195,6 @@ export const RESET_DATABASE = gql`
   }
 `;
 
-// Subscriptions: 
 export const STOCKEVENT = gql`
   subscription StockEvent ($username: String) {
     stockEvent (username: $username){

@@ -19,24 +19,17 @@ import { useHistory } from "react-router-dom";
 import { AnimateKeyframes } from "react-simple-animate";
 import useStyles from "./otherComponentsStyles.module";
 
-// This component is responsible for rendering the sidebar.
 
 const SideBar = (): JSX.Element => {
-    // Initiating dispath with useDispatch-hook.
     const dispatch = useDispatch();
-    // Getting the sidebar's state from the Redux-store.
     const sidebarState = useSelector<RootState, boolean>(
         (state): boolean => state.sidebar
     );
-    // Importing styles 
     const styles = useStyles();
-    // History is for pushing the user to another page.
     const history = useHistory();
-    // Getting the purchase state (if the user has no stocks in their portfolio, an animation is displayed in the sidebar as well).
     const purchaseState = useSelector<RootState, boolean>(
         (state): boolean => state.purchase
     );
-    // Rendering the side bar.
     return (
         <div>
             <Drawer

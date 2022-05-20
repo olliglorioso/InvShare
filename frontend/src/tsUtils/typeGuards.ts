@@ -1,19 +1,14 @@
 import notification from "../utils/notification";
 import { UserInformation } from "./types";
-// This function includes essential functions, so called "type guards",
-// to check if the type of the user input is correct and valid. 
 
-// This function check if a supposed-text is string and turns it into a string.
 export const isString = (text: unknown): text is string => {
     return typeof text === "string" || text instanceof String;
 };
 
-// This function check if a supposed-number is number and turns it into a number.
 export const isNumber = (numb: unknown): numb is number => {
     return numb instanceof Number || typeof numb === "number";
 };
 
-// Parses UserInformation (username and password).
 export const parseUserInformation = (userInformation: UserInformation): UserInformation => {
     if (!userInformation || !userInformation.username || !userInformation.password || 
         !isString(userInformation.username) || !isString(userInformation.password)) {
@@ -31,7 +26,6 @@ export const parseUserInformation = (userInformation: UserInformation): UserInfo
     return userInformation;
 };
 
-// Parse username.
 export const parseUsername = (username: unknown): string => {
     if (!isString(username)) {
         notification("Error.", "Username must be a string.", "danger");
@@ -40,7 +34,6 @@ export const parseUsername = (username: unknown): string => {
     return username;
 };
 
-// Parse amount.
 export const parseAmount = (amount: unknown): string => {
     if (isNumber(amount)) {
         return amount.toString();
@@ -51,7 +44,6 @@ export const parseAmount = (amount: unknown): string => {
     throw new Error("Amount is neither a number nor a string.");
 };
 
-// Parse company/symbol/stock.
 export const parseCompany = (company: unknown): string => {
     if (isString(company)) {
         return company;
@@ -60,7 +52,6 @@ export const parseCompany = (company: unknown): string => {
     throw new Error("Company is not a string.");
 };
 
-// Parse price.
 export const parsePrice = (price: unknown): number => {
     if (isNumber(price)) {
         return price;

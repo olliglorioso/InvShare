@@ -25,29 +25,19 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
   stockSubscription: string | undefined,
   followSubscriptions: string | undefined
 }): JSX.Element => {
-    // Importing styles.
     const styles = useStyles();
-    // Executing me-query.
     const meResult = useQuery(ME);
-    // Initializing dispatch with useDispatch-hook.
     const dispatch = useDispatch();
-    // Executing currentPortfolioValue-query with the mode "days".
     const daysData = useQuery(CURRENT_PORTFOLIO_VALUE, { 
         variables: { mode: "days" }
     });
-    // Executing currentPortfolioValue-query with the mode "hours".
     const hoursData = useQuery(CURRENT_PORTFOLIO_VALUE, {
         variables: { mode: "hours" }
     });
-    // Initializing mode-state with useState-hook.
     const [mode, setMode] = useState("Analysis");
-    // Getting the current mode from Redux-store.
     const switchMode = useSelector<RootState, { mode: boolean }>(
         (state) => state.mode
     );
-    // This useEffect is executed every time we get a notification of relevant follow/unfollow or
-    // a new stock-purchase/sale from the server. It updates all the data in the page, so that the client doesn't have to reload the page
-    // to see the changes.
     useEffect(() => {
         if (stockSubscription || followSubscriptions) {
             try {
@@ -59,27 +49,20 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
             }
         }
     }, [stockSubscription, followSubscriptions]);
-    // Checking if the user has no stocks ==> show the tutorial if true.
     if (
         daysData.error?.message === "This user has no transactions." || hoursData.error?.message === "This user has no transactions."
     ) {
         dispatch(noPurchases());
         return <TutorialAnimation />;
     }
-    // Checking if the data has been fetched.
     if (!meResult.data || !hoursData.data ||!meResult.data.me || !hoursData.data.currentPortfolioValue) {
         return <div className={styles.myProfileLoadingAnimation}><LoadingAnimation type={"spin"} color={"black"} /></div>;
     }
-    // Checking errors.
     if (meResult.error || daysData.error || hoursData.error) {
         const errorMessage = meResult.error?.message || daysData.error?.message || hoursData.error?.message;
         notification("An error occured.", errorMessage as string, "danger");
         return <div className={styles.myProfileLoadingAnimation}><LoadingAnimation type={"spin"} color={"black"} /></div>;
     }
-    // If relevant data is not yet fetched, show the loading animation. We don't include daysData here
-    // because we want to show the loading animation onlye while the hoursData is still loading. If we have to 
-    // wait daysData as well, the waiting time would be too long. The user cannot access the daily data
-    // before it's fetched, because in another component we disable the switch for the time.
     if (meResult.loading || hoursData.loading || !meResult.data || !hoursData.data) {
         return (
             <div className={styles.myProfileLoadingAnimation}>
@@ -92,13 +75,10 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
         dispatch(noPurchases());
         return <TutorialAnimation />;
     } else if (meResult.data.me.usersHoldings.length !== 0) {dispatch(buyFirstStock());}
-    // Setting the data to analysisData-variable based on the mode.
     const analysisData = switchMode.mode
         ? daysData.data.currentPortfolioValue[0]
         : hoursData.data.currentPortfolioValue[0];
-    // Setting the transactions to a variable.
     const transactions = meResult.data.me.usersTransactions;
-    // Calculating the value of the whole portfolio when individual stocks were bought with usersHoldings.
     const totalOriginalValue = meResult.data.me.usersHoldings.reduce(
         (acc: number, curr: Holdings
         ) => {
@@ -106,9 +86,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
         },
         0
     );
-    // Current profit percentage.
     const currentProfitPercentage = (parseFloat((100 * (-1 + hoursData.data.currentPortfolioValue[0].wholeValue / totalOriginalValue)).toString())).toFixed(2);
-    // Rendering MyProfile.
     return (
         <div className={styles.myProfileMainDiv}>
             <div style={{ padding: 15 }}>
@@ -157,7 +135,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
                                 </Typography>
                             </div>
                             <div>
-                                {parseFloat(currentProfitPercentage) >= 0  // The color of the text is based on the sign of the profit.
+                                {parseFloat(currentProfitPercentage) >= 0  
                                     ?   <Typography className={styles.myProfileCardContentNumberGreen}>{currentProfitPercentage}%</Typography> 
                                     :   <Typography className={styles.myProfileCardContentNumberRed}>{currentProfitPercentage}%</Typography>}
 
@@ -174,7 +152,7 @@ const MyProfile = ({stockSubscription, followSubscriptions}: {
                                 </Typography>
                             </div>
                             <div>
-                                {Math.round(meResult.data.me.moneyMade) >= 0 // The color of the text is based on the sign of the money made.
+                                {Math.round(meResult.data.me.moneyMade) >= 0 
                                     ?   <Typography className={styles.myProfileCardContentNumberGreen}>{Math.round(meResult.data.me.moneyMade)}</Typography>
                                     :   <Typography className={styles.myProfileCardContentNumberRed}>{Math.round(meResult.data.me.moneyMade)}</Typography>}
                                 <Typography style={{ textAlign: "center" }}>Profit</Typography>

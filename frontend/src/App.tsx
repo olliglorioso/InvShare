@@ -17,17 +17,10 @@ import ActionsPage from "./components/ActionsRoute/ActionsPage";
 import Reset from "./components/Other/Reset";
 import HealthCheck from "./components/Other/HealthCheck";
 
-// This is the highest component in hierarchy. Displays the whole app.
 function App(): JSX.Element {
-    // Getting the logged user from the Redux-store.
     const userLogged = useSelector<RootState, string>((state) => state.user.username);
-    // StockEvent-subscription.
     const stockEvent = useSubscription(STOCKEVENT, {variables: {username: userLogged}});
-    // FollowEvent-subscription.
     const followEvent = useSubscription(FOLLOWEVENT, {variables: {username: userLogged}});
-    // Rendering the other components.
-    // We user React router to display the different pages and change urls.
-    // ReactNotification-component is used to display notifications.
     const stockSubscription = {trans: stockEvent.data?.stockEvent?.transaction, me: stockEvent.data?.stockEvent.me};
     return (
         <div>

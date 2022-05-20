@@ -4,10 +4,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../..";
 import useStyles from "./otherComponentsStyles.module";
 
-// This component renders the default page ("/").
 
 const DefaultPage = () => {
-    // Getting the userState.
     const styles = useStyles();
     const userState = useSelector<RootState, string>((state) => state.user.username);
     return (

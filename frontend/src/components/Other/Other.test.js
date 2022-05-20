@@ -9,7 +9,6 @@ import thunk from "redux-thunk";
 const mockStore = configureMockStore([thunk]);
 
 test("Default page renders correctly", () => {
-    // test a component which includes useSelector hook from redux library
     const store = mockStore({
         user: {username: "koirakissa"}
     });
@@ -21,6 +20,5 @@ test("Default page renders correctly", () => {
         </div>
     );
     component.debug();
-    // Mock return value is "" => user is not logged in
     expect(component.container).toHaveTextContent("You are logged in.");
 });

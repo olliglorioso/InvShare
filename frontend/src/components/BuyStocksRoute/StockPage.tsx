@@ -9,17 +9,13 @@ import { ArrowDownRight } from "react-bootstrap-icons";
 import useStyles from "./buyStocksRouteStyles.module";
 
 const StockPage = (): JSX.Element => {
-    // Importing styles.
     const styles = useStyles();
-    // Getting the current company name from the Redux store.
     const currentName = useSelector<RootState, string>(
         (state) => state.stock.stockName
     );
-    // For the occasion that this is the first buy.
     const purchase = useSelector<RootState, boolean>(
         (state): boolean => state.purchase
     );
-    // Returns the Stock Page.
     return (
         <div className={styles.stockPageFirstDiv}>
             <div className={styles.stockPageSecondDiv}>

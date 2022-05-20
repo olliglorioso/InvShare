@@ -11,22 +11,14 @@ import leadingZeros, { finalMyDateOption, options } from "../../utils/helpers";
 import useStyles from "./buyStocksRouteStyles.module";
 import { parseCompany } from "../../tsUtils/typeGuards";
 
-// This component returns chart that is shown to the user before purchasing a stock.
 const MainChart = (props: { stock: string }): JSX.Element => {
-    // Importing styles.
     const styles = useStyles();
-    // Parsing the stock name.
     const parsedStock = parseCompany(props.stock);
-    // With useQuery we run individualStock-query from the backend. We give
-    // company name as a variable (it comes from BuyStocks-component's form).
     const { data, loading, ...rest } = useQuery(INDIVIDUAL_STOCK, {
         variables: { company: parsedStock },
     });
-    // We use useDispatch's dispatch to dispatch actions to the Redux store.
     const dispatch = useDispatch();
-    // Initializing stockList for the ApexChart-library's options.
     let stockList: { close: number; date: string }[] = [];
-    // If the data has loaded, we reformat it.
     if (data) {
         stockList = data.individualStock.map((b: {__typename: string, close: number, date: string
         }): { close: number; date: string } => {
@@ -34,7 +26,6 @@ const MainChart = (props: { stock: string }): JSX.Element => {
         }
         );
     }
-    // Every time the data from individualStock-query changes, we change the price per stock with Redux.
     useEffect(() => {
         if (stockList && stockList[stockList.length - 1] !== undefined) {
             dispatch(changePrice(stockList[stockList.length - 1].close));
@@ -44,17 +35,13 @@ const MainChart = (props: { stock: string }): JSX.Element => {
         }
     }, [data]);
 
-    // Here we determine some options to be used in the chart, on top of the previously made options
-    // we have imported.
     const finalOptions = {
         ...options,
         xaxis: {
-            // INsert values for x-axis.
             categories: stockList.map((x: { close: number; date: string }) => x.date),
             type: finalMyDateOption,
             labels: {
                 formatter: function (value: string) {
-                    // Formatting the label for x-axis.
                     const a = new Date(value);
                     const xLabel = `${a.getDate()}.${a.getMonth()}, ${leadingZeros(
                         a.getHours()
@@ -64,7 +51,6 @@ const MainChart = (props: { stock: string }): JSX.Element => {
             },
         },
     };
-    // These are the value for y-axis.
     const series = [
         {
             name: props.stock.toUpperCase(),
@@ -73,7 +59,6 @@ const MainChart = (props: { stock: string }): JSX.Element => {
             ) || [0],
         },
     ];
-    // Returning the chart and checking if there are errors.
     return (
         <div>
             <Typography>Last 96 hours</Typography>

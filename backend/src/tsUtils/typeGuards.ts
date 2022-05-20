@@ -4,25 +4,19 @@ import { InvalidApiResponseError } from "../utils/customMadeErrors"
 import { MarketDataItem } from "@stoqey/finnhub"
 import { Resolution } from "@stoqey/finnhub"
 
-// This function includes essential functions, so called "type guards",
-// to check if the type of the user input is correct and valid. 
 
-// This function check if a supposed-text is string and turns it into a string.
 const isString = (text: unknown): text is string => {
     return typeof text === "string" || text instanceof String
 }
 
-// This function check if a supposed-number is number and turns it into a number.
 const isNumber = (numb: unknown): numb is number => {
     return numb instanceof Number || typeof numb === "number"
 }
 
-// Check if given parameter is a date.
 const isDate = (date: unknown): date is Date => {
     return date instanceof Date
 }
 
-// Parse to date.
 export const parseDate = (date: unknown): Date => {
     if (isDate(date)) {
         return date
@@ -33,7 +27,6 @@ export const parseDate = (date: unknown): Date => {
     }
 }
 
-// Parse to Resolution.
 export const parseResolution = (resolution: unknown): Resolution => {
     if (isString(resolution)) {
         switch (resolution) {
@@ -61,13 +54,11 @@ export const parseResolution = (resolution: unknown): Resolution => {
     }
 }
 
-// Checks if the parameter has valid Alpha Vantage data.
 const isAlphaVantageValues = (alphaVantageValues: unknown): alphaVantageValues is AlphaVantageValues => {
     return alphaVantageValues instanceof Object && Object.prototype.hasOwnProperty.call(alphaVantageValues,"Meta Data") &&
         Object.prototype.hasOwnProperty.call(alphaVantageValues, "Weekly Time Series")
 }
 
-// Check if a single candle is valid.
 const isCandlesType = (candles: unknown): candles is CandlesType => {
     return candles instanceof Object && Object.prototype.hasOwnProperty.call(candles, "close") &&
         Object.prototype.hasOwnProperty.call(candles, "date") && Object.prototype.hasOwnProperty.call(candles, "high") &&
@@ -75,12 +66,10 @@ const isCandlesType = (candles: unknown): candles is CandlesType => {
         Object.prototype.hasOwnProperty.call(candles, "volume")
 }
 
-// Check if a market data item is valid.
 const isMarketDataItem = (marketDataItems: unknown): marketDataItems is MarketDataItem[] => {
     return marketDataItems instanceof Array && marketDataItems.every(item => isCandlesType(item))
 }
 
-// Check if the whole finnhub's data is valid.
 export const parseFinnhubResponse = (finnhubResponse: unknown): MarketDataItem[] => {
     if (!finnhubResponse || !Array.isArray(finnhubResponse)) {
         throw new InvalidApiResponseError("Finnhub's API-response is not a list / is undefined.")
@@ -91,7 +80,6 @@ export const parseFinnhubResponse = (finnhubResponse: unknown): MarketDataItem[]
     throw new InvalidApiResponseError("Finnhub's API-response is not a list of Candles.")
 }
 
-// This parses a supposed-Mode to a Mode. If it isn't a Mode, it throws an error.
 export const parseMode = (mode: unknown): Mode => {
     if (mode === "hours" || mode === "days") {
         return mode
@@ -100,7 +88,6 @@ export const parseMode = (mode: unknown): Mode => {
     }
 }
 
-// This parses a supposed-Company to a Company. If it isn't a Company, it throws an error.
 export const parseCompany = (company: unknown): string => {
     if (!company || !isString(company)) {
         throw new UserInputError("Incorrect or missing symbol.", {errorCode: 400})
@@ -108,7 +95,6 @@ export const parseCompany = (company: unknown): string => {
     return company
 }
 
-// This parses a supposed-UserInformation to a UserInformation. If it isn't a UserInformation, it throws an error.
 export const parseUserInformation = (userInformation: UserInformation): UserInformation => {
     if (!userInformation || !userInformation.username || !userInformation.password || 
         !isString(userInformation.username) || !isString(userInformation.password)) {
@@ -123,7 +109,6 @@ export const parseUserInformation = (userInformation: UserInformation): UserInfo
     return userInformation
 }
 
-// This parses a supposed-number to a number. If it isn't a number, it throws an error.
 export const parseAmount = (amount: unknown): number => {
     if (!amount || !isNumber(amount)) {
         throw new UserInputError("Incorrect type of amount.", {errorCode: 400})
@@ -131,7 +116,6 @@ export const parseAmount = (amount: unknown): number => {
     return amount
 }
 
-// This parses supposed-AlphaVantageValues to AlphaVantageValues. If it isn't AlphaVantageValues, it throws an error.
 export const parseAlphaVantange = (sticks: unknown): AlphaVantageValues => {
     if (!sticks) {
         throw new InvalidApiResponseError("Alpha Vantage -API's response is empty.");

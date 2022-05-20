@@ -20,8 +20,6 @@ import firstBuyReducer from "./reducers/firstBuyReducer";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import actionNotificationReducer from "./reducers/actionNotificationReducer";
 
-// Here we  combine all our reducers into one store. This way we can easily access them in our components.
-// Generally combineReducer-allows us to create multiple reducers.
 const reducer = combineReducers({
     user: userLoggedReducer,
     sidebar: sidebarReducer,
@@ -31,16 +29,13 @@ const reducer = combineReducers({
     notification: actionNotificationReducer
 });
 
-// Deciding which backend endpoint we want to use with the help of environment variables.
 const gqlUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
     ? "http://localhost:3001/graphql" 
     : "https://fso2021practicework.herokuapp.com/graphql";
 const httpLink = new HttpLink({ uri: gqlUri });
-// Deciding which websocket endpoint we want to use with the help of environment variables.
 const wsUri = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
     ? "ws://localhost:3001/subscriptions" 
     : "wss://fso2021practicework.herokuapp.com/subscriptions";
-// Creating a WebSocketLink-object, which will be used to connect to the websocket endpoint and it is a terminating lik.
 const wsLink = new WebSocketLink({
     uri: wsUri as string,
     options: {
@@ -48,13 +43,10 @@ const wsLink = new WebSocketLink({
     },
 });
 
-// Creating a Redux-store.
 const store = createStore(reducer);
 
-// This is to use Typescript with Redux.
 export type RootState = ReturnType<typeof store.getState>;
 
-// This is to use headers with our backend-requests, especially for authorization.
 const authLink = setContext((_, { headers }) => {
     const token = localStorage.getItem("usersToken");
     return {
@@ -65,11 +57,6 @@ const authLink = setContext((_, { headers }) => {
     };
 });
 
-// Creating a splitLink that will split the incoming requests into two categories:
-// 1. GraphQL requests
-// 2. Subscription requests
-// The split-method takes theww parameters. First of all, it tests whether the request is a GraphQL request or not.
-// If it is a GraphQL request, it will use the authLink.concat(httpLink). If it is a Subscription request, it will use the wsLink.
 const splitLink = split(
     ({ query }) => {
         const definition = getMainDefinition(query);
@@ -82,13 +69,11 @@ const splitLink = split(
     authLink.concat(httpLink)
 );
 
-// Creating an Apollo-client.
 const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: splitLink,
 });
 
-// Rendering the website with ReactDOM-object. We also provide the Redux-store and Apollo-client to the app.
 ReactDOM.render(
     <Provider store={store}>
         <ApolloProvider client={client}>

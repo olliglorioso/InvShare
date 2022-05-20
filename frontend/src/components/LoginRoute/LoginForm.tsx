@@ -14,29 +14,20 @@ import notification from "../../utils/notification";
 import useStyles from "./loginRouteStyles.module";
 import { parseUserInformation } from "../../tsUtils/typeGuards";
 
-// This component is used to render the login form.
-// Validation schema for the form.
 const ValidationSchema = Yup.object().shape({
-    // Username is required and its min length is 4.
     username: Yup.string()
         .required("Required field.")
         .min(4, "Must be at least 4 characters."),
-    // Password is required and its min length is 8.
     password: Yup.string()
         .required("Required field.")
         .min(8, "Must be at least 8 characters."),
 });
 
 const LoginForm = (): JSX.Element => {
-    // Importing styles.
     const styles = useStyles();
-    // Login-mutation initialized with useMutation-hook.
     const [login, loginResult] = useMutation(LOGIN);
-    // Dispatch-function initialized with useDispatch-hook.
     const dispatch = useDispatch();
-    // History-object initialized with useHistory-hook.
     const history = useHistory();
-    // Every time loginResult.data changes, we try to dispatch the result to the Redux-store and go to the default page.
     useEffect(() => {
         try {
             dispatch(logUserIn(loginResult.data.login.value, loginResult.data.login.username));
@@ -45,7 +36,6 @@ const LoginForm = (): JSX.Element => {
             return;
         }
     }, [loginResult.data]);
-    // Initial values (they are empty).
     const initialValues = {
         username: "",
         password: "",
@@ -53,11 +43,7 @@ const LoginForm = (): JSX.Element => {
     return (
         <Formik
             initialValues={initialValues}
-            // When submit, we try to user login-mutation. If it fails, a notification is shown
-            // (the login was unsuccessfull.). If it succeeds, we dispatch the result to the Redux-store
-            // in the previous useEffect-hook and go to the default page.
             onSubmit={async ({username, password}: { username: string, password: string }) => {
-                // Parsing inputted user information.
                 const parsedUserInfo = parseUserInformation({username, password});
                 try {
                     await login({
@@ -97,7 +83,6 @@ const LoginForm = (): JSX.Element => {
                     />
 
                     {errors.username && touched.username 
-                    // If there is an error and field is touched, ann error text is shown.
                         ? 
                         (
                             <div className={styles.errorColor}>{errors.username}</div>
