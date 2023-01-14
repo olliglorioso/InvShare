@@ -3,6 +3,7 @@
 InvShare is my final project for the Full Stack open 2021 by the University of Helsinki. 
 
 ## Heroku link
+As Heroku removed their free tier in November of 2022, there is currently no demo. Tbd.
 [heroku](https://fso2021practicework.herokuapp.com/) \
 User with some older data (to see better how the My profile -page works): \
 username: testikarhu \
